@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La Copa De Vatoz &middot; Sand Valley 2026</title>
+<style>
+:root{
+  color-scheme: light;
+  --surface-1:#fcfcfb; --plane:#f9f9f7;
+  --ink-1:#0b0b0b; --ink-2:#52514e; --ink-3:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7;
+  --pos:#006300; --neg:#d03b3b; --warn:#fab219;
+  --accent:#2a78d6;
+  --ring:rgba(11,11,11,0.10);
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme: dark;
+    --surface-1:#1a1a19; --plane:#0d0d0d;
+    --ink-1:#ffffff; --ink-2:#c3c2b7; --ink-3:#898781;
+    --grid:#2c2c2a; --axis:#383835;
+    --pos:#0ca30c; --neg:#d03b3b;
+    --accent:#3987e5;
+    --ring:rgba(255,255,255,0.10);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--plane); color:var(--ink-1);
+  font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;
+  padding-bottom:calc(64px + env(safe-area-inset-bottom));
+  -webkit-text-size-adjust:100%;
+}
+header{
+  position:sticky; top:0; z-index:20;
+  background:var(--surface-1); border-bottom:1px solid var(--ring);
+  padding:10px 14px calc(10px) 14px;
+}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.brand h1{font-size:16px;margin:0;letter-spacing:-0.01em}
+.brand span{font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em}
+.rsel{display:flex;align-items:center;gap:6px;margin-top:8px}
+.rsel select{
+  flex:1 1 0;min-width:0;min-height:38px;font:inherit;color:var(--ink-1);
+  background:var(--plane);border:1px solid var(--ring);border-radius:8px;padding:0 8px;
+}
+.rsel button{
+  flex:0 0 auto;min-width:38px;min-height:38px;font-size:17px;line-height:1;
+  background:var(--plane);color:var(--ink-1);border:1px solid var(--ring);border-radius:8px;
+}
+main{padding:14px;max-width:760px;margin:0 auto}
+.card{
+  background:var(--surface-1);border:1px solid var(--ring);border-radius:var(--radius);
+  padding:14px;margin-bottom:12px;
+}
+.card h2{font-size:12px;margin:0 0 10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.hero{font-size:26px;font-weight:600;letter-spacing:-0.02em;margin:0 0 2px}
+.sub{color:var(--ink-2);font-size:13px;margin:0}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--grid);font-size:14px}
+.kv:last-child{border-bottom:0}
+.kv b{font-weight:600;font-variant-numeric:tabular-nums}
+.pill{
+  display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;
+  border:1px solid var(--ring);color:var(--ink-2);background:var(--plane);
+  text-transform:uppercase;letter-spacing:.05em;font-weight:600;
+}
+.pill.count{color:var(--accent);border-color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;text-align:right;font-weight:600;padding:0 0 6px}
+th:first-child{text-align:left}
+td{padding:7px 0;border-top:1px solid var(--grid);text-align:right;font-size:14px}
+td:first-child{text-align:left}
+.grp{border:1px solid var(--ring);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--plane)}
+.grp h3{margin:0 0 6px;font-size:13px;display:flex;justify-content:space-between}
+.grp h3 small{color:var(--ink-3);font-weight:400;font-variant-numeric:tabular-nums}
+.grp ul{margin:0;padding-left:0;list-style:none}
+.grp li{display:flex;justify-content:space-between;padding:3px 0;font-size:14px}
+.grp li span{color:var(--ink-3);font-variant-numeric:tabular-nums}
+.entry{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid var(--grid)}
+.entry label{flex:1;font-size:14px}
+.entry label em{font-style:normal;color:var(--ink-3);font-size:12px;display:block}
+.entry input[type=number]{
+  width:76px;min-height:42px;text-align:center;font:inherit;font-variant-numeric:tabular-nums;
+  background:var(--plane);color:var(--ink-1);border:1px solid var(--ring);border-radius:8px;
+}
+.entry select{min-height:42px;font-size:12px;background:var(--plane);color:var(--ink-1);border:1px solid var(--ring);border-radius:8px;max-width:96px}
+.delta{font-weight:600;font-variant-numeric:tabular-nums;min-width:42px;text-align:right}
+.pos{color:var(--pos)} .neg{color:var(--neg)}
+button.act{
+  width:100%;min-height:46px;font:inherit;font-weight:600;border-radius:10px;
+  background:var(--ink-1);color:var(--surface-1);border:0;margin-top:10px;
+}
+button.ghost{background:var(--plane);color:var(--ink-1);border:1px solid var(--ring)}
+.chk{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chk label{
+  display:flex;align-items:center;gap:5px;padding:8px 10px;border-radius:8px;
+  border:1px solid var(--ring);background:var(--plane);font-size:13px;min-height:40px;
+}
+.chk input{width:16px;height:16px;accent-color:var(--accent)}
+.chk label.off{opacity:.42}
+.seg{display:flex;gap:6px;margin-bottom:10px}
+.seg button{flex:1;min-height:40px;font:inherit;font-size:13px;border-radius:8px;border:1px solid var(--ring);background:var(--plane);color:var(--ink-2)}
+.seg button[aria-pressed=true]{background:var(--ink-1);color:var(--surface-1);border-color:var(--ink-1);font-weight:600}
+.bars{margin-top:4px}
+.barrow{display:grid;grid-template-columns:64px 1fr 46px;align-items:center;gap:8px;padding:4px 0}
+.barrow .nm{font-size:13px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track{position:relative;height:16px}
+.track.noaxis::before{display:none}
+.track::before{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--axis)}
+.bar{position:absolute;top:2px;height:12px;background:var(--pos)}
+.bar.l{background:var(--neg);border-radius:4px 0 0 4px}
+.bar.r{border-radius:0 4px 4px 0}
+nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;
+  background:var(--surface-1);border-top:1px solid var(--ring);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+nav button{
+  flex:1;min-height:60px;background:none;border:0;color:var(--ink-3);
+  font:inherit;font-size:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+}
+nav button b{font-size:16px;font-weight:400;line-height:1}
+nav button[aria-selected=true]{color:var(--ink-1);font-weight:600}
+.hide{display:none}
+.note{font-size:12.5px;color:var(--ink-2);line-height:1.5}
+.note code{background:var(--plane);padding:1px 4px;border-radius:4px;font-size:12px}
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:80px;z-index:60;
+  background:var(--ink-1);color:var(--surface-1);padding:10px 16px;border-radius:999px;
+  font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.toast.on{opacity:1}
+.rules{font-size:13px;color:var(--ink-2);margin:0;padding-left:18px}
+.rules li{margin:4px 0}
+.seedrow{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--grid)}
+.seedno{width:26px;height:26px;border-radius:999px;background:var(--ink-1);color:var(--surface-1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:0 0 auto}
+.matchcard{border:1px solid var(--ring);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--plane)}
+.prow{border-top:1px solid var(--grid)}
+.prow .entry{border-top:0;padding-bottom:2px}
+.teeline{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:0 0 9px;font-size:11px;color:var(--ink-3)}
+.teeline input{width:58px;min-height:34px;text-align:center;font:inherit;font-size:12px;font-variant-numeric:tabular-nums;background:var(--plane);color:var(--ink-1);border:1px solid var(--ring);border-radius:6px}
+.teeline select{min-height:34px;font-size:12px;background:var(--plane);color:var(--ink-1);border:1px solid var(--ring);border-radius:6px;max-width:112px}
+.teeline b{margin-left:auto;color:var(--ink-1);font-size:12px;font-variant-numeric:tabular-nums}
+.asgn{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--grid)}
+.asgn span{flex:1;font-size:14px}
+.asgn span i{font-style:normal;color:var(--ink-3);font-size:12px}
+.asgn select{min-height:40px;font:inherit;font-size:13px;background:var(--plane);color:var(--ink-1);border:1px solid var(--ring);border-radius:8px;min-width:112px}
+.warn{color:var(--warn);font-weight:700}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1 id="brandName">La Copa De Vatoz</h1>
+    <span>Sand Valley &middot; Oct 2026</span>
+  </div>
+  <div class="rsel">
+    <button id="prevR" aria-label="Previous round">&#8249;</button>
+    <select id="roundSel"></select>
+    <button id="nextR" aria-label="Next round">&#8250;</button>
+  </div>
+</header>
+
+<main>
+  <section id="v-today"></section>
+  <section id="v-enter" class="hide"></section>
+  <section id="v-stand" class="hide"></section>
+  <section id="v-pair" class="hide"></section>
+  <section id="v-info" class="hide"></section>
+</main>
+
+<nav>
+  <button data-v="info" aria-selected="true"><b>&#8505;</b>Info</button>
+  <button data-v="today" aria-selected="false"><b>&#9971;</b>Today</button>
+  <button data-v="enter" aria-selected="false"><b>&#9998;</b>Enter</button>
+  <button data-v="stand" aria-selected="false"><b>&#9733;</b>Standings</button>
+  <button data-v="pair" aria-selected="false"><b>&#9783;</b>Pairings</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   LA COPA VATOZ  —  Sand Valley 2026
+   Single file. State lives in the URL hash, so the link IS the save file.
+   To rename the competition, change TRIP_NAME below.
+   ============================================================ */
+
+const TRIP_NAME = "La Copa De Vatoz";
+document.getElementById('brandName').textContent = TRIP_NAME;
+document.title = TRIP_NAME + " · Sand Valley 2026";
+
+/* ---------- Roster (edit indexes here) ---------- */
+const P = [
+  {n:'Matt',   idx:13},
+  {n:'Drew',   idx:7},
+  {n:'Mike',   idx:6},
+  {n:'Tony',   idx:13},
+  {n:'Brook',  idx:12},
+  {n:'Eric',   idx:10},
+  {n:'Ryan',   idx:14},
+  {n:'Paul',   idx:8},
+  {n:'Daniel', idx:9},
+];
+const NP = P.length;
+
+/* ---------- Tees: [name, course rating, slope, par] ---------- */
+const TEES = {
+  links:      [['White', 72.0, 133, 72]],
+  woodlands:  [['Blue', 71.6, 131, 72], ['White', 70.2, 128, 72]],
+  sedge:      [['Back', 68.7, 130, 68], ['Back/Middle', 67.0, 126, 68]],
+  mammoth:    [['Orange', 72.1, 136, 72], ['Orange/Sand', 71.1, 134, 72], ['Sand', 69.8, 131, 72]],
+  sandvalley: [['Orange', 72.8, 138, 72], ['Orange/Sand', 71.4, 133, 72], ['Sand', 70.2, 129, 72]],
+  sandbox:    null,
+  commons:    null
+};
+
+/* ---------- The 8 rounds ---------- */
+const R = [
+ {id:'r1', day:'Sun Oct 4', when:'PM', course:'Lawsonia Links',     key:'links',      tees:'1:40 / 1:50',
+  counts:false, tag:'El Qualifier', game:'Bingo Bango Bongo', out:[8], ng:2, pin:true,
+  rules:['Warmup round. Everyone posts a gross score.','Committee (Drew + Matt) may adjust any index &plusmn;3 before Monday.','Does not count for Copa points. Sunday finish is the FIRST tiebreak for seeding.'],
+  gamerules:['Points per hole: first on green, closest once all are on, first in the hole.','Order of play is honest &mdash; furthest away goes first.','No handicap math. Everyone still plays their own ball.']},
+
+ {id:'r2', day:'Mon Oct 5', when:'AM', course:'Lawsonia Woodlands', key:'woodlands',  tees:'9:00 / 9:10',
+  counts:true, tag:'Copa Round 1', game:'Six-Six-Six', out:[8], ng:2,
+  rules:['Counts for La Copa.'],
+  gamerules:['Partners rotate every 6 holes so each player partners each other player.','Holes 1&ndash;6, 7&ndash;12, 13&ndash;18. Best ball each segment.','Fresh money each segment.']},
+
+ {id:'r3', day:'Mon Oct 5', when:'PM', course:'The Sandbox',        key:'sandbox',    tees:'4:54 / 5:18',
+  counts:false, tag:'Side Pot', game:'Gross skins + CTP', out:[], ng:2,
+  rules:['17 par 3s at dusk. All nine play. Fivesomes confirmed OK here.','Separate buy-in, does not touch Copa standings.'],
+  gamerules:['GROSS skins, no handicaps. Ties carry over.','Closest to the pin on every hole.','Expect a monster carryover on the closing holes.']},
+
+ {id:'r4', day:'Tue Oct 6', when:'AM', course:'Sedge Valley',       key:'sedge',      tees:'8:30 / 8:40',
+  counts:true, tag:'Copa Round 2', game:'Wolf', out:[4], ng:2,
+  rules:['Counts for La Copa. Brook sits (no 36 Tuesday).','TIGHT TURN: at 4:15 pace you finish 12:45&ndash;12:55 and Mammoth is 12:50. Play fast.'],
+  gamerules:['Rotating Wolf order, changes every hole.','Wolf tees off last, picks a partner after watching drives, or goes Lone Wolf for double.','Net scores. Best terrain on the trip for this game.']},
+
+ {id:'r5', day:'Tue Oct 6', when:'PM', course:'Mammoth Dunes',      key:'mammoth',    tees:'12:50 / 1:00',
+  counts:true, tag:'Copa Round 3', game:'Four-ball Nassau', out:[1], ng:2,
+  rules:['Counts for La Copa. One player sits (placeholder: Drew volunteered).','If a 3rd tee time lands, switch to three groups of three and everyone plays.'],
+  gamerules:['2v2 better ball. Front, back, total.','Automatic press at 2 down.','Wide and birdie-able &mdash; be aggressive.']},
+
+ {id:'r6', day:'Wed Oct 7', when:'AM', course:'Sedge Valley',       key:'sedge',      tees:'7:40 / 7:50',
+  counts:true, tag:'Copa Round 4', game:'Nine Point / Six-Six-Six', out:[3], ng:2,
+  rules:['Counts for La Copa. Tony sits (his no-36 day).','Pre-8am = resort speed slot, under 4 hours. You will finish ~11:40 with time to spare.'],
+  gamerules:['THREESOMES: Nine Point. 9 points a hole &mdash; 5 best, 3 middle, 1 worst.','FOURSOMES: Six-Six-Six, partners rotate every 6 holes.','Net scores.']},
+
+ {id:'r7', day:'Wed Oct 7', when:'PM', course:'Sand Valley',        key:'sandvalley', tees:'12:50 / 1:00',
+  counts:true, tag:'Copa Round 5', game:'Vegas', out:[0], ng:2,
+  rules:['Final counting round. Standings lock after this.','One player sits (placeholder: Matt). Must be someone who has not already taken a drop.'],
+  gamerules:['2v2. Combine partners&rsquo; scores into a two-digit number, low digit first.','A birdie by the opposing side FLIPS your number. This is how people lose money.','Double stakes. It is the marquee round.']},
+
+ {id:'r8', day:'Thu Oct 8', when:'AM', course:'The Commons',        key:'commons',    tees:'8:00 / 8:10',
+  counts:false, tag:'La Final', game:'Match play', out:[], ng:2,
+  rules:['12 holes, par 45, 3,417 from the back tees.','8:00 &mdash; top 4 seeds. 8:10 &mdash; El Toilet Bowl.','Not USGA rated, so no quota here. Match strokes use the scorecard&rsquo;s own 65% rule.'],
+  gamerules:['Match A: Seed 1 v Seed 2 for $500 / $300.','Match B: Seed 3 v Seed 4 for $200 / nothing.','Seeds 1 and 3 start 1 UP. All square after 12 &rarr; higher seed wins.']}
+];
+
+const COUNTING = R.filter(r=>r.counts).map(r=>r.id);
+const ENTRY_FEE = 150;
+const PRIZES = [700, 350, 300];
+
+/* The Commons is not USGA rated (you cannot post a score there), so there is no
+   slope or course rating to run through the normal formula. The scorecard itself
+   prescribes 65% of your handicap for match allocation over the 12 holes. */
+const COMMONS_PCT = 0.65;
+const COMMONS_STROKE_HOLES = [12,9,4,10,3,11,2,6,5,8,1,7]; // holes, hardest first
+function commonsHcp(idx){ return Math.round(COMMONS_PCT*idx); }
+
+/* ---------- Golf math ---------- */
+function chcp(idx, tee){ return Math.round(idx*tee[2]/113 + (tee[1]-tee[3])); }
+function quotaFor(idx, tee){ return 36 - chcp(idx, tee); }
+function teeFor(rd, pi){
+  const list = TEES[rd.key]; if(!list) return null;
+  const ov = S.t[rd.id] && S.t[rd.id][pi];
+  if(ov && ov.length===2) return ['Custom', ov[0], ov[1], list[0][3]];
+  return list[0];
+}
+
+/* ---------- State (compact, lives in the URL hash) ----------
+   s: scores      {roundId:[9 values, null if blank]}
+   t: tee choice  {roundId:[9 tee indexes]}
+   p: pairings    {roundId:[[playerIdx...],[...]]}
+   o: sit-outs    {roundId:[playerIdx...]}
+   l: ledger      [[playerIdx, amount, "note"], ...]
+------------------------------------------------------------- */
+let S = {v:1, s:{}, t:{}, p:{}, o:{}, u:{}, l:[]};
+
+function encode(){
+  try{ return btoa(unescape(encodeURIComponent(JSON.stringify(S)))).replace(/=+$/,''); }
+  catch(e){ return ''; }
+}
+function decode(h){
+  try{
+    const j = decodeURIComponent(escape(atob(h)));
+    const o = JSON.parse(j);
+    if(o && o.v) return Object.assign({v:1,s:{},t:{},p:{},o:{},u:{},l:[]}, o);
+  }catch(e){}
+  return null;
+}
+function save(){
+  const h = encode();
+  history.replaceState(null,'', location.pathname + location.search + '#' + h);
+}
+function load(){
+  const h = location.hash.replace(/^#/,'');
+  if(h){ const o = decode(h); if(o){ S = o; return true; } }
+  return false;
+}
+
+/* ---------- Sit-outs ---------- */
+function sitOuts(rd){
+  if(S.o[rd.id]) return S.o[rd.id].slice();
+  return rd.out.slice();
+}
+function playing(rd){
+  const out = sitOuts(rd);
+  const a=[]; for(let i=0;i<NP;i++) if(out.indexOf(i)<0) a.push(i);
+  return a;
+}
+
+/* ---------- Standings: drop your worst, average the rest ---------- */
+function results(pi){
+  const out=[];
+  COUNTING.forEach(rid=>{
+    const rd = R.find(r=>r.id===rid);
+    if(sitOuts(rd).indexOf(pi)>=0) return;
+    const row = S.s[rid];
+    const v = row ? row[pi] : null;
+    if(v===null||v===undefined||v==='') return;
+    const t = teeFor(rd, pi);
+    out.push({rid:rid, course:rd.course, pts:v, q:quotaFor(P[pi].idx,t), d:v - quotaFor(P[pi].idx,t)});
+  });
+  return out;
+}
+function standing(pi){
+  const rs = results(pi);
+  if(!rs.length) return {n:0, avg:null, dropped:null, rs:rs};
+  if(rs.length===1) return {n:1, avg:rs[0].d, dropped:null, rs:rs};
+  let wi=0; for(let i=1;i<rs.length;i++) if(rs[i].d < rs[wi].d) wi=i;
+  let sum=0; for(let i=0;i<rs.length;i++) if(i!==wi) sum+=rs[i].d;
+  return {n:rs.length, avg:sum/(rs.length-1), dropped:rs[wi], rs:rs};
+}
+function sundayDelta(pi){
+  const rd = R[0], row = S.s[rd.id];
+  if(!row) return null;
+  const v = row[pi];
+  if(v===null||v===undefined||v==='') return null;
+  return v - quotaFor(P[pi].idx, teeFor(rd,pi));
+}
+function board(){
+  const rows = P.map((p,i)=>{
+    const st = standing(i);
+    return {i:i, name:p.n, idx:p.idx, n:st.n, avg:st.avg, dropped:st.dropped, best:st.rs.length?Math.max.apply(null,st.rs.map(r=>r.d)):null, sun:sundayDelta(i)};
+  });
+  rows.sort((a,b)=>{
+    if(a.avg===null && b.avg===null) return a.name.localeCompare(b.name);
+    if(a.avg===null) return 1;
+    if(b.avg===null) return -1;
+    if(b.avg!==a.avg) return b.avg-a.avg;
+    if(a.sun!==null && b.sun!==null && b.sun!==a.sun) return b.sun-a.sun;  // tiebreak 1: Sunday
+    if(a.best!==null && b.best!==null && b.best!==a.best) return b.best-a.best; // tiebreak 2: best round
+    return a.name.localeCompare(b.name);
+  });
+  return rows;
+}
+
+/* ---------- Pairing engine ---------- */
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function sizesFor(n,g){
+  const base=Math.floor(n/g), rem=n%g, out=[];
+  for(let i=0;i<g;i++) out.push(base + (i<rem?1:0));
+  return out.sort((a,b)=>b-a);
+}
+function historyUpTo(uptoIdx){
+  const h={};
+  for(let k=0;k<uptoIdx;k++){
+    if(R[k].id==='r3') continue;            // Sandbox: whole group plays together
+    const gs = S.p[R[k].id];
+    if(!gs) continue;
+    gs.forEach(g=>{ for(let a=0;a<g.length;a++) for(let b=a+1;b<g.length;b++){
+      const key = Math.min(g[a],g[b])+'|'+Math.max(g[a],g[b]);
+      h[key]=(h[key]||0)+1;
+    }});
+  }
+  return h;
+}
+function scorePartition(groups, hist){
+  let rep=0, means=[];
+  groups.forEach(g=>{
+    let s=0;
+    for(let a=0;a<g.length;a++){
+      s+=P[g[a]].idx;
+      for(let b=a+1;b<g.length;b++){
+        const c = hist[Math.min(g[a],g[b])+'|'+Math.max(g[a],g[b])]||0;
+        rep += c*c;
+      }
+    }
+    means.push(s/g.length);
+  });
+  const m = means.reduce((x,y)=>x+y,0)/means.length;
+  let varr=0; means.forEach(x=>varr+=(x-m)*(x-m));
+  return rep*12 + varr*1.0;
+}
+function generate(ids, sizes, hist, seed){
+  const rnd = mulberry32(seed||1);
+  let best=null, bestScore=Infinity;
+  for(let it=0; it<6000; it++){
+    const pool = ids.slice();
+    for(let i=pool.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); const t=pool[i];pool[i]=pool[j];pool[j]=t; }
+    const groups=[]; let k=0;
+    sizes.forEach(sz=>{ groups.push(pool.slice(k,k+sz)); k+=sz; });
+    const sc = scorePartition(groups, hist);
+    if(sc<bestScore){ bestScore=sc; best=groups.map(g=>g.slice().sort((a,b)=>P[a].idx-P[b].idx)); }
+  }
+  return best;
+}
+/* Baseline grid, found by optimising all six grouped rounds jointly rather than
+   round by round. Every one of the 36 possible pairs plays together at least
+   once, nobody is paired more than three times, and no round has its two groups
+   more than 2.0 apart in average index. Sunday is pinned to the groups Drew
+   picked and the other five rounds were optimised around that fixed start. The Sandbox is excluded (everyone plays
+   it together) and Thursday follows the standings. Edit freely on the Pairings
+   tab &mdash; the matrix there tracks what your changes do to those numbers. */
+const BASE_SEED = 3;
+const BASE_GRID = {"r1":[[2,5,4,6],[1,7,0,3]],"r2":[[5,4,7,0],[1,3,2,6]],
+                   "r4":[[3,7,6,8],[1,5,2,0]],"r5":[[6,5,0,8],[4,7,2,3]],
+                   "r6":[[4,1,5,8],[6,0,2,7]],"r7":[[4,7,1,6],[8,5,3,2]]};
+function defaultPairings(){
+  R.forEach((rd,i)=>{
+    if(S.p[rd.id]) return;
+    if(rd.id==='r3' || rd.id==='r8') return;   // Sandbox is one big group; Thursday follows standings
+    if(BASE_GRID[rd.id] && !S.o[rd.id]){
+      S.p[rd.id] = BASE_GRID[rd.id].map(g=>g.slice().sort((a,b)=>P[a].idx-P[b].idx));
+      return;
+    }
+    const ids = playing(rd);
+    S.p[rd.id] = generate(ids, sizesFor(ids.length, ids.length>8?3:2), historyUpTo(i), BASE_SEED);
+  });
+}
+
+/* ---------- Rendering ---------- */
+const $ = s=>document.querySelector(s);
+let view='info', cur=0;
+
+function fmt(d){ if(d===null||d===undefined) return '&mdash;'; const s=(d>0?'+':'')+(Math.round(d*10)/10); return s; }
+function cls(d){ return d===null||d===undefined?'':(d>0?'pos':(d<0?'neg':'')); }
+function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function renderRoundSel(){
+  const sel=$('#roundSel');
+  sel.innerHTML = R.map((r,i)=>`<option value="${i}"${i===cur?' selected':''}>${r.day} ${r.when} &middot; ${r.course}</option>`).join('');
+}
+
+function renderToday(){
+  const rd=R[cur], t0=TEES[rd.key], play=playing(rd), out=sitOuts(rd);
+  let h='';
+  h+=`<div class="card">
+    <span class="pill ${rd.counts?'count':''}">${rd.tag}</span>
+    <p class="hero" style="margin-top:8px">${rd.course}</p>
+    <p class="sub">${rd.day} &middot; tee times ${rd.tees}${t0?` &middot; ${t0[0][0]} tees by default`:''}</p>
+  </div>`;
+
+  h+=`<div class="card"><h2>Groups${rd.pin&&!S.u[rd.id]?' <span class="pill">Locked</span>':''}</h2>`;
+  if(rd.id==='r3'){
+    h+=`<p class="note">All nine play. Fivesomes are fine at the Sandbox, so no groups to set and it is left out of the partner tracking.</p>`;
+  } else {
+    const gs=(S.p[rd.id]||[]).filter(g=>g.length);
+    if(gs.length){
+      gs.forEach((g,i)=>{
+        const tee = rd.tees.split('/')[i] ? rd.tees.split('/')[i].trim() : '';
+        h+=`<div class="grp"><h3>Group ${i+1} <small>${tee}</small></h3><ul>`;
+        g.forEach(pi=>{ const t=teeFor(rd,pi);
+          h+=`<li>${P[pi].n}<span>${t?('quota '+quotaFor(P[pi].idx,t)):('idx '+P[pi].idx)}</span></li>`; });
+        h+=`</ul></div>`;
+      });
+    } else if(rd.id==='r8'){
+      h+=`<p class="note">Thursday's groups come from the standings. Top 4 tee at 8:00 for La Final; everyone else is El Toilet Bowl at 8:10.</p>`;
+    } else {
+      h+=`<p class="note">No groups set yet. Open the Pairings tab.</p>`;
+    }
+    if(out.length) h+=`<p class="note" style="margin-top:8px"><b>Sitting:</b> ${out.map(i=>P[i].n).join(', ')}</p>`;
+  }
+  h+=`</div>`;
+
+  h+=`<div class="card"><h2>Format idea &mdash; ${esc(rd.game)}</h2><ul class="rules">${rd.gamerules.map(x=>`<li>${x}</li>`).join('')}</ul>
+      <p class="note" style="margin-top:8px">A suggestion, not a rule. Any group can run its own game as long as everyone plays their own ball.</p></div>`;
+  h+=`<div class="card"><h2>Notes</h2><ul class="rules">${rd.rules.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+
+  if(rd.key==='commons'){
+    h+=`<div class="card"><h2>Commons handicaps &mdash; 65% of index</h2>
+      <p class="note" style="margin-bottom:8px">No quota here. The Commons is not USGA rated so there is no slope or rating; the scorecard prescribes 65% for match allocation over the 12 holes.</p>
+      <table><thead><tr><th>Player</th><th>Idx</th><th>65%</th></tr></thead><tbody>`;
+    P.forEach((p,i)=>{ h+=`<tr><td>${p.n}</td><td>${p.idx}</td><td><b>${commonsHcp(p.idx)}</b></td></tr>`; });
+    h+=`</tbody></table>
+      <p class="note" style="margin-top:8px">Strokes fall hardest hole first: ${COMMONS_STROKE_HOLES.slice(0,6).map(x=>'#'+x).join(', ')} &hellip;</p></div>`;
+  }
+  if(t0){
+    h+=`<div class="card"><h2>Quotas &mdash; ${esc(rd.course)}</h2><table><thead><tr><th>Player</th><th>Idx</th><th>Tee</th><th>CH</th><th>Quota</th></tr></thead><tbody>`;
+    play.forEach(pi=>{ const t=teeFor(rd,pi);
+      h+=`<tr><td>${P[pi].n}</td><td>${P[pi].idx}</td><td style="font-size:12px;color:var(--ink-3)">${t[0]}</td><td>${chcp(P[pi].idx,t)}</td><td><b>${quotaFor(P[pi].idx,t)}</b></td></tr>`; });
+    h+=`</tbody></table></div>`;
+  }
+  $('#v-today').innerHTML=h;
+}
+
+function renderEnter(){
+  const rd=R[cur], play=playing(rd), list=TEES[rd.key];
+  let h=`<div class="card"><h2>Enter points &mdash; ${esc(rd.course)}</h2>`;
+  if(!list){
+    h+=`<p class="note">${rd.id==='r3'
+      ? 'The Sandbox is a separate gross skins and CTP pot, settled among yourselves. Nothing to enter here.'
+      : 'La Final is match play, not quota. Nothing to enter here.'}</p></div>`;
+    $('#v-enter').innerHTML=h; return;
+  }
+  h+=`<p class="note" style="margin-bottom:4px">Type each player&rsquo;s total quota points. Bogey 1, par 2, birdie 4, eagle 6. Gross double or worse is 0.</p>
+      <p class="note" style="margin-bottom:6px">Rating and slope default to the ${list[0][0]} tees (par ${list[0][3]}). Change them for anyone who played a different tee and their quota follows.</p>`;
+  const row = S.s[rd.id]||[];
+  play.forEach(pi=>{
+    const t=teeFor(rd,pi), q=quotaFor(P[pi].idx,t);
+    const v=(row[pi]===null||row[pi]===undefined)?'':row[pi];
+    const d=(v===''?null:v-q);
+    const presets = list.map((t2,ti)=>`<option value="${ti}"${t[0]===t2[0]?' selected':''}>${t2[0]}</option>`).join('')
+                  + `<option value="c"${t[0]==='Custom'?' selected':''}>Custom</option>`;
+    h+=`<div class="prow">
+      <div class="entry">
+        <label>${P[pi].n}<em>index ${P[pi].idx} &middot; CH ${chcp(P[pi].idx,t)}</em></label>
+        <input type="number" inputmode="numeric" data-pts="${pi}" value="${v}" placeholder="&ndash;">
+        <span class="delta ${cls(d)}">${d===null?'':fmt(d)}</span>
+      </div>
+      <div class="teeline">
+        <select data-preset="${pi}">${presets}</select>
+        CR <input type="number" step="0.1" inputmode="decimal" data-cr="${pi}" value="${t[1]}">
+        SL <input type="number" inputmode="numeric" data-sl="${pi}" value="${t[2]}">
+        <b>quota ${q}</b>
+      </div>
+    </div>`;
+  });
+  h+=`<button class="act" id="saveScores">Save &amp; copy link</button>
+      <p class="note" style="margin-top:8px">Saving rewrites the page link. Text that link to the group and everyone sees the live board.</p></div>`;
+  $('#v-enter').innerHTML=h;
+
+  const setTee=(pi,cr,sl)=>{
+    if(!S.t[rd.id]) S.t[rd.id]=new Array(NP).fill(0);
+    const base=list[0];
+    if(+cr===base[1] && +sl===base[2]) S.t[rd.id][pi]=0;   // back to default, keep the URL small
+    else S.t[rd.id][pi]=[+cr,+sl];
+    save(); renderEnter();
+  };
+  $('#v-enter').querySelectorAll('[data-pts]').forEach(el=>el.addEventListener('input',()=>{
+    const pi=+el.dataset.pts;
+    if(!S.s[rd.id]) S.s[rd.id]=new Array(NP).fill(null);
+    S.s[rd.id][pi] = el.value===''?null:(+el.value);
+    save(); renderEnterDelta();
+  }));
+  $('#v-enter').querySelectorAll('[data-preset]').forEach(el=>el.addEventListener('change',()=>{
+    if(el.value==='c') return;
+    const t2=list[+el.value]; setTee(+el.dataset.preset, t2[1], t2[2]);
+  }));
+  $('#v-enter').querySelectorAll('[data-cr],[data-sl]').forEach(el=>el.addEventListener('change',()=>{
+    const pi=+(el.dataset.cr!==undefined?el.dataset.cr:el.dataset.sl);
+    const box=el.closest('.teeline');
+    const cr=+box.querySelector('[data-cr]').value, sl=+box.querySelector('[data-sl]').value;
+    if(!cr||!sl){ toast('Rating and slope must both be set'); renderEnter(); return; }
+    setTee(pi, cr, sl);
+  }));
+  const b=$('#saveScores'); if(b) b.addEventListener('click',copyLink);
+}
+function renderEnterDelta(){
+  const rd=R[cur], row=S.s[rd.id]||[];
+  $('#v-enter').querySelectorAll('[data-pts]').forEach(el=>{
+    const pi=+el.dataset.pts, t=teeFor(rd,pi), q=quotaFor(P[pi].idx,t);
+    const v=row[pi], d=(v===null||v===undefined||v==='')?null:v-q;
+    const sp=el.parentNode.querySelector('.delta');
+    sp.className='delta '+cls(d); sp.innerHTML = d===null?'':fmt(d);
+  });
+}
+
+function renderStand(){
+  const rows=board(), scored=rows.filter(r=>r.avg!==null);
+  const mx=Math.max(1, ...scored.map(r=>Math.abs(r.avg)));
+  let h='';
+
+  h+=`<div class="card"><h2>La Copa &mdash; drop your worst (El Mulligan), average the rest</h2>
+    <table><thead><tr><th>#</th><th style="text-align:left">Player</th><th>Rds</th><th>Drop</th><th>Avg</th></tr></thead><tbody>`;
+  rows.forEach((r,i)=>{
+    h+=`<tr><td style="text-align:left;color:var(--ink-3)">${r.avg===null?'':i+1}</td>
+      <td style="text-align:left">${r.name} <span style="color:var(--ink-3);font-size:12px">${r.idx}</span></td>
+      <td>${r.n||'&mdash;'}</td>
+      <td style="color:var(--ink-3);font-size:12px">${r.dropped?fmt(r.dropped.d):'&mdash;'}</td>
+      <td class="${cls(r.avg)}"><b>${fmt(r.avg)}</b></td></tr>`;
+  });
+  h+=`</tbody></table>`;
+  if(scored.length){
+    const anyNeg = scored.some(r=>r.avg<0);
+    const zero = anyNeg ? 50 : 0, span = anyNeg ? 50 : 100;
+    h+=`<div class="bars" style="margin-top:12px">`;
+    rows.forEach(r=>{
+      if(r.avg===null) return;
+      const pct=Math.abs(r.avg)/mx*span;
+      const bar = r.avg>=0
+        ? `<div class="bar r" style="left:${zero}%;width:${pct}%"></div>`
+        : `<div class="bar l" style="right:${100-zero}%;width:${pct}%"></div>`;
+      h+=`<div class="barrow"><div class="nm">${r.name}</div><div class="track${anyNeg?'':' noaxis'}">${bar}</div><div class="delta ${cls(r.avg)}">${fmt(r.avg)}</div></div>`;
+    });
+    h+=`</div>`;
+  }
+  h+=`<p class="note" style="margin-top:10px">Ties broken by Sunday finish at Lawsonia, then best single round.</p></div>`;
+
+  const q=rows.filter(r=>r.avg!==null).slice(0,4);
+  h+=`<div class="card"><h2>La Final &mdash; Thursday at the Commons</h2>`;
+  if(q.length<4){
+    h+=`<p class="note">Seeds set once the counting rounds are in. ${q.length} of 4 places filled.</p>`;
+  } else {
+    h+=`<div class="matchcard"><b style="font-size:13px">Match A &mdash; $${PRIZES[0]} / $${PRIZES[1]}</b>
+      <div class="seedrow"><div class="seedno">1</div><div style="flex:1">${q[0].name}</div><div class="pill">1 UP</div></div>
+      <div class="seedrow"><div class="seedno">2</div><div style="flex:1">${q[1].name}</div></div></div>
+      <div class="matchcard"><b style="font-size:13px">Match B &mdash; $${PRIZES[2]}</b>
+      <div class="seedrow"><div class="seedno">3</div><div style="flex:1">${q[2].name}</div><div class="pill">1 UP</div></div>
+      <div class="seedrow"><div class="seedno">4</div><div style="flex:1">${q[3].name}</div></div></div>
+      <p class="note">${matchStrokes(q[0],q[1])}<br>${matchStrokes(q[2],q[3])}</p>
+      <p class="note" style="margin-top:6px">12 holes. The Commons is not USGA rated, so strokes come off the scorecard&rsquo;s 65% rule rather than a course handicap. All square after 12 &rarr; split the prizes, or agree on a playoff, chip-off or putt-off.</p>`;
+    const rest=rows.filter(r=>q.indexOf(r)<0).map(r=>r.name);
+    h+=`<p class="note" style="margin-top:8px"><b>El Toilet Bowl (8:10):</b> ${rest.join(', ')}</p>`;
+  }
+  h+=`</div>`;
+
+  const pool = ENTRY_FEE*NP, payout = PRIZES.reduce((a,b)=>a+b,0);
+  h+=`<div class="card"><h2>The pool</h2>
+    <table><tbody>
+      <tr><td style="text-align:left">Buy-in</td><td><b>$${ENTRY_FEE}</b> each</td></tr>
+      <tr><td style="text-align:left">${NP} buy-ins</td><td><b>$${pool.toLocaleString()}</b></td></tr>
+      <tr><td style="text-align:left">1st</td><td><b>$${PRIZES[0]}</b></td></tr>
+      <tr><td style="text-align:left">2nd</td><td><b>$${PRIZES[1]}</b></td></tr>
+      <tr><td style="text-align:left">3rd</td><td><b>$${PRIZES[2]}</b></td></tr>
+    </tbody></table>
+    <p class="note" style="margin-top:8px">${pool===payout
+      ? 'Pays out exactly at nine.'
+      : (pool>payout ? `$${pool-payout} over the payout at nine.` : `<span class="warn">$${payout-pool} short at ${NP} buy-ins.</span>`)}</p></div>`;
+
+  h+=`<button class="act ghost" id="copy2">Copy link to this board</button>`;
+  $('#v-stand').innerHTML=h;
+  $('#copy2').addEventListener('click',copyLink);
+}
+
+function matchStrokes(a,b){
+  const ha=commonsHcp(P[a.i].idx), hb=commonsHcp(P[b.i].idx), d=Math.abs(ha-hb);
+  if(!d) return `<b>${a.name} v ${b.name}:</b> scratch, no strokes (both play to ${ha}).`;
+  const gets = ha>hb ? a.name : b.name;
+  const holes = COMMONS_STROKE_HOLES.slice(0,d).sort((x,y)=>x-y).map(x=>'#'+x).join(', ');
+  return `<b>${a.name} v ${b.name}:</b> ${gets} gets ${d} stroke${d>1?'s':''} (${ha} v ${hb}) on hole${d>1?'s':''} ${holes}.`;
+}
+
+function renderInfo(){
+  let h='';
+
+  h+=`<div class="card">
+    <p class="hero" style="font-size:22px">${TRIP_NAME}</p>
+    <p class="sub">Sand Valley &amp; Lawsonia &middot; October 4&ndash;8, 2026 &middot; nine Vatoz, eight rounds</p>
+    <p class="note" style="margin-top:10px">One individual competition runs the whole trip. Every round can also have its own team game or bets within the foursome. As long as everyone plays their own ball, it won&rsquo;t interfere with the trip competition.</p>
+  </div>`;
+
+  h+=`<div class="card"><h2>The competition &mdash; the quota game</h2>
+    <p class="note">You get a <b>quota</b> for every round: 36 minus your course handicap for the tee you actually play. Then you earn gross points as you go and try to beat it.</p>
+    <table style="margin-top:10px"><thead><tr><th style="text-align:left">Score</th><th>Points</th></tr></thead><tbody>
+      <tr><td style="text-align:left">Eagle</td><td><b>6</b></td></tr>
+      <tr><td style="text-align:left">Birdie</td><td><b>4</b></td></tr>
+      <tr><td style="text-align:left">Par</td><td><b>2</b></td></tr>
+      <tr><td style="text-align:left">Bogey</td><td><b>1</b></td></tr>
+      <tr><td style="text-align:left">Double or worse</td><td><b>0</b></td></tr>
+    </tbody></table>
+    <p class="note" style="margin-top:10px">Your result for the round is <b>points minus quota</b>. Beat your number and you are positive. Because the double-bogey floor is zero, <b>pick up</b> once a hole is gone &mdash; it costs you nothing and Sand Valley enforces a 4:15 pace.</p>
+    <p class="note" style="margin-top:8px"><b>Default tees are listed</b> on the Today tab, but the quota target will be adjusted if different tees are played. Rating and slope are editable per player on the Enter tab.</p>
+  </div>`;
+
+  h+=`<div class="card"><h2>What counts</h2>
+    <table><thead><tr><th style="text-align:left">Round</th><th>Counts?</th></tr></thead><tbody>`;
+  R.forEach(rd=>{
+    h+=`<tr><td style="text-align:left">${rd.course} <span style="color:var(--ink-3);font-size:12px">${rd.day.split(' ')[0]} ${rd.when}</span></td>
+      <td style="font-size:12px;color:${rd.counts?'var(--accent)':'var(--ink-3)'}">${rd.counts?'YES':'No &mdash; '+rd.tag}</td></tr>`;
+  });
+  h+=`</tbody></table>
+    <p class="note" style="margin-top:10px"><b>Five counting rounds.</b> Sunday is a warmup, the Sandbox is its own pot, and Thursday is the final.</p>
+  </div>`;
+
+  h+=`<div class="card"><h2>How standings work</h2>
+    <p class="note"><b>Everyone drops their worst round (El Mulligan), then averages the rest.</b> Play five, average your best four. Play four, average your best three.</p>
+    <p class="note" style="margin-top:8px">This exists because the round counts are uneven and cannot be made even: five counting rounds &times; eight tee-time slots is 40 player-rounds for nine players, so four of you play five rounds and five of you play four. Counting a fixed number instead would hand the five-round players a free discard the four-round players never get, worth over a point a round. Dropping one each way removes almost all of it.</p>
+    <p class="note" style="margin-top:8px"><b>Corollary:</b> whoever sits Mammoth or Sand Valley must be someone playing all other rounds.</p>
+  </div>`;
+
+  h+=`<div class="card"><h2>Seeding &amp; La Final</h2>
+    <ul class="rules">
+      <li><b>Sunday at Lawsonia</b> is warmup only. It does not award points. It sets adjusted indexes (the committee may move any index &plusmn;3 before Monday) and it is the <b>first tiebreak</b> for seeding. Second tiebreak is your best single round.</li>
+      <li><b>Top 4 after Wednesday</b> tee at 8:00 Thursday at the Commons.</li>
+      <li>Seed 1 v Seed 2 for <b>$${PRIZES[0]} / $${PRIZES[1]}</b>. Seed 3 v Seed 4 for <b>$${PRIZES[2]}</b>.</li>
+      <li><b>Seeds 1 and 3 start 1 up.</b> All square after 12 &rarr; split the prizes, or agree on a playoff, chip-off or putt-off.</li>
+      <li>The Commons is not USGA rated, so there is no quota and no course handicap. Strokes come off the scorecard&rsquo;s own <b>65% of index</b> rule, allocated hardest hole first.</li>
+      <li>Everyone else plays <b>El Toilet Bowl</b> at 8:10.</li>
+    </ul>
+  </div>`;
+
+  h+=`<div class="card"><h2>How pairings work</h2>
+    <p class="note">Groups are re-drawn every round and are <b>fully editable by hand</b> on the Pairings tab. Auto-generate balances the groups by handicap while favouring partners you have not played with yet; then move anyone you like. The matrix at the bottom of that tab tracks who still has not played with whom and updates with every change.</p>
+  </div>`;
+
+  h+=`<div class="card"><h2>Money</h2>
+    <ul class="rules">
+      <li><b>La Copa:</b> $${ENTRY_FEE} each, pays $${PRIZES[0]} / $${PRIZES[1]} / $${PRIZES[2]}. Nine buy-ins funds it exactly.</li>
+      <li><b>Each round can have its own separate money game within the foursome.</b> See the Today tab for ideas for formats.</li>
+      <li><b>The Sandbox</b> (Monday dusk) is a separate pot: gross skins with carryovers, plus closest to the pin on all 17. No handicaps.</li>
+    </ul>
+  </div>`;
+
+  h+=`<div class="card"><h2>Using this page</h2>
+    <ul class="rules">
+      <li><b>The link is the save file.</b> Every save rewrites the page URL with the current state. Bookmark it after your first save, and text it to the group so everyone can see the board.</li>
+      <li><b>One scorekeeper.</b> If two people enter scores from different copies of the link, you get two different boards.</li>
+      <li>Enter nine numbers after each round on the <b>Enter</b> tab. No hole-by-hole. Quota is self-tallying, so everyone knows their own number walking off 18.</li>
+    </ul>
+  </div>`;
+
+  $('#v-info').innerHTML=h;
+}
+
+function renderPair(){
+  const rd=R[cur];
+  if(rd.id==='r3'){
+    $('#v-pair').innerHTML=`<div class="card"><h2>${esc(rd.course)}</h2>
+      <p class="note">All nine play the Sandbox together and fivesomes are fine, so there is nothing to pair. It is also excluded from the partner tracking below, since &ldquo;played with&rdquo; means nothing when everyone is out there at once.</p></div>`;
+    return;
+  }
+  const gs=(S.p[rd.id]||[]), ng=Math.max(2, gs.length||2);
+  const asg=new Array(NP).fill(-1);
+  gs.forEach((g,gi)=>g.forEach(pi=>asg[pi]=gi));
+  const counts=new Array(ng).fill(0); asg.forEach(g=>{ if(g>=0&&g<ng) counts[g]++; });
+
+  let h=`<div class="card"><h2>Groups &mdash; ${esc(rd.course)}</h2>
+    <p class="note" style="margin-bottom:8px">Set anyone by hand. Everything below, including the partner counts, updates as you change it.</p>`;
+  P.forEach((p,i)=>{
+    let opts=`<option value="-1"${asg[i]<0?' selected':''}>Sitting</option>`;
+    for(let g=0;g<ng;g++) opts+=`<option value="${g}"${asg[i]===g?' selected':''}>Group ${g+1}</option>`;
+    h+=`<div class="asgn"><span>${p.n} <i>${p.idx}</i></span><select data-asg="${i}">${opts}</select></div>`;
+  });
+  const over=counts.some((c,i)=>c>4);
+  const locked = rd.pin && !S.u[rd.id];
+  h+=`<div class="seg" style="margin-top:12px">
+      <button data-ng="2" aria-pressed="${ng===2}">2 groups</button>
+      <button data-ng="3" aria-pressed="${ng===3}">3 groups</button></div>
+    <p class="note">${counts.map((c,i)=>`Group ${i+1}: ${c}`).join(' &middot; ')} &middot; sitting ${asg.filter(x=>x<0).length}
+      ${over?'<br><span class="warn">A group has more than 4. You will need another tee time.</span>':''}</p>`;
+  if(locked){
+    h+=`<p class="note" style="margin-top:10px"><span class="pill">Locked</span> These are the groups you picked for Sunday. You can still move people by hand above; auto-generate is disabled so it can&rsquo;t wipe them.</p>
+        <button class="act ghost" id="unlock">Unlock auto-generate</button></div>`;
+  } else {
+    h+=`<button class="act" id="gen">Auto-generate</button>
+        <button class="act ghost" id="reroll">Try another arrangement</button></div>`;
+  }
+
+  const hist=historyUpTo(R.indexOf(rd));
+  if(gs.filter(g=>g.length).length){
+    h+=`<div class="card"><h2>Preview</h2>`;
+    gs.forEach((g,i)=>{
+      if(!g.length) return;
+      const avg=(g.reduce((s,x)=>s+P[x].idx,0)/g.length).toFixed(1);
+      let rep=0;
+      for(let a=0;a<g.length;a++) for(let b=a+1;b<g.length;b++) rep+=hist[Math.min(g[a],g[b])+'|'+Math.max(g[a],g[b])]||0;
+      h+=`<div class="grp"><h3>Group ${i+1} <small>avg idx ${avg}${rep?` &middot; ${rep} repeat${rep>1?'s':''}`:' &middot; all new'}</small></h3><ul>`;
+      g.forEach(pi=>h+=`<li>${P[pi].n}<span>${P[pi].idx}</span></li>`);
+      h+=`</ul></div>`;
+    });
+    h+=`</div>`;
+  }
+
+  const all=historyUpTo(R.length), vals=Object.values(all);
+  const met=Object.keys(all).length, worst=vals.length?Math.max.apply(null,vals):0;
+  h+=`<div class="card"><h2>Who has played with whom</h2><table><thead><tr><th style="text-align:left"></th>${P.map(p=>`<th style="text-align:center;font-size:10px">${p.n.slice(0,2)}</th>`).join('')}</tr></thead><tbody>`;
+  P.forEach((p,i)=>{
+    h+=`<tr><td style="text-align:left;font-size:12px">${p.n}</td>`;
+    P.forEach((q2,j)=>{
+      if(i===j){ h+=`<td style="text-align:center;color:var(--grid)">&middot;</td>`; return; }
+      const c=all[Math.min(i,j)+'|'+Math.max(i,j)]||0;
+      const col = c===0 ? 'var(--neg)' : (c>3 ? 'var(--warn)' : 'var(--ink-1)');
+      h+=`<td style="text-align:center;font-size:12px;color:${col};font-weight:${c===0||c>3?'700':'400'}">${c||'0'}</td>`;
+    });
+    h+=`</tr>`;
+  });
+  h+=`</tbody></table>
+    <p class="note" style="margin-top:8px"><b>${met}/36</b> pairs have played together, worst repeat <b>${worst}</b>. A red <b>0</b> is a pair who never meet; amber is four or more. The Sandbox is excluded because everyone plays it together.</p></div>`;
+
+  $('#v-pair').innerHTML=h;
+
+  const apply=(a,n)=>{
+    const groups=[]; for(let i=0;i<n;i++) groups.push([]);
+    const out=[];
+    a.forEach((g,pi)=>{ if(g<0||g>=n) out.push(pi); else groups[g].push(pi); });
+    S.p[rd.id]=groups.map(g=>g.sort((x,y)=>P[x].idx-P[y].idx));
+    S.o[rd.id]=out;
+    save(); renderPair(); renderToday();
+  };
+  $('#v-pair').querySelectorAll('[data-asg]').forEach(el=>el.addEventListener('change',()=>{
+    const a=asg.slice(); a[+el.dataset.asg]=+el.value; apply(a,ng);
+  }));
+  $('#v-pair').querySelectorAll('[data-ng]').forEach(b=>b.addEventListener('click',()=>{
+    const n=+b.dataset.ng, a=asg.map(g=>g>=n?-1:g); apply(a,n);
+  }));
+  const doGen=(seed)=>{
+    const ids=playing(rd);
+    S.p[rd.id]=generate(ids, sizesFor(ids.length,ng), historyUpTo(R.indexOf(rd)), seed);
+    save(); renderPair(); renderToday();
+  };
+  if(locked){
+    $('#unlock').addEventListener('click',()=>{ S.u[rd.id]=1; save(); renderPair(); });
+  } else {
+    $('#gen').addEventListener('click',()=>doGen(BASE_SEED));
+    $('#reroll').addEventListener('click',()=>doGen(Math.floor(Math.random()*1e9)));
+  }
+}
+
+/* ---------- Chrome ---------- */
+function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),1600); }
+function copyLink(){
+  save();
+  const u=location.href;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(u).then(()=>toast('Link copied'),()=>toast('Saved. Copy from the address bar.'));
+  } else toast('Saved. Copy from the address bar.');
+}
+function render(){
+  renderRoundSel();
+  ['today','enter','stand','pair','info'].forEach(v=>$('#v-'+v).classList.toggle('hide', v!==view));
+  document.querySelector('.rsel').classList.toggle('hide', view==='stand' || view==='info');
+  if(view==='today') renderToday();
+  if(view==='enter') renderEnter();
+  if(view==='stand') renderStand();
+  if(view==='pair')  renderPair();
+  if(view==='info')  renderInfo();
+}
+function syncNav(){ document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected', x.dataset.v===view?'true':'false')); }
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{
+  view=b.dataset.v;
+  document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected', x===b?'true':'false'));
+  window.scrollTo(0,0); render();
+}));
+$('#roundSel').addEventListener('change',e=>{ cur=+e.target.value; render(); });
+$('#prevR').addEventListener('click',()=>{ cur=Math.max(0,cur-1); render(); });
+$('#nextR').addEventListener('click',()=>{ cur=Math.min(R.length-1,cur+1); render(); });
+
+/* ---------- Boot ---------- */
+(function(){
+  load();
+  // Pick the round matching today's date if we are on the trip.
+  const today=new Date(), y=today.getFullYear(), m=today.getMonth(), d=today.getDate();
+  if(y===2026 && m===9 && d>=4 && d<=8){
+    const day=['Sun Oct 4','Mon Oct 5','Tue Oct 6','Wed Oct 7','Thu Oct 8'][d-4];
+    const pm=today.getHours()>=12;
+    let i=R.findIndex(r=>r.day===day && (r.when===(pm?'PM':'AM')));
+    if(i<0) i=R.findIndex(r=>r.day===day);
+    if(i>=0){ cur=i; view='today'; }
+  }
+  defaultPairings();
+  save();
+  syncNav();
+  render();
+})();
+</script>
+</body>
+</html>
