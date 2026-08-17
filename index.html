@@ -252,8 +252,8 @@ const R = [
   gamerules:['THREESOMES: Nine Point. 9 points a hole &mdash; 5 best, 3 middle, 1 worst.','FOURSOMES: Six-Six-Six, partners rotate every 6 holes.','Net scores.']},
 
  {id:'r7', day:'Wed Oct 7', sd:'Wed 10/7', when:'PM', course:'Sand Valley', sc:'Sand Valley', key:'sandvalley', tees:'12:50 / 1:00',
-  counts:true, tag:'Copa Round 5', game:'Vegas', out:[0], ng:2,
-  rules:['Final counting round. Standings lock after this.','One player sits (placeholder: Matt). Must be someone who has not already taken a drop.'],
+  counts:true, tag:'Copa Round 5', game:'Vegas', out:[7], ng:2,
+  rules:['Final counting round. Standings lock after this.','One player sits (placeholder: Paul). Must be someone who has not already taken a drop.'],
   gamerules:['2v2. Combine partners&rsquo; scores into a two-digit number, low digit first.','A birdie by the opposing side FLIPS your number. This is how people lose money.','Double stakes. It is the marquee round.']},
 
  {id:'r8', day:'Thu Oct 8', sd:'Thu 10/8', when:'AM', course:'The Commons', sc:'Commons', key:'commons',    tees:'8:00 / 8:10',
@@ -424,15 +424,16 @@ function generate(ids, sizes, hist, seed){
 /* Baseline grid, found by optimising all six grouped rounds jointly rather than
    round by round. Every one of the 36 possible pairs plays together at least
    once, nobody is paired more than three times, and no round has its two groups
-   more than 2.0 apart in average index. Two pairings are pinned by request &mdash;
-   Sunday's groups, and Matt with Daniel on Tuesday morning (Daniel's first 18)
+   more than 2.0 apart in average index. Four constraints are pinned by request &mdash;
+   Sunday's groups, Matt with Daniel on Tuesday morning (Daniel's first 18), and
+   Matt/Daniel and Drew/Paul together at least twice each across the week
    &mdash; and the remaining rounds were optimised around those fixed points. The Sandbox is excluded (everyone plays
    it together) and Thursday follows the standings. Edit freely on the Pairings
    tab &mdash; the matrix there tracks what your changes do to those numbers. */
 const BASE_SEED = 3;
-const BASE_GRID = {"r1":[[2,5,4,6],[1,7,0,3]],"r2":[[1,6,0,2],[3,7,4,5]],
-                   "r4":[[6,7,0,8],[3,5,1,2]],"r5":[[3,6,8,5],[4,2,7,0]],
-                   "r6":[[7,6,1,4],[8,0,2,5]],"r7":[[4,8,5,1],[6,7,3,2]]};
+const BASE_GRID = {"r1":[[2,5,4,6],[1,7,0,3]],"r2":[[6,7,5,1],[2,0,3,4]],
+                   "r4":[[8,0,7,6],[5,1,2,3]],"r5":[[2,7,4,6],[8,0,3,5]],
+                   "r6":[[8,1,6,4],[0,7,5,2]],"r7":[[6,8,3,2],[5,4,1,0]]};
 /* Every round carrying a baseline grid starts locked, so a stray tap on
    auto-generate can't wipe a chosen pairing. Unlock per round on the Pairings
    tab. Manual moves are always allowed, locked or not. */

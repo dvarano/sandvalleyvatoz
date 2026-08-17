@@ -25,7 +25,7 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Brook |
 | r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Four-ball Nassau | one sits |
 | r6 | Wed 10/7 AM | Sedge Valley | 7:40 / 7:50 | Back 68.7 / 130, par 68 | **Yes** | Nine Point / 6-6-6 | Tony |
-| r7 | Wed 10/7 PM | Sand Valley | 12:50 / 1:00 | Orange 72.8 / 138, par 72 | **Yes** | Vegas | one sits |
+| r7 | Wed 10/7 PM | Sand Valley | 12:50 / 1:00 | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Paul |
 | r8 | Thu 10/8 AM | The Commons | 8:00 / 8:10 | 12 holes, par 45 | No — La Final | Match play | — |
 
 Alternate tees available in the app: Woodlands White 70.2/128; Sedge Back/Middle 67.0/126;
@@ -130,20 +130,22 @@ extraction was garbled (summed to 47 against a stated par of 45), so the index r
 | Round | Group 1 | Group 2 |
 |---|---|---|
 | r1 Links | Mike, Eric, Brook, Ryan | Drew, Paul, Matt, Tony |
-| r2 Woodlands | Mike, Drew, Matt, Ryan | Paul, Eric, Brook, Tony |
+| r2 Woodlands | Drew, Paul, Eric, Ryan | Mike, Brook, Matt, Tony |
 | r4 Sedge (Tue) | Paul, Daniel, Matt, Ryan | Mike, Drew, Eric, Tony |
-| r5 Mammoth | Daniel, Eric, Tony, Ryan | Mike, Paul, Brook, Matt |
-| r6 Sedge (Wed) | Drew, Paul, Brook, Ryan | Mike, Daniel, Eric, Matt |
-| r7 Sand Valley | Drew, Daniel, Eric, Brook | Mike, Paul, Tony, Ryan |
+| r5 Mammoth | Mike, Paul, Brook, Ryan | Daniel, Eric, Matt, Tony |
+| r6 Sedge (Wed) | Drew, Daniel, Brook, Ryan | Mike, Paul, Eric, Matt |
+| r7 Sand Valley | Mike, Daniel, Tony, Ryan | Drew, Eric, Brook, Matt |
 
 **Pinned by request — do not lose these when regenerating:**
 - **r1 Sunday** is exactly the grid Drew picked.
 - **r4 Tuesday AM** must have **Matt with Daniel** (Daniel's first 18).
+- **Matt with Daniel at least twice** across the week (r4 and r5).
+- **Drew with Paul at least twice** across the week (r1 and r2).
 
 **Properties this grid satisfies:** all **36 possible pairs** play together at least once,
-**nobody paired more than 3 times**, and no round has its two groups more than **2.0 apart**
-in average index. The Sandbox is excluded from partner tracking because everyone plays it
-together; Thursday follows the standings.
+**nobody paired more than 3 times** (and nobody paired zero times), and no round has its two
+groups more than **2.0 apart** in average index. The Sandbox is excluded from partner tracking
+because everyone plays it together; Thursday follows the standings.
 
 **How it was produced.** Not greedily round-by-round — that plateaus around 35/36 with a 4.25
 index gap. All six grouped rounds were optimized **jointly**: random restart plus hill-climbing
@@ -214,8 +216,9 @@ without a page error.
 
 ## 5. Open items
 
-- [ ] **Who sits Mammoth (Tue PM) and Sand Valley (Wed PM).** Placeholders are Drew and Matt.
-      Must be someone playing all other rounds (see the corollary above).
+- [ ] **Who sits Mammoth (Tue PM).** Placeholder is Drew. Must be someone playing all other
+      rounds (see the corollary above). **Sand Valley (Wed PM) is settled: Paul sits** — he
+      plays every other round, so he drops from five counting rounds to four.
 - [ ] **Ask Sand Valley for a third tee time** on those two rounds. Turns them into 3/3/3 so
       everyone plays, and threesomes walk faster.
 - [ ] **Tuesday's turn is tight.** Sedge at 8:30/8:40 finishing at the resort's 4:15 pace lands
@@ -273,7 +276,7 @@ lands, a new pairing gets pinned). Edit `OUT`, `FIXED_R1` and the `together()` c
 const P=[13,7,6,13,12,10,14,8,9];                     // indexes, array order below
 const NAMES=['Matt','Drew','Mike','Tony','Brook','Eric','Ryan','Paul','Daniel'];
 const FIXED_R1=[[2,5,4,6],[1,7,0,3]];                 // Sunday, pinned
-const OUT={r2:[8],r4:[4],r5:[1],r6:[3],r7:[0]};       // who sits each round
+const OUT={r2:[8],r4:[4],r5:[1],r6:[3],r7:[7]};       // who sits each round
 const FREE=['r2','r4','r5','r6','r7'], ALL=['r1'].concat(FREE);
 const IDS={}; FREE.forEach(r=>{IDS[r]=[];for(let i=0;i<9;i++)if(OUT[r].indexOf(i)<0)IDS[r].push(i);});
 function mul(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
@@ -291,8 +294,11 @@ function stats(plan){
   return {h,unmet,max:Math.max(...v),bal,excess,met:Object.keys(h).length};
 }
 function together(plan,r,a,b){return plan[r].some(g=>g.indexOf(a)>=0&&g.indexOf(b)>=0);}
+const MD=key(0,8), DP=key(1,7);                   // Matt+Daniel, Drew+Paul
 const cost=(s,plan)=>s.unmet*10000 + s.excess*60 + Math.max(0,s.max-3)*5000 + s.bal*8
-  + (together(plan,'r4',0,8)?0:1000000);          // Matt + Daniel, Tuesday AM
+  + (together(plan,'r4',0,8)?0:1000000)           // Matt + Daniel, Tuesday AM
+  + Math.max(0,2-(s.h[MD]||0))*1000000            // Matt + Daniel at least twice
+  + Math.max(0,2-(s.h[DP]||0))*1000000;           // Drew + Paul at least twice
 function climb(plan){
   let cur=cost(stats(plan),plan),imp=true;
   while(imp){ imp=false;
