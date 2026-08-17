@@ -212,6 +212,42 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(JSON.parse(repo.file).i['0'] === 9, 'index reached the published payload');
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
 
+  // one decimal place: real indexes look like 7.4
+  const attrs8 = await p.evaluate(() => {
+    const el = document.querySelector('[data-idx="1"]');
+    return { inputmode: el.getAttribute('inputmode'), step: el.getAttribute('step'), type: el.type };
+  });
+  ok(attrs8.step === '0.1', 'input step is 0.1 (got ' + attrs8.step + ')');
+  ok(attrs8.inputmode === 'decimal', 'inputmode is decimal so phones show a decimal point (got ' + attrs8.inputmode + ')');
+
+  await p.fill('[data-idx="1"]', '7.4'); await p.dispatchEvent('[data-idx="1"]', 'change');
+  await p.waitForTimeout(300);
+  const dec8 = await p.evaluate(() => ({
+    idx: P[1].idx, stored: S.i[1],
+    shown: document.querySelector('[data-idx="1"]').value,
+    quota: quotaFor(P[1].idx, teeFor(R[1], 1)),
+    expect: 36 - Math.round(7.4 * teeFor(R[1],1)[2] / 113 + (teeFor(R[1],1)[1] - teeFor(R[1],1)[3]))
+  }));
+  ok(dec8.idx === 7.4 && dec8.stored === 7.4, 'a decimal index is kept exactly (got ' + dec8.idx + ')');
+  ok(dec8.shown === '7.4', 'field redisplays 7.4 after re-render (got "' + dec8.shown + '")');
+  ok(dec8.quota === dec8.expect, 'quota computed from the decimal index (got ' + dec8.quota + ', expected ' + dec8.expect + ')');
+
+  // more than one decimal rounds rather than being rejected
+  await p.fill('[data-idx="1"]', '7.43'); await p.dispatchEvent('[data-idx="1"]', 'change');
+  await p.waitForTimeout(300);
+  ok(await p.evaluate(() => P[1].idx === 7.4), 'extra decimals round to one place');
+
+  // plus handicaps are negative; out-of-range values clamp
+  await p.fill('[data-idx="1"]', '-2.3'); await p.dispatchEvent('[data-idx="1"]', 'change');
+  await p.waitForTimeout(300);
+  ok(await p.evaluate(() => P[1].idx === -2.3), 'plus handicap (negative index) accepted');
+  await p.fill('[data-idx="1"]', '999'); await p.dispatchEvent('[data-idx="1"]', 'change');
+  await p.waitForTimeout(300);
+  ok(await p.evaluate(() => P[1].idx === 54), 'absurd value clamps to 54');
+  await p.fill('[data-idx="1"]', '7'); await p.dispatchEvent('[data-idx="1"]', 'change');
+  await p.waitForTimeout(300);
+  ok(await p.evaluate(() => P[1].idx === 7 && S.i[1] === undefined), 'back to the placeholder value clears the override');
+
   // reset returns to the baked-in placeholders
   await p.click('#idxReset'); await p.waitForTimeout(350);
   const reset8 = await p.evaluate(() => ({ idx: P[0].idx, keys: Object.keys(S.i).length }));

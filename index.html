@@ -958,7 +958,7 @@ function rosterCard(){
   P.forEach((p,n)=>{
     const moved = p.idx !== BASE_IDX[n];
     h+=`<div class="asgn"><span>${p.n} <i>${moved?`was ${BASE_IDX[n]}`:'placeholder'}</i></span>
-      <input type="number" inputmode="numeric" step="0.1" min="-10" max="54" data-idx="${n}" value="${p.idx}"
+      <input type="number" inputmode="decimal" step="0.1" min="-10" max="54" data-idx="${n}" value="${p.idx}"
         style="width:82px;min-height:40px;text-align:center;font:inherit;font-size:14px;background:var(--plane);color:var(--ink-1);border:1px solid var(--ring);border-radius:8px"></div>`;
   });
   h+=`<p class="note" style="margin-top:10px">${custom
@@ -969,8 +969,12 @@ function rosterCard(){
 }
 function wireRoster(){
   $('#v-pair').querySelectorAll('[data-idx]').forEach(el=>el.addEventListener('change',()=>{
-    const n=+el.dataset.idx, v=parseFloat(el.value);
-    if(!isFinite(v)){ el.value=P[n].idx; return; }
+    const n=+el.dataset.idx, raw=parseFloat(el.value);
+    if(!isFinite(raw)){ el.value=P[n].idx; return; }
+    /* Indexes carry one decimal (7.4). Round rather than reject so a pasted
+       7.43 lands somewhere sane, and clamp to the range a real index can take
+       — plus handicaps are negative. */
+    const v = Math.min(54, Math.max(-10, Math.round(raw*10)/10));
     if(!S.i) S.i={};
     if(v===BASE_IDX[n]) delete S.i[n]; else S.i[n]=v;   // keep the hash small
     applyIdx(); edit(); renderPair(); renderToday();

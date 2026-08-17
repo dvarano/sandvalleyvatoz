@@ -323,8 +323,8 @@ Supabase/Firebase (proper, and overkill).
 
 `verify.js` in the repo root (Playwright, GitHub API mocked via route interception) covers both
 modes, publish, the stale-SHA 409 retry, rate limiting, offline edit survival, index editing and
-propagation, backward compatibility with pre-`i` links, the baseline-grid freeze guard, and the
-pairing invariants — 52
+propagation, backward compatibility with pre-`i` links, the baseline-grid freeze guard, the
+read-only viewer tab, and the pairing invariants — 74
 assertions. Worth re-running after any change to the sync path.
 
 ```
