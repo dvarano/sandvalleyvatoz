@@ -245,6 +245,38 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 
+  // ---- 11. Baseline pairings are not frozen into the published board -------
+  console.log('\n[11] Baseline grid stays code-supplied');
+  repo = makeRepo();
+  p = await newPage(browser, 'github_pat_TEST');
+  await mockApi(p, repo);
+  await p.goto(URL); await settle(p);
+  await p.click('#pubBtn'); await settle(p);
+  let payload = JSON.parse(repo.file);
+  ok(Object.keys(payload.p).length === 0, 'untouched baseline rounds omitted from publish (got ' + JSON.stringify(Object.keys(payload.p)) + ')');
+
+  // hand-edit one round; that one SHOULD be published
+  await p.click('nav button[data-v="pair"]'); await p.waitForTimeout(300);
+  await p.selectOption('[data-asg="0"]', '-1'); await p.waitForTimeout(300);
+  await p.click('#pubBtn'); await settle(p);
+  payload = JSON.parse(repo.file);
+  ok(Object.keys(payload.p).length === 1, 'hand-edited round IS published (got ' + JSON.stringify(Object.keys(payload.p)) + ')');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
+  // a client on a NEWER code grid must not inherit a stale published grid
+  p = await newPage(browser);
+  await mockApi(p, { file: JSON.stringify({ v:1, s:{}, t:{}, p:{}, o:{}, u:{}, i:{}, m: Date.now(), l:[] }), sha:'s1', puts:[], commits:[] });
+  await p.goto(URL); await settle(p);
+  const g11 = await p.evaluate(() => {
+    const N = P.map(x => x.n);
+    return { r7: S.p.r7.map(g => g.map(i => N[i]).sort().join('/')).sort().join(' | '),
+             sit: sitOuts(R.find(r => r.id === 'r7')).map(i => N[i]).join() };
+  });
+  ok(g11.sit === 'Paul', 'r7 sit-out comes from code, not the published file (got ' + g11.sit + ')');
+  ok(/Brook\/Drew\/Eric\/Matt/.test(g11.r7), 'r7 groups are the current code grid (got ' + g11.r7 + ')');
+  await p.context().close();
+
   // every tab renders for the editor
   p = await newPage(browser, 'github_pat_TEST');
   await mockApi(p, makeRepo());

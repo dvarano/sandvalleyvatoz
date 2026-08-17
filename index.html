@@ -419,6 +419,25 @@ async function remoteGet(){
   const j = await r.json();
   return {sha:j.sha, state:JSON.parse(unb64(j.content || ''))};
 }
+/* Rounds still sitting on the baseline grid are NOT published. defaultPairings()
+   seeds S.p from BASE_GRID at boot, so publishing it verbatim would freeze the
+   grid at the publisher's code version and no later BASE_GRID change could ever
+   reach anyone — which is exactly what happened the first time a board was
+   published. Omitting them lets every client fall back to the code it is running.
+   Hand-edited rounds are published as-is. */
+function sameGroups(a, b){
+  if(!a || !b || a.length !== b.length) return false;
+  const norm = g => g.map(x => x.slice().sort((m,n)=>m-n).join(',')).sort().join('|');
+  return norm(a) === norm(b);
+}
+function publishPayload(){
+  const out = Object.assign({}, S, {p:{}});
+  Object.keys(S.p || {}).forEach(id=>{
+    if(BASE_GRID[id] && sameGroups(S.p[id], BASE_GRID[id])) return;
+    out.p[id] = S.p[id];
+  });
+  return out;
+}
 /* PUT needs the blob SHA of the file being replaced. A stale SHA (you published
    from your phone, then from a laptop that still held the old one) comes back
    409/422 — refetch and retry once. With a single editor the newest write
@@ -431,7 +450,7 @@ async function remotePut(){
     }
     const body = {
       message: 'Board update — ' + new Date().toISOString().replace('T',' ').slice(0,16) + 'Z',
-      content: b64(JSON.stringify(S)),
+      content: b64(JSON.stringify(publishPayload())),
       branch: REPO.branch
     };
     if(remoteSha) body.sha = remoteSha;

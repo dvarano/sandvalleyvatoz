@@ -305,6 +305,13 @@ that person's own copy, which vanishes on refresh. Don't "harden" the hiding; it
 - **Rate limiting is detected from the response body, not the `x-ratelimit-remaining` header**,
   which is CORS-filtered and not reliably readable from the page.
 - **On conflict, newer `m` wins**, and unpublished local edits are never clobbered by a pull.
+- **Baseline pairings are deliberately NOT published.** `defaultPairings()` seeds `S.p` from
+  `BASE_GRID` at boot, so publishing it verbatim freezes the grid at the publisher's code
+  version and no later `BASE_GRID` change can reach anyone. This bit us on the very first
+  publish (a board went out carrying the pre-Paul grid, which then contradicted `rd.out` and
+  showed Paul both playing and sitting Sand Valley). `publishPayload()` now strips rounds that
+  still match `BASE_GRID`; hand-edited rounds are published as-is. **If you change `BASE_GRID`,
+  that is enough — do not also hand-write `data.json`.**
 
 Alternatives considered: Cloudflare Workers + KV (better on every axis — no browser token, no
 rate limit, no SHA dance — but a second service to stand up for nine guys and five rounds), and
@@ -314,7 +321,8 @@ Supabase/Firebase (proper, and overkill).
 
 `verify.js` in the repo root (Playwright, GitHub API mocked via route interception) covers both
 modes, publish, the stale-SHA 409 retry, rate limiting, offline edit survival, index editing and
-propagation, backward compatibility with pre-`i` links, and the pairing invariants — 47
+propagation, backward compatibility with pre-`i` links, the baseline-grid freeze guard, and the
+pairing invariants — 52
 assertions. Worth re-running after any change to the sync path.
 
 ```
