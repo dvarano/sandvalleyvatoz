@@ -7,6 +7,8 @@ so a future session can pick this up cold.
 - **The app:** `index.html` — one self-contained file, no build step, no dependencies.
 - **Group name:** the Sand Valley Vatoz (vatos with a z). Competition is **La Copa De Vatoz**.
   Rename via `TRIP_NAME` at the top of the script.
+- **Branch:** commit and push directly to `main`. No feature branches, no PRs — Pages serves
+  `main`, so anything not on it isn't live.
 
 ---
 
