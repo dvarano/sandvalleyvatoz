@@ -609,6 +609,11 @@ let view='info', cur=0;
 function fmt(d){ if(d===null||d===undefined) return '&mdash;'; const s=(d>0?'+':'')+(Math.round(d*10)/10); return s; }
 function cls(d){ return d===null||d===undefined?'':(d>0?'pos':(d<0?'neg':'')); }
 function esc(s){ return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+/* Handicap indexes always show one decimal, the way they are written on a card:
+   7 renders as 7.0. Course handicaps and quotas are whole numbers by definition
+   — chcp() and commonsHcp() already round — so they are never passed through
+   this. Keep that split: index = 1dp, anything derived from it = integer. */
+function fmtIdx(v){ return Number(v).toFixed(1); }
 
 function renderRoundSel(){
   const sel=$('#roundSel');
@@ -634,7 +639,7 @@ function renderToday(){
         const tee = rd.tees.split('/')[i] ? rd.tees.split('/')[i].trim() : '';
         h+=`<div class="grp"><h3>Group ${i+1} <small>${tee}</small></h3><ul>`;
         g.forEach(pi=>{ const t=teeFor(rd,pi);
-          h+=`<li>${P[pi].n}<span>${t?('quota '+quotaFor(P[pi].idx,t)):('idx '+P[pi].idx)}</span></li>`; });
+          h+=`<li>${P[pi].n}<span>${t?('quota '+quotaFor(P[pi].idx,t)):('idx '+fmtIdx(P[pi].idx))}</span></li>`; });
         h+=`</ul></div>`;
       });
     } else if(rd.id==='r8'){
@@ -654,14 +659,14 @@ function renderToday(){
     h+=`<div class="card"><h2>Commons handicaps &mdash; 65% of index</h2>
       <p class="note" style="margin-bottom:8px">No quota here. The Commons is not USGA rated so there is no slope or rating; the scorecard prescribes 65% for match allocation over the 12 holes.</p>
       <table><thead><tr><th>Player</th><th>Idx</th><th>65%</th></tr></thead><tbody>`;
-    P.forEach((p,i)=>{ h+=`<tr><td>${p.n}</td><td>${p.idx}</td><td><b>${commonsHcp(p.idx)}</b></td></tr>`; });
+    P.forEach((p,i)=>{ h+=`<tr><td>${p.n}</td><td>${fmtIdx(p.idx)}</td><td><b>${commonsHcp(p.idx)}</b></td></tr>`; });
     h+=`</tbody></table>
       <p class="note" style="margin-top:8px">Strokes fall hardest hole first: ${COMMONS_STROKE_HOLES.slice(0,6).map(x=>'#'+x).join(', ')} &hellip;</p></div>`;
   }
   if(t0){
     h+=`<div class="card"><h2>Quotas &mdash; ${esc(rd.course)}</h2><table><thead><tr><th>Player</th><th>Idx</th><th>Tee</th><th>CH</th><th>Quota</th></tr></thead><tbody>`;
     play.forEach(pi=>{ const t=teeFor(rd,pi);
-      h+=`<tr><td>${P[pi].n}</td><td>${P[pi].idx}</td><td style="font-size:12px;color:var(--ink-3)">${t[0]}</td><td>${chcp(P[pi].idx,t)}</td><td><b>${quotaFor(P[pi].idx,t)}</b></td></tr>`; });
+      h+=`<tr><td>${P[pi].n}</td><td>${fmtIdx(P[pi].idx)}</td><td style="font-size:12px;color:var(--ink-3)">${t[0]}</td><td>${chcp(P[pi].idx,t)}</td><td><b>${quotaFor(P[pi].idx,t)}</b></td></tr>`; });
     h+=`</tbody></table></div>`;
   }
   $('#v-today').innerHTML=h;
@@ -687,7 +692,7 @@ function renderEnter(){
                   + `<option value="c"${t[0]==='Custom'?' selected':''}>Custom</option>`;
     h+=`<div class="prow">
       <div class="entry">
-        <label>${P[pi].n}<em>index ${P[pi].idx} &middot; CH ${chcp(P[pi].idx,t)}</em></label>
+        <label>${P[pi].n}<em>index ${fmtIdx(P[pi].idx)} &middot; CH ${chcp(P[pi].idx,t)}</em></label>
         <input type="number" inputmode="numeric" data-pts="${pi}" value="${v}" placeholder="&ndash;">
         <span class="delta ${cls(d)}">${d===null?'':fmt(d)}</span>
       </div>
@@ -750,7 +755,7 @@ function renderStand(){
     <table><thead><tr><th>#</th><th style="text-align:left">Player</th><th>Rds</th><th>Drop</th><th>Avg</th></tr></thead><tbody>`;
   rows.forEach((r,i)=>{
     h+=`<tr><td style="text-align:left;color:var(--ink-3)">${r.avg===null?'':i+1}</td>
-      <td style="text-align:left">${r.name} <span style="color:var(--ink-3);font-size:12px">${r.idx}</span></td>
+      <td style="text-align:left">${r.name} <span style="color:var(--ink-3);font-size:12px">${fmtIdx(r.idx)}</span></td>
       <td>${r.n||'&mdash;'}</td>
       <td style="color:var(--ink-3);font-size:12px">${r.dropped?fmt(r.dropped.d):'&mdash;'}</td>
       <td class="${cls(r.avg)}"><b>${fmt(r.avg)}</b></td></tr>`;
@@ -944,7 +949,7 @@ function rosterCardReadOnly(){
   let h=`<div class="card"><h2>Handicap indexes</h2>
     <p class="note" style="margin-bottom:8px">Your quota each round is 36 minus your course handicap, which comes from your index and the tee you play. These also set the Commons 65% strokes on Thursday.</p>
     <table><thead><tr><th style="text-align:left">Player</th><th>Index</th><th>Commons</th></tr></thead><tbody>`;
-  P.forEach(p=>{ h+=`<tr><td style="text-align:left">${p.n}</td><td>${p.idx}</td><td><b>${commonsHcp(p.idx)}</b></td></tr>`; });
+  P.forEach(p=>{ h+=`<tr><td style="text-align:left">${p.n}</td><td>${fmtIdx(p.idx)}</td><td><b>${commonsHcp(p.idx)}</b></td></tr>`; });
   return h+`</tbody></table>
     <p class="note" style="margin-top:8px">${custom
       ? 'Confirmed by the committee.'
@@ -957,8 +962,8 @@ function rosterCard(){
     <p class="note" style="margin-bottom:8px"><b>Lock these before Monday.</b> Round results are recomputed from the current index, so editing one after a counting round rewrites that round&rsquo;s result. Sunday does not count, which is why the committee&rsquo;s &plusmn;3 adjustment belongs Sunday night.</p>`;
   P.forEach((p,n)=>{
     const moved = p.idx !== BASE_IDX[n];
-    h+=`<div class="asgn"><span>${p.n} <i>${moved?`was ${BASE_IDX[n]}`:'placeholder'}</i></span>
-      <input type="number" inputmode="decimal" step="0.1" min="-10" max="54" data-idx="${n}" value="${p.idx}"
+    h+=`<div class="asgn"><span>${p.n} <i>${moved?`was ${fmtIdx(BASE_IDX[n])}`:'placeholder'}</i></span>
+      <input type="number" inputmode="decimal" step="0.1" min="-10" max="54" data-idx="${n}" value="${fmtIdx(p.idx)}"
         style="width:82px;min-height:40px;text-align:center;font:inherit;font-size:14px;background:var(--plane);color:var(--ink-1);border:1px solid var(--ring);border-radius:8px"></div>`;
   });
   h+=`<p class="note" style="margin-top:10px">${custom
@@ -1011,7 +1016,7 @@ function renderPair(){
   P.forEach((p,i)=>{
     let opts=`<option value="-1"${asg[i]<0?' selected':''}>Sitting</option>`;
     for(let g=0;g<ng;g++) opts+=`<option value="${g}"${asg[i]===g?' selected':''}>Group ${g+1}</option>`;
-    h+=`<div class="asgn"><span>${p.n} <i>${p.idx}</i></span><select data-asg="${i}">${opts}</select></div>`;
+    h+=`<div class="asgn"><span>${p.n} <i>${fmtIdx(p.idx)}</i></span><select data-asg="${i}">${opts}</select></div>`;
   });
   const over=counts.some((c,i)=>c>4);
   const locked = isLocked(rd);
@@ -1037,7 +1042,7 @@ function renderPair(){
       let rep=0;
       for(let a=0;a<g.length;a++) for(let b=a+1;b<g.length;b++) rep+=hist[Math.min(g[a],g[b])+'|'+Math.max(g[a],g[b])]||0;
       h+=`<div class="grp"><h3>Group ${i+1} <small>avg idx ${avg}${rep?` &middot; ${rep} repeat${rep>1?'s':''}`:' &middot; all new'}</small></h3><ul>`;
-      g.forEach(pi=>h+=`<li>${P[pi].n}<span>${P[pi].idx}</span></li>`);
+      g.forEach(pi=>h+=`<li>${P[pi].n}<span>${fmtIdx(P[pi].idx)}</span></li>`);
       h+=`</ul></div>`;
     });
     h+=`</div>`;

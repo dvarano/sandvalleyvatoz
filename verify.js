@@ -230,6 +230,39 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   }));
   ok(dec8.idx === 7.4 && dec8.stored === 7.4, 'a decimal index is kept exactly (got ' + dec8.idx + ')');
   ok(dec8.shown === '7.4', 'field redisplays 7.4 after re-render (got "' + dec8.shown + '")');
+
+  // indexes pad to one decimal everywhere; anything derived stays integer
+  const pad = await p.evaluate(() => {
+    const grab = sel => (document.querySelector(sel) || {}).textContent || '';
+    return {
+      // Mike is on the placeholder 6 -> must render "6.0"
+      pairRow: [...document.querySelectorAll('#v-pair .asgn span i')].map(x => x.textContent),
+      roIdx: (() => { const c = rosterCardReadOnly(); const m = c.match(/<td>([\d.\-]+)<\/td><td><b>(\d+)<\/b>/); return m ? { idx: m[1], commons: m[2] } : null; })(),
+      chcpInt: Number.isInteger(chcp(7.4, teeFor(R[1], 1))),
+      commonsInt: Number.isInteger(commonsHcp(7.4)),
+      quotaInt: Number.isInteger(quotaFor(7.4, teeFor(R[1], 1)))
+    };
+  });
+  // Two kinds of <i> live on this tab: the assignment rows show a bare index,
+  // the roster editor shows "was N.N" or "placeholder". All must be padded.
+  const badPad = pad.pairRow.filter(t => !(t === 'placeholder' || /^(was )?-?\d+\.\d$/.test(t)));
+  ok(badPad.length === 0, 'every index on the Pairings tab is padded to 1dp' + (badPad.length ? ', unpadded: ' + JSON.stringify(badPad) : ''));
+  ok(pad.roIdx && /^-?\d+\.\d$/.test(pad.roIdx.idx), 'read-only index table padded to 1dp (got ' + JSON.stringify(pad.roIdx) + ')');
+  ok(pad.roIdx && /^\d+$/.test(pad.roIdx.commons), 'Commons handicap has no decimals (got ' + (pad.roIdx || {}).commons + ')');
+  ok(pad.chcpInt && pad.commonsInt && pad.quotaInt,
+     'course handicap, Commons and quota stay integers off a decimal index');
+
+  // and across the other tabs
+  for (const [tab, sel] of [['today', '#v-today'], ['enter', '#v-enter'], ['stand', '#v-stand']]) {
+    await p.click(`nav button[data-v="${tab}"]`); await p.waitForTimeout(250);
+    const bare = await p.evaluate(s => {
+      const txt = document.querySelector(s).textContent;
+      // an index written without a decimal, e.g. "index 7 ·" or "idx 12<"
+      return (txt.match(/\bind?e?x? \d+(?!\.\d)\b/g) || []);
+    }, sel);
+    ok(bare.length === 0, tab + ' tab shows no unpadded index' + (bare.length ? ': ' + JSON.stringify(bare) : ''));
+  }
+  await p.click('nav button[data-v="pair"]'); await p.waitForTimeout(250);
   ok(dec8.quota === dec8.expect, 'quota computed from the decimal index (got ' + dec8.quota + ', expected ' + dec8.expect + ')');
 
   // more than one decimal rounds rather than being rejected

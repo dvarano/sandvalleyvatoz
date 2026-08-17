@@ -205,6 +205,7 @@ shape evolves. Preserve that when changing state.
 | Function | Does |
 |---|---|
 | `chcp(idx, tee)` / `quotaFor(idx, tee)` | course handicap and quota; `tee = [name, CR, slope, par]` |
+| `fmtIdx(v)` | **index display, always 1dp** (7 → `7.0`). Never wrap a course handicap or quota in it — those are integers by definition |
 | `applyIdx()` | copies `S.i` onto `P[n].idx`. Run after every load/pull, **before `defaultPairings()`** |
 | `rosterCard()` / `wireRoster()` | the index editor on the Pairings tab |
 | `teeFor(rd, pi)` | that player's tee for that round, honoring per-player CR/slope overrides |
@@ -324,7 +325,7 @@ Supabase/Firebase (proper, and overkill).
 `verify.js` in the repo root (Playwright, GitHub API mocked via route interception) covers both
 modes, publish, the stale-SHA 409 retry, rate limiting, offline edit survival, index editing and
 propagation, backward compatibility with pre-`i` links, the baseline-grid freeze guard, the
-read-only viewer tab, and the pairing invariants — 74
+read-only viewer tab, index/course-handicap number formatting, and the pairing invariants — 81
 assertions. Worth re-running after any change to the sync path.
 
 ```
