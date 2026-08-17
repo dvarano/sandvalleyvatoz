@@ -866,7 +866,7 @@ function renderInfo(){
   </div>`;
 
   h+=`<div class="card"><h2>How pairings work</h2>
-    <p class="note">Groups are re-drawn every round and are <b>fully editable by hand</b> on the Pairings tab. Auto-generate balances the groups by handicap while favouring partners you have not played with yet; then move anyone you like. The matrix at the bottom of that tab tracks who still has not played with whom and updates with every change.</p>
+    <p class="note">Groups are re-drawn every round and are <b>fully editable by hand</b> on the Pairings tab. Auto-generate balances the groups by handicap while favouring partners you have not played with yet; then move anyone you like. The matrix at the bottom of that tab tracks who still does not play with whom and updates with every change.</p>
     <p class="note" style="margin-top:8px">All eight grouped rounds start <b>locked</b>, so auto-generate cannot wipe a pairing by accident. Moving people by hand always works; unlock a round only if you want it re-drawn from scratch.</p>
   </div>`;
 
@@ -916,9 +916,40 @@ function renderInfo(){
   });
 }
 
-/* Roster indexes. Lives on Pairings because that tab is already token-gated and
-   the group-balance averages below are computed from these numbers, so an edit
-   shows its effect immediately. */
+/* Partner counts across the whole week. Read-only for everyone — the numbers are
+   derived from the grid, never typed. */
+function matrixCard(){
+  const all=historyUpTo(R.length), vals=Object.values(all);
+  const met=Object.keys(all).length, worst=vals.length?Math.max.apply(null,vals):0;
+  let h=`<div class="card"><h2>Who plays with whom</h2><table><thead><tr><th style="text-align:left"></th>${P.map(p=>`<th style="text-align:center;font-size:10px">${p.n.slice(0,2)}</th>`).join('')}</tr></thead><tbody>`;
+  P.forEach((p,i)=>{
+    h+=`<tr><td style="text-align:left;font-size:12px">${p.n}</td>`;
+    P.forEach((q2,j)=>{
+      if(i===j){ h+=`<td style="text-align:center;color:var(--grid)">&middot;</td>`; return; }
+      const c=all[Math.min(i,j)+'|'+Math.max(i,j)]||0;
+      const col = c===0 ? 'var(--neg)' : (c>3 ? 'var(--warn)' : 'var(--ink-1)');
+      h+=`<td style="text-align:center;font-size:12px;color:${col};font-weight:${c===0||c>3?'700':'400'}">${c||'0'}</td>`;
+    });
+    h+=`</tr>`;
+  });
+  return h+`</tbody></table>
+    <p class="note" style="margin-top:8px"><b>${met}/36</b> pairs play together at some point, worst repeat <b>${worst}</b>. A red <b>0</b> is a pair who never meet; amber is four or more. The Sandbox is excluded because everyone plays it together.</p></div>`;
+}
+
+/* Roster indexes. Editable only with a token; everyone else gets the same numbers
+   as a plain table. Lives on Pairings because the group-balance averages there
+   are computed from these, so an edit shows its effect immediately. */
+function rosterCardReadOnly(){
+  const custom = idxDirty();
+  let h=`<div class="card"><h2>Handicap indexes</h2>
+    <p class="note" style="margin-bottom:8px">Your quota each round is 36 minus your course handicap, which comes from your index and the tee you play. These also set the Commons 65% strokes on Thursday.</p>
+    <table><thead><tr><th style="text-align:left">Player</th><th>Index</th><th>Commons</th></tr></thead><tbody>`;
+  P.forEach(p=>{ h+=`<tr><td style="text-align:left">${p.n}</td><td>${p.idx}</td><td><b>${commonsHcp(p.idx)}</b></td></tr>`; });
+  return h+`</tbody></table>
+    <p class="note" style="margin-top:8px">${custom
+      ? 'Confirmed by the committee.'
+      : 'These are still placeholders until the committee confirms them.'} Only the organiser can change them.</p></div>`;
+}
 function rosterCard(){
   const custom = idxDirty();
   let h=`<div class="card"><h2>Handicap indexes</h2>
@@ -951,6 +982,13 @@ function wireRoster(){
 }
 
 function renderPair(){
+  /* Without a token the tab is the two read-only cards and nothing else: no
+     assignment dropdowns, no generator, no index inputs. Both cards are
+     round-independent, so the round selector is hidden too (see render). */
+  if(!isEditor()){
+    $('#v-pair').innerHTML = matrixCard() + rosterCardReadOnly();
+    return;
+  }
   const rd=R[cur];
   if(rd.id==='r3'){
     $('#v-pair').innerHTML=`<div class="card"><h2>${esc(rd.course)}</h2>
@@ -1001,22 +1039,7 @@ function renderPair(){
     h+=`</div>`;
   }
 
-  const all=historyUpTo(R.length), vals=Object.values(all);
-  const met=Object.keys(all).length, worst=vals.length?Math.max.apply(null,vals):0;
-  h+=`<div class="card"><h2>Who has played with whom</h2><table><thead><tr><th style="text-align:left"></th>${P.map(p=>`<th style="text-align:center;font-size:10px">${p.n.slice(0,2)}</th>`).join('')}</tr></thead><tbody>`;
-  P.forEach((p,i)=>{
-    h+=`<tr><td style="text-align:left;font-size:12px">${p.n}</td>`;
-    P.forEach((q2,j)=>{
-      if(i===j){ h+=`<td style="text-align:center;color:var(--grid)">&middot;</td>`; return; }
-      const c=all[Math.min(i,j)+'|'+Math.max(i,j)]||0;
-      const col = c===0 ? 'var(--neg)' : (c>3 ? 'var(--warn)' : 'var(--ink-1)');
-      h+=`<td style="text-align:center;font-size:12px;color:${col};font-weight:${c===0||c>3?'700':'400'}">${c||'0'}</td>`;
-    });
-    h+=`</tr>`;
-  });
-  h+=`</tbody></table>
-    <p class="note" style="margin-top:8px"><b>${met}/36</b> pairs have played together, worst repeat <b>${worst}</b>. A red <b>0</b> is a pair who never meet; amber is four or more. The Sandbox is excluded because everyone plays it together.</p></div>`;
-
+  h+=matrixCard();
   h+=rosterCard();
 
   $('#v-pair').innerHTML=h;
@@ -1145,22 +1168,23 @@ async function publish(){
   }
   $('#pubBtn').disabled = false;
 }
-/* Without a token the Enter and Pairings tabs are not rendered, so the other
-   eight get a clean read-only board on the same URL. This is tidiness, not
-   security — the real guard is that publishing needs the token, so an unhidden
-   tab only ever edits that person's own copy. */
+/* Without a token the Enter tab is not rendered and Pairings falls back to its
+   two read-only cards, so the other eight get a clean board on the same URL.
+   This is tidiness, not security — the real guard is that publishing needs the
+   token, so an unhidden tab only ever edits that person's own copy. */
 function applyMode(){
   const ed = isEditor();
   document.querySelectorAll('nav button').forEach(b=>{
-    if(b.dataset.v === 'enter' || b.dataset.v === 'pair') b.classList.toggle('hide', !ed);
+    if(b.dataset.v === 'enter') b.classList.toggle('hide', !ed);
   });
-  if(!ed && (view === 'enter' || view === 'pair')) view = 'info';
+  if(!ed && view === 'enter') view = 'info';
   renderSync();
 }
 function render(){
   renderRoundSel();
   ['today','enter','stand','pair','info'].forEach(v=>$('#v-'+v).classList.toggle('hide', v!==view));
-  document.querySelector('.rsel').classList.toggle('hide', view==='stand' || view==='info');
+  document.querySelector('.rsel').classList.toggle('hide',
+    view==='stand' || view==='info' || (view==='pair' && !isEditor()));
   if(view==='today') renderToday();
   if(view==='enter') renderEnter();
   if(view==='stand') renderStand();

@@ -218,7 +218,8 @@ shape evolves. Preserve that when changing state.
 | `remoteGet()` / `remotePut()` | contents API read / write; `remotePut` retries once on a stale-SHA 409 |
 | `pull(manual)` / `publish()` | fetch the published board (never clobbers unpublished edits) / push it |
 | `renderSync()` / `ago(ms)` | the last-updated header line and its relative-time formatting |
-| `applyMode()` | hides Enter and Pairings when there's no token |
+| `applyMode()` | hides Enter when there's no token; Pairings then renders read-only |
+| `matrixCard()` / `rosterCardReadOnly()` | the two cards viewers see on Pairings |
 | `renderInfo / renderToday / renderEnter / renderStand / renderPair` | the five tabs |
 
 ### Tabs
@@ -282,11 +283,12 @@ It publishes to one repo, so the worst case if it leaks is a defaced golf site.
 
 | | Token present | No token |
 |---|---|---|
-| Tabs | all five | Info, Today, Standings |
+| Tabs | all five | Info, Today, Standings, **Pairings (read-only)** |
+| Pairings tab | assignment dropdowns, generator, editable indexes | "Who plays with whom" + indexes as a table, nothing editable |
 | Header | last-updated + Refresh + **Publish** | last-updated + Refresh |
 | Writes | local hash *and* `data.json` | local hash only, never shared |
 
-Hiding the two tabs is **cosmetic, not a security boundary** — anyone can unhide them in dev
+Hiding Enter and the Pairings edit controls is **cosmetic, not a security boundary** — anyone can unhide them in dev
 tools. The real guard is that publishing needs the token, so an unhidden tab only ever edits
 that person's own copy, which vanishes on refresh. Don't "harden" the hiding; it isn't the point.
 

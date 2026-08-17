@@ -61,7 +61,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   let p = await newPage(browser);
   await mockApi(p, repo);
   await p.goto(URL); await settle(p);
-  ok(JSON.stringify(await tabs(p)) === '["info","today","stand"]', 'Enter and Pairings hidden for viewer');
+  ok(JSON.stringify(await tabs(p)) === '["info","today","stand","pair"]', 'Enter hidden for viewer; Pairings present read-only');
   ok(await p.$eval('#pubBtn', e => e.classList.contains('hide')), 'Publish button hidden for viewer');
   ok(/No board published yet/.test(await sync(p)), 'header says no board published: "' + await sync(p) + '"');
   ok(await p.$eval('#v-stand', e => true).catch(() => false), 'Standings section exists');
@@ -101,7 +101,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   const seen = await p.evaluate(() => S.s.r1 ? S.s.r1[0] : null);
   ok(seen === 38, 'viewer pulled the published score (got ' + seen + ')');
   ok(/Updated/.test(await sync(p)), 'viewer sees last-updated: "' + await sync(p) + '"');
-  ok(JSON.stringify(await tabs(p)) === '["info","today","stand"]', 'still read-only');
+  ok(JSON.stringify(await tabs(p)) === '["info","today","stand","pair"]', 'still no Enter tab');
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 
@@ -275,6 +275,51 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   });
   ok(g11.sit === 'Paul', 'r7 sit-out comes from code, not the published file (got ' + g11.sit + ')');
   ok(/Brook\/Drew\/Eric\/Matt/.test(g11.r7), 'r7 groups are the current code grid (got ' + g11.r7 + ')');
+  await p.context().close();
+
+  // ---- 12. Pairings tab is read-only for viewers, editable for the organiser
+  console.log('\n[12] Read-only Pairings for viewers');
+  p = await newPage(browser);
+  await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+  ok(JSON.stringify(await tabs(p)) === '["info","today","stand","pair"]', 'viewer now sees Pairings, still no Enter');
+  await p.click('nav button[data-v="pair"]'); await p.waitForTimeout(300);
+  const ro = await p.evaluate(() => ({
+    heads: [...document.querySelectorAll('#v-pair h2')].map(x => x.textContent),
+    inputs: document.querySelectorAll('#v-pair input, #v-pair select, #v-pair button').length,
+    oldName: /Who has played with whom/.test(document.querySelector('#v-pair').innerHTML),
+    rselHidden: document.querySelector('.rsel').classList.contains('hide'),
+    showsIdx: /\b13\b/.test(document.querySelector('#v-pair').innerHTML)
+  }));
+  ok(JSON.stringify(ro.heads) === '["Who plays with whom","Handicap indexes"]', 'exactly the two cards: ' + JSON.stringify(ro.heads));
+  ok(ro.inputs === 0, 'no inputs, selects or buttons for a viewer (found ' + ro.inputs + ')');
+  ok(!ro.oldName, 'old "Who has played with whom" wording is gone');
+  ok(ro.showsIdx, 'viewer can still read the index values');
+  ok(ro.rselHidden, 'round selector hidden (both cards are round-independent)');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
+  // organiser keeps the full editable tab
+  p = await newPage(browser, 'github_pat_TEST');
+  await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+  await p.click('nav button[data-v="pair"]'); await p.waitForTimeout(300);
+  const ed12 = await p.evaluate(() => ({
+    heads: [...document.querySelectorAll('#v-pair h2')].map(x => x.textContent),
+    idxInputs: document.querySelectorAll('#v-pair [data-idx]').length,
+    asgSelects: document.querySelectorAll('#v-pair [data-asg]').length,
+    rselHidden: document.querySelector('.rsel').classList.contains('hide')
+  }));
+  ok(ed12.idxInputs === 9, 'organiser still has nine editable index fields (got ' + ed12.idxInputs + ')');
+  ok(ed12.asgSelects === 9, 'organiser still has the assignment dropdowns (got ' + ed12.asgSelects + ')');
+  ok(ed12.heads.includes('Who plays with whom'), 'organiser matrix also renamed: ' + JSON.stringify(ed12.heads));
+  ok(!ed12.rselHidden, 'round selector visible for the organiser');
+
+  // and the index edit still works end to end
+  await p.fill('[data-idx="2"]', '4'); await p.dispatchEvent('[data-idx="2"]', 'change');
+  await p.waitForTimeout(300);
+  ok(await p.evaluate(() => P[2].idx === 4 && S.i[2] === 4), 'organiser edit still applies');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 
   // every tab renders for the editor
