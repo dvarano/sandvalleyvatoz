@@ -233,6 +233,10 @@ const P = [
   {n:'Daniel', idx:9},
 ];
 const NP = P.length;
+/* The values above are the fallback. Confirmed or committee-adjusted indexes live
+   in the published state (S.i) and are applied onto P by applyIdx(), so the ~17
+   places that read P[i].idx keep working untouched. */
+const BASE_IDX = P.map(p=>p.idx);
 
 /* ---------- Tees: [name, course rating, slope, par] ---------- */
 const TEES = {
@@ -314,11 +318,22 @@ function teeFor(rd, pi){
    t: tee choice  {roundId:[9 tee indexes]}
    p: pairings    {roundId:[[playerIdx...],[...]]}
    o: sit-outs    {roundId:[playerIdx...]}
+   i: indexes     {playerIdx: handicapIndex} — sparse; absent means use BASE_IDX
    m: modified    epoch ms of the last user edit — decides hash-vs-remote
    l: ledger      [[playerIdx, amount, "note"], ...]
 ------------------------------------------------------------- */
-const BLANK = {v:1, s:{}, t:{}, p:{}, o:{}, u:{}, m:0, l:[]};
+const BLANK = {v:1, s:{}, t:{}, p:{}, o:{}, u:{}, i:{}, m:0, l:[]};
 let S = Object.assign({}, BLANK);
+
+/* Copy any confirmed indexes from state onto the roster. Must run after every
+   load or pull, and BEFORE defaultPairings(), which sorts groups by index. */
+function applyIdx(){
+  P.forEach((p,n)=>{
+    const v = S.i && S.i[n];
+    p.idx = (typeof v === 'number' && isFinite(v)) ? v : BASE_IDX[n];
+  });
+}
+function idxDirty(){ return P.some((p,n)=>p.idx !== BASE_IDX[n]); }
 
 function encode(){
   try{ return btoa(unescape(encodeURIComponent(JSON.stringify(S)))).replace(/=+$/,''); }
@@ -882,11 +897,47 @@ function renderInfo(){
   });
 }
 
+/* Roster indexes. Lives on Pairings because that tab is already token-gated and
+   the group-balance averages below are computed from these numbers, so an edit
+   shows its effect immediately. */
+function rosterCard(){
+  const custom = idxDirty();
+  let h=`<div class="card"><h2>Handicap indexes</h2>
+    <p class="note" style="margin-bottom:4px">Quotas, course handicaps and the Commons 65% strokes all derive from these. Change one and everything recalculates.</p>
+    <p class="note" style="margin-bottom:8px"><b>Lock these before Monday.</b> Round results are recomputed from the current index, so editing one after a counting round rewrites that round&rsquo;s result. Sunday does not count, which is why the committee&rsquo;s &plusmn;3 adjustment belongs Sunday night.</p>`;
+  P.forEach((p,n)=>{
+    const moved = p.idx !== BASE_IDX[n];
+    h+=`<div class="asgn"><span>${p.n} <i>${moved?`was ${BASE_IDX[n]}`:'placeholder'}</i></span>
+      <input type="number" inputmode="numeric" step="0.1" min="-10" max="54" data-idx="${n}" value="${p.idx}"
+        style="width:82px;min-height:40px;text-align:center;font:inherit;font-size:14px;background:var(--plane);color:var(--ink-1);border:1px solid var(--ring);border-radius:8px"></div>`;
+  });
+  h+=`<p class="note" style="margin-top:10px">${custom
+    ? 'Confirmed indexes are stored with the board &mdash; press <b>Publish</b> so everyone gets them.'
+    : 'All nine are still the placeholders baked into the page.'}</p>`;
+  if(custom) h+=`<button class="act ghost" id="idxReset">Reset all to placeholders</button>`;
+  return h+`</div>`;
+}
+function wireRoster(){
+  $('#v-pair').querySelectorAll('[data-idx]').forEach(el=>el.addEventListener('change',()=>{
+    const n=+el.dataset.idx, v=parseFloat(el.value);
+    if(!isFinite(v)){ el.value=P[n].idx; return; }
+    if(!S.i) S.i={};
+    if(v===BASE_IDX[n]) delete S.i[n]; else S.i[n]=v;   // keep the hash small
+    applyIdx(); edit(); renderPair(); renderToday();
+  }));
+  const rb=$('#idxReset');
+  if(rb) rb.addEventListener('click',()=>{
+    S.i={}; applyIdx(); edit(); renderPair(); renderToday(); toast('Back to placeholders');
+  });
+}
+
 function renderPair(){
   const rd=R[cur];
   if(rd.id==='r3'){
     $('#v-pair').innerHTML=`<div class="card"><h2>${esc(rd.course)}</h2>
-      <p class="note">All nine play the Sandbox together and fivesomes are fine, so there is nothing to pair. It is also excluded from the partner tracking below, since &ldquo;played with&rdquo; means nothing when everyone is out there at once.</p></div>`;
+      <p class="note">All nine play the Sandbox together and fivesomes are fine, so there is nothing to pair. It is also excluded from the partner tracking below, since &ldquo;played with&rdquo; means nothing when everyone is out there at once.</p></div>`
+      + rosterCard();
+    wireRoster();
     return;
   }
   const gs=(S.p[rd.id]||[]), ng=Math.max(2, gs.length||2);
@@ -947,7 +998,10 @@ function renderPair(){
   h+=`</tbody></table>
     <p class="note" style="margin-top:8px"><b>${met}/36</b> pairs have played together, worst repeat <b>${worst}</b>. A red <b>0</b> is a pair who never meet; amber is four or more. The Sandbox is excluded because everyone plays it together.</p></div>`;
 
+  h+=rosterCard();
+
   $('#v-pair').innerHTML=h;
+  wireRoster();
 
   const apply=(a,n)=>{
     const groups=[]; for(let i=0;i<n;i++) groups.push([]);
@@ -1041,6 +1095,7 @@ async function pull(manual){
     if(remoteM >= localM){
       S = Object.assign({}, BLANK, r.state);
       dirty = false;
+      applyIdx();
       defaultPairings();
       save();
       syncBusy = false; renderSync(); render();
@@ -1108,6 +1163,7 @@ $('#nextR').addEventListener('click',()=>{ cur=Math.min(R.length-1,cur+1); rende
 /* ---------- Boot ---------- */
 (function(){
   load();
+  applyIdx();
   // Pick the round matching today's date if we are on the trip.
   const today=new Date(), y=today.getFullYear(), m=today.getMonth(), d=today.getDate();
   if(y===2026 && m===9 && d>=4 && d<=8){

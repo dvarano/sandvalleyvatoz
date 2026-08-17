@@ -42,6 +42,9 @@ quota self-corrects for tees automatically.
 |---|---|---|---|---|---|---|---|---|
 | 6 | 7 | 8 | 9 | 10 | 12 | 13 | 13 | 14 |
 
+These are the `BASE_IDX` fallback baked into the page. Confirmed values are edited in the app
+(Pairings tab) and published with the board — no code change needed. See §5.
+
 Array index order in the code is **0 Matt, 1 Drew, 2 Mike, 3 Tony, 4 Brook, 5 Eric, 6 Ryan,
 7 Paul, 8 Daniel**. The `BASE_GRID` constant uses these integers.
 
@@ -183,6 +186,7 @@ S = {
   p: { roundId: [[playerIdx,...], [playerIdx,...]] },// pairings
   o: { roundId: [playerIdx,...] },                   // sit-outs
   u: { roundId: 1 },                                 // rounds unlocked for auto-generate
+  i: { playerIdx: 11 },                              // confirmed indexes; absent = BASE_IDX
   m: 0,                                              // epoch ms of last user edit
   l: []                                              // legacy ledger, unused
 }
@@ -201,6 +205,8 @@ shape evolves. Preserve that when changing state.
 | Function | Does |
 |---|---|
 | `chcp(idx, tee)` / `quotaFor(idx, tee)` | course handicap and quota; `tee = [name, CR, slope, par]` |
+| `applyIdx()` | copies `S.i` onto `P[n].idx`. Run after every load/pull, **before `defaultPairings()`** |
+| `rosterCard()` / `wireRoster()` | the index editor on the Pairings tab |
 | `teeFor(rd, pi)` | that player's tee for that round, honoring per-player CR/slope overrides |
 | `results(pi)` / `standing(pi)` / `board()` | round results, drop-worst-average, sorted leaderboard with tiebreaks |
 | `commonsHcp(idx)` / `matchStrokes(a, b)` | the 65% rule and La Final stroke allocation |
@@ -242,7 +248,12 @@ without a page error.
 - [ ] **Tuesday's turn is tight.** Sedge at 8:30/8:40 finishing at the resort's 4:15 pace lands
       12:45–12:55 against a 12:50 Mammoth tee. Moving Tuesday's Sedge earlier is worth more than
       the extra tee times. (Wednesday is fine: 7:40 is a pre-8am speed slot, under 4 hours.)
-- [ ] **Confirm real handicap indexes.** All nine are placeholders.
+- [ ] **Confirm real handicap indexes.** All nine are still placeholders, but they no longer
+      need a code change: edit them on the **Pairings tab → Handicap indexes** and Publish.
+      The hardcoded `P` array is only the fallback. **Lock them before Monday** — round results
+      are recomputed from the current index, so editing one after a counting round rewrites
+      that round's result. Sunday doesn't count, which is why the committee's ±3 belongs
+      Sunday night.
 - [ ] **Verify the Commons stroke-index row** against the physical scorecard.
 - [ ] **Lido** — group is waitlisted for 2–8 golfers. If it lands, rounds shuffle; regenerate
       affected pairings.
@@ -302,8 +313,9 @@ Supabase/Firebase (proper, and overkill).
 ### Testing
 
 `verify.js` in the repo root (Playwright, GitHub API mocked via route interception) covers both
-modes, publish, the stale-SHA 409 retry, rate limiting, offline edit survival, and the pairing
-invariants — 31 assertions. Worth re-running after any change to the sync path.
+modes, publish, the stale-SHA 409 retry, rate limiting, offline edit survival, index editing and
+propagation, backward compatibility with pre-`i` links, and the pairing invariants — 47
+assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked

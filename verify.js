@@ -165,8 +165,87 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(inv.dp >= 2, 'Drew+Paul ' + inv.dp + ' >= 2');
   ok(inv.r5 === 'Drew' && inv.r7 === 'Paul', 'sit-outs intact (r5 ' + inv.r5 + ', r7 ' + inv.r7 + ')');
 
-  // every tab renders for the editor
   await p.context().close();
+
+  // ---- 8. Handicap indexes: edit, recalc, publish, propagate ---------------
+  console.log('\n[8] Handicap indexes');
+  repo = makeRepo();
+  p = await newPage(browser, 'github_pat_TEST');
+  await mockApi(p, repo);
+  await p.goto(URL); await settle(p);
+  await p.click('nav button[data-v="pair"]'); await p.waitForTimeout(300);
+
+  const before8 = await p.evaluate(() => ({
+    idx: P[0].idx,
+    quota: quotaFor(P[0].idx, teeFor(R[1], 0)),
+    commons: commonsHcp(P[0].idx)
+  }));
+  ok(before8.idx === 13, 'Matt starts on the placeholder 13 (got ' + before8.idx + ')');
+
+  await p.fill('[data-idx="0"]', '9');
+  await p.dispatchEvent('[data-idx="0"]', 'change');
+  await p.waitForTimeout(350);
+
+  const after8 = await p.evaluate(() => ({
+    idx: P[0].idx,
+    quota: quotaFor(P[0].idx, teeFor(R[1], 0)),
+    commons: commonsHcp(P[0].idx),
+    stateVal: S.i[0],
+    others: P.slice(1).map(x => x.idx)
+  }));
+  ok(after8.idx === 9, 'roster index updated to 9 (got ' + after8.idx + ')');
+  ok(after8.stateVal === 9, 'stored in S.i for publishing (got ' + after8.stateVal + ')');
+  // Quota does NOT track the index 1:1 — slope scales it. Woodlands Blue is
+  // 71.6/131 par 72, so 13->9 is 4 index strokes but 4.6 course-handicap
+  // strokes, which rounds to 5. Check against the formula, not a guessed delta.
+  const expect8 = await p.evaluate(() => {
+    const t = teeFor(R[1], 0);
+    return { at13: 36 - Math.round(13 * t[2] / 113 + (t[1] - t[3])),
+             at9:  36 - Math.round(9  * t[2] / 113 + (t[1] - t[3])) };
+  });
+  ok(before8.quota === expect8.at13 && after8.quota === expect8.at9,
+     'quota tracks the index through slope (' + before8.quota + '->' + after8.quota + ', expected ' + expect8.at13 + '->' + expect8.at9 + ')');
+  ok(after8.commons !== before8.commons, 'Commons 65% handicap recalculated (' + before8.commons + '->' + after8.commons + ')');
+  ok(JSON.stringify(after8.others) === JSON.stringify([7, 6, 13, 12, 10, 14, 8, 9]), 'other eight untouched');
+
+  await p.click('#pubBtn'); await settle(p);
+  ok(JSON.parse(repo.file).i['0'] === 9, 'index reached the published payload');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+
+  // reset returns to the baked-in placeholders
+  await p.click('#idxReset'); await p.waitForTimeout(350);
+  const reset8 = await p.evaluate(() => ({ idx: P[0].idx, keys: Object.keys(S.i).length }));
+  ok(reset8.idx === 13 && reset8.keys === 0, 'reset restores placeholders and clears S.i');
+  await p.context().close();
+
+  // ---- 9. Viewers receive published indexes --------------------------------
+  console.log('\n[9] Viewer picks up published indexes');
+  repo = makeRepo();
+  repo.file = JSON.stringify({ v: 1, s: {}, t: {}, p: {}, o: {}, u: {}, i: { 0: 9, 6: 11 }, m: Date.now(), l: [] });
+  repo.sha = 'sha1';
+  p = await newPage(browser);
+  await mockApi(p, repo);
+  await p.goto(URL); await settle(p);
+  const v9 = await p.evaluate(() => ({ matt: P[0].idx, ryan: P[6].idx, mike: P[2].idx }));
+  ok(v9.matt === 9 && v9.ryan === 11, 'viewer sees published indexes (Matt ' + v9.matt + ', Ryan ' + v9.ryan + ')');
+  ok(v9.mike === 6, 'unpublished players keep placeholders (Mike ' + v9.mike + ')');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
+  // ---- 10. Old links without the i key still work --------------------------
+  console.log('\n[10] Backward compatibility');
+  p = await newPage(browser);
+  await mockApi(p, makeRepo());
+  const legacy = Buffer.from(JSON.stringify({ v: 1, s: { r2: [30, null, null, null, null, null, null, null, null] }, t: {}, p: {}, o: {}, u: {}, l: [] }), 'utf8').toString('base64').replace(/=+$/, '');
+  await p.goto(URL + '#' + legacy); await settle(p);
+  const l10 = await p.evaluate(() => ({ idx: P.map(x => x.idx), score: S.s.r2 ? S.s.r2[0] : null, hasI: !!S.i }));
+  ok(JSON.stringify(l10.idx) === JSON.stringify([13, 7, 6, 13, 12, 10, 14, 8, 9]), 'legacy link falls back to placeholders');
+  ok(l10.score === 30, 'legacy link keeps its scores');
+  ok(l10.hasI, 'missing i key is backfilled');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
+  // every tab renders for the editor
   p = await newPage(browser, 'github_pat_TEST');
   await mockApi(p, makeRepo());
   await p.goto(URL); await settle(p);
