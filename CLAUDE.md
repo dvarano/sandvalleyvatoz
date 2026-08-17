@@ -23,7 +23,7 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | r2 | Mon 10/5 AM | Lawsonia Woodlands | 9:00 / 9:10 | Blue 71.6 / 131, par 72 | **Yes** | Six-Six-Six | Daniel |
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Brook |
-| r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Four-ball Nassau | one sits |
+| r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Four-ball Nassau | Drew |
 | r6 | Wed 10/7 AM | Sedge Valley | 7:40 / 7:50 | Back 68.7 / 130, par 68 | **Yes** | Nine Point / 6-6-6 | Tony |
 | r7 | Wed 10/7 PM | Sand Valley | 12:50 / 1:00 | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Paul |
 | r8 | Thu 10/8 AM | The Commons | 8:00 / 8:10 | 12 holes, par 45 | No — La Final | Match play | — |
@@ -216,9 +216,10 @@ without a page error.
 
 ## 5. Open items
 
-- [ ] **Who sits Mammoth (Tue PM).** Placeholder is Drew. Must be someone playing all other
-      rounds (see the corollary above). **Sand Valley (Wed PM) is settled: Paul sits** — he
-      plays every other round, so he drops from five counting rounds to four.
+- [x] **Who sits Mammoth (Tue PM) and Sand Valley (Wed PM).** Settled: **Drew sits Mammoth**
+      (he volunteered), **Paul sits Sand Valley**. Both play every other round, so both drop
+      from five counting rounds to four and the corollary above holds. Revisit only if the
+      third tee time lands (see below), which would make them moot.
 - [ ] **Ask Sand Valley for a third tee time** on those two rounds. Turns them into 3/3/3 so
       everyone plays, and threesomes walk faster.
 - [ ] **Tuesday's turn is tight.** Sedge at 8:30/8:40 finishing at the resort's 4:15 pace lands
