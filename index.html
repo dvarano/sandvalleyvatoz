@@ -149,6 +149,26 @@ nav button[aria-selected=true]{color:var(--ink-1);font-weight:600}
 .asgn span i{font-style:normal;color:var(--ink-3);font-size:12px}
 .asgn select{min-height:40px;font:inherit;font-size:13px;background:var(--plane);color:var(--ink-1);border:1px solid var(--ring);border-radius:8px;min-width:112px}
 .warn{color:var(--warn);font-weight:700}
+/* Sync strip: last-updated for everyone, publish controls for the organiser. */
+.syncbar{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:11.5px;color:var(--ink-3)}
+.syncbar .dot{width:7px;height:7px;border-radius:50%;background:var(--ink-3);flex:none}
+.syncbar .dot.ok{background:var(--pos)}
+.syncbar .dot.err{background:var(--neg)}
+.syncbar .dot.warn{background:var(--accent)}
+.syncbar .dot.sync{background:var(--accent);animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.syncbar #syncTxt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.syncbar button{
+  flex:none;min-height:28px;padding:0 9px;font:inherit;font-size:11.5px;font-weight:600;
+  background:var(--plane);color:var(--ink-1);border:1px solid var(--ring);border-radius:7px;
+}
+.syncbar button.pub{background:var(--accent);color:#fff;border-color:transparent}
+.syncbar button:disabled{opacity:.45}
+.tokrow{display:flex;gap:6px;margin-top:8px}
+.tokrow input{
+  flex:1;min-width:0;min-height:38px;font:inherit;font-size:13px;padding:0 8px;
+  background:var(--plane);color:var(--ink-1);border:1px solid var(--ring);border-radius:8px;
+}
 </style>
 </head>
 <body>
@@ -162,6 +182,12 @@ nav button[aria-selected=true]{color:var(--ink-1);font-weight:600}
     <button id="prevR" aria-label="Previous round">&#8249;</button>
     <select id="roundSel"></select>
     <button id="nextR" aria-label="Next round">&#8250;</button>
+  </div>
+  <div class="syncbar">
+    <span class="dot" id="syncDot"></span>
+    <span id="syncTxt">Loading&hellip;</span>
+    <button id="refreshBtn">Refresh</button>
+    <button id="pubBtn" class="pub hide">Publish</button>
   </div>
 </header>
 
@@ -288,9 +314,11 @@ function teeFor(rd, pi){
    t: tee choice  {roundId:[9 tee indexes]}
    p: pairings    {roundId:[[playerIdx...],[...]]}
    o: sit-outs    {roundId:[playerIdx...]}
+   m: modified    epoch ms of the last user edit — decides hash-vs-remote
    l: ledger      [[playerIdx, amount, "note"], ...]
 ------------------------------------------------------------- */
-let S = {v:1, s:{}, t:{}, p:{}, o:{}, u:{}, l:[]};
+const BLANK = {v:1, s:{}, t:{}, p:{}, o:{}, u:{}, m:0, l:[]};
+let S = Object.assign({}, BLANK);
 
 function encode(){
   try{ return btoa(unescape(encodeURIComponent(JSON.stringify(S)))).replace(/=+$/,''); }
@@ -300,7 +328,7 @@ function decode(h){
   try{
     const j = decodeURIComponent(escape(atob(h)));
     const o = JSON.parse(j);
-    if(o && o.v) return Object.assign({v:1,s:{},t:{},p:{},o:{},u:{},l:[]}, o);
+    if(o && o.v) return Object.assign({}, BLANK, o);
   }catch(e){}
   return null;
 }
@@ -308,10 +336,99 @@ function save(){
   const h = encode();
   history.replaceState(null,'', location.pathname + location.search + '#' + h);
 }
+/* Every genuine user edit goes through edit(), not save(). It stamps S.m so the
+   hash-vs-remote comparison on load has something to compare, and flags the
+   board as having unpublished changes. Boot-time seeding calls save() directly
+   so simply opening the page never looks like an edit. */
+let dirty = false;
+function edit(){ S.m = Date.now(); dirty = true; lastSyncErr = ''; save(); renderSync(); }
 function load(){
   const h = location.hash.replace(/^#/,'');
   if(h){ const o = decode(h); if(o){ S = o; return true; } }
   return false;
+}
+
+/* ---------- Remote save layer (GitHub contents API) ----------
+   The link still works and the hash is still written on every edit, so the app
+   is fully usable with no token and no signal. On top of that, whoever holds a
+   fine-grained token (contents:write, this repo only) can publish the board to
+   data.json, and everyone else reads it from the same URL.
+
+   Reads go through the contents API rather than the Pages URL or
+   raw.githubusercontent.com because those are CDN-cached for minutes, which
+   would feel broken when nine people refresh right after a round.
+
+   Unauthenticated reads are 60/hour PER IP — and on resort wifi the whole group
+   is behind one NAT, so that 60 is shared. Hence: refresh is manual, never
+   polled, and a 403 says so plainly instead of blanking the board.
+-------------------------------------------------------------- */
+const REPO = {owner:'dvarano', name:'sandvalleyvatoz', path:'data.json', branch:'main'};
+const TOKEN_KEY = 'copa_token';
+const API = `https://api.github.com/repos/${REPO.owner}/${REPO.name}/contents/${REPO.path}`;
+let remoteSha = null;
+
+/* localStorage is wrapped because the app is also meant to run inside sandboxes
+   that block it. If it throws, you simply get the read-only board. */
+function getToken(){ try{ return localStorage.getItem(TOKEN_KEY) || ''; }catch(e){ return ''; } }
+function setToken(t){
+  try{ if(t) localStorage.setItem(TOKEN_KEY, t); else localStorage.removeItem(TOKEN_KEY); return true; }
+  catch(e){ return false; }
+}
+function isEditor(){ return !!getToken(); }
+function b64(str){ return btoa(unescape(encodeURIComponent(str))); }
+function unb64(str){ return decodeURIComponent(escape(atob(str.replace(/\s/g,'')))); }
+
+function apiHeaders(){
+  const h = {'Accept':'application/vnd.github+json'};
+  const t = getToken(); if(t) h.Authorization = 'Bearer ' + t;
+  return h;
+}
+/* Rate limiting is detected from the response body, not the x-ratelimit-remaining
+   header: response headers are CORS-filtered, so the header is not reliably
+   readable from the page. The body message always is. */
+function rateLimited(r, body){
+  if(r.headers.get('x-ratelimit-remaining') === '0') return true;
+  try{ return /rate limit/i.test(JSON.parse(body).message || ''); }catch(e){ return false; }
+}
+async function remoteGet(){
+  let r;
+  try{
+    r = await fetch(API + '?ref=' + REPO.branch + '&cb=' + Date.now(), {headers:apiHeaders(), cache:'no-store'});
+  }catch(e){ throw new Error('no connection'); }
+  if(r.status === 404) return {missing:true};
+  if(r.status === 401) throw new Error('token rejected');
+  if(r.status === 403){
+    throw new Error(rateLimited(r, await r.text()) ? 'GitHub rate limit — wait a minute' : 'access denied');
+  }
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  const j = await r.json();
+  return {sha:j.sha, state:JSON.parse(unb64(j.content || ''))};
+}
+/* PUT needs the blob SHA of the file being replaced. A stale SHA (you published
+   from your phone, then from a laptop that still held the old one) comes back
+   409/422 — refetch and retry once. With a single editor the newest write
+   winning is the behaviour we want. */
+async function remotePut(){
+  for(let attempt = 0; attempt < 2; attempt++){
+    if(remoteSha === null){
+      const cur = await remoteGet();
+      remoteSha = cur.missing ? undefined : cur.sha;
+    }
+    const body = {
+      message: 'Board update — ' + new Date().toISOString().replace('T',' ').slice(0,16) + 'Z',
+      content: b64(JSON.stringify(S)),
+      branch: REPO.branch
+    };
+    if(remoteSha) body.sha = remoteSha;
+    let r;
+    try{ r = await fetch(API, {method:'PUT', headers:apiHeaders(), body:JSON.stringify(body)}); }
+    catch(e){ throw new Error('no connection'); }
+    if(r.ok){ const j = await r.json(); remoteSha = j.content.sha; return; }
+    if((r.status === 409 || r.status === 422) && attempt === 0){ remoteSha = null; continue; }
+    if(r.status === 401) throw new Error('token rejected');
+    if(r.status === 403) throw new Error('token lacks contents:write');
+    throw new Error('HTTP ' + r.status);
+  }
 }
 
 /* ---------- Sit-outs ---------- */
@@ -548,8 +665,9 @@ function renderEnter(){
       </div>
     </div>`;
   });
-  h+=`<button class="act" id="saveScores">Save &amp; copy link</button>
-      <p class="note" style="margin-top:8px">Saving rewrites the page link. Text that link to the group and everyone sees the live board.</p></div>`;
+  h+=`<button class="act" id="pubScores">Publish to the group</button>
+      <button class="act ghost" id="saveScores" style="margin-top:6px">Copy link instead</button>
+      <p class="note" style="margin-top:8px">Scores save on your device as you type. <b>Publish</b> pushes them to the shared board &mdash; everyone else just refreshes. No signal? Copy the link and text it as before.</p></div>`;
   $('#v-enter').innerHTML=h;
 
   const setTee=(pi,cr,sl)=>{
@@ -557,13 +675,13 @@ function renderEnter(){
     const base=list[0];
     if(+cr===base[1] && +sl===base[2]) S.t[rd.id][pi]=0;   // back to default, keep the URL small
     else S.t[rd.id][pi]=[+cr,+sl];
-    save(); renderEnter();
+    edit(); renderEnter();
   };
   $('#v-enter').querySelectorAll('[data-pts]').forEach(el=>el.addEventListener('input',()=>{
     const pi=+el.dataset.pts;
     if(!S.s[rd.id]) S.s[rd.id]=new Array(NP).fill(null);
     S.s[rd.id][pi] = el.value===''?null:(+el.value);
-    save(); renderEnterDelta();
+    edit(); renderEnterDelta();
   }));
   $('#v-enter').querySelectorAll('[data-preset]').forEach(el=>el.addEventListener('change',()=>{
     if(el.value==='c') return;
@@ -577,6 +695,7 @@ function renderEnter(){
     setTee(pi, cr, sl);
   }));
   const b=$('#saveScores'); if(b) b.addEventListener('click',copyLink);
+  const pb=$('#pubScores'); if(pb) pb.addEventListener('click',publish);
 }
 function renderEnterDelta(){
   const rd=R[cur], row=S.s[rd.id]||[];
@@ -727,13 +846,40 @@ function renderInfo(){
 
   h+=`<div class="card"><h2>Using this page</h2>
     <ul class="rules">
-      <li><b>The link is the save file.</b> Every save rewrites the page URL with the current state. Bookmark it after your first save, and text it to the group so everyone can see the board.</li>
-      <li><b>One scorekeeper.</b> If two people enter scores from different copies of the link, you get two different boards.</li>
-      <li>Enter nine numbers after each round on the <b>Enter</b> tab. No hole-by-hole. Quota is self-tallying, so everyone knows their own number walking off 18.</li>
+      <li><b>Bookmark this URL.</b> It does not change. Drew publishes the board after each round &mdash; hit <b>Refresh</b> at the top to pull the latest.</li>
+      <li>The header line tells you <b>when the board was last published</b>, so you always know whether you are looking at current numbers.</li>
+      <li><b>One scorekeeper.</b> Drew enters the scores; everyone else reads. Quota is self-tallying, so you know your own number walking off 18.</li>
+      <li>Refresh by hand rather than leaving it open &mdash; on shared wifi the whole group shares one GitHub rate limit.</li>
     </ul>
+    <p class="note" style="margin-top:10px"><a href="#" id="orgToggle" style="color:var(--accent)">Organiser access</a></p>
+    <div id="orgBox" class="hide">
+      <p class="note" style="margin-top:6px">Paste a fine-grained GitHub token (this repo only, <b>contents: read and write</b>). It is stored on this device only and never leaves it except to publish.</p>
+      <div class="tokrow">
+        <input type="password" id="tokIn" placeholder="github_pat_&hellip;" autocomplete="off" spellcheck="false">
+        <button class="act" id="tokSave" style="width:auto;padding:0 12px;margin:0">Save</button>
+      </div>
+      <p class="note" style="margin-top:6px" id="tokState"></p>
+    </div>
   </div>`;
 
   $('#v-info').innerHTML=h;
+
+  const box=$('#orgBox'), st=$('#tokState');
+  const showState=()=>{ st.innerHTML = isEditor()
+    ? 'Token stored on this device. <a href="#" id="tokClear" style="color:var(--accent)">Remove it</a>'
+    : 'No token on this device &mdash; read-only.';
+    const c=$('#tokClear');
+    if(c) c.addEventListener('click',e=>{ e.preventDefault(); setToken(''); $('#tokIn').value=''; showState(); applyMode(); render(); toast('Token removed'); });
+  };
+  showState();
+  $('#orgToggle').addEventListener('click',e=>{ e.preventDefault(); box.classList.toggle('hide'); });
+  $('#tokSave').addEventListener('click',()=>{
+    const v=$('#tokIn').value.trim();
+    if(!v){ toast('Paste a token first'); return; }
+    if(!setToken(v)){ toast('This browser blocks storage'); return; }
+    $('#tokIn').value=''; showState(); applyMode(); render();
+    toast('Token saved'); pull(true);
+  });
 }
 
 function renderPair(){
@@ -809,7 +955,7 @@ function renderPair(){
     a.forEach((g,pi)=>{ if(g<0||g>=n) out.push(pi); else groups[g].push(pi); });
     S.p[rd.id]=groups.map(g=>g.sort((x,y)=>P[x].idx-P[y].idx));
     S.o[rd.id]=out;
-    save(); renderPair(); renderToday();
+    edit(); renderPair(); renderToday();
   };
   $('#v-pair').querySelectorAll('[data-asg]').forEach(el=>el.addEventListener('change',()=>{
     const a=asg.slice(); a[+el.dataset.asg]=+el.value; apply(a,ng);
@@ -820,10 +966,10 @@ function renderPair(){
   const doGen=(seed)=>{
     const ids=playing(rd);
     S.p[rd.id]=generate(ids, sizesFor(ids.length,ng), historyUpTo(R.indexOf(rd)), seed);
-    save(); renderPair(); renderToday();
+    edit(); renderPair(); renderToday();
   };
   if(locked){
-    $('#unlock').addEventListener('click',()=>{ S.u[rd.id]=1; save(); renderPair(); });
+    $('#unlock').addEventListener('click',()=>{ S.u[rd.id]=1; edit(); renderPair(); });
   } else {
     $('#gen').addEventListener('click',()=>doGen(BASE_SEED));
     $('#reroll').addEventListener('click',()=>doGen(Math.floor(Math.random()*1e9)));
@@ -838,6 +984,104 @@ function copyLink(){
   if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(u).then(()=>toast('Link copied'),()=>toast('Saved. Copy from the address bar.'));
   } else toast('Saved. Copy from the address bar.');
+}
+
+/* ---------- Sync UI ---------- */
+function ago(ms){
+  if(!ms) return 'never';
+  const s = Math.max(0, Math.round((Date.now() - ms)/1000));
+  if(s < 45) return 'just now';
+  const m = Math.round(s/60);  if(m < 60) return m + ' min ago';
+  const h = Math.round(m/60);  if(h < 24) return h + ' hr' + (h>1?'s':'') + ' ago';
+  const d = Math.round(h/24);  return d + ' day' + (d>1?'s':'') + ' ago';
+}
+function setSync(state, msg, title){
+  const dot = $('#syncDot'), txt = $('#syncTxt');
+  if(!dot) return;
+  dot.className = 'dot' + (state ? ' ' + state : '');
+  txt.textContent = msg;
+  txt.title = title || '';
+}
+/* The header line everyone sees. Viewers get when the board was last published;
+   the organiser also gets the state of their own unpublished edits. */
+function renderSync(){
+  const pub = $('#pubBtn'); if(pub) pub.classList.toggle('hide', !isEditor());
+  if(syncBusy) return;
+  const when = S.m ? new Date(S.m).toLocaleString() : '';
+  /* Errors outrank the dirty flag: a failed publish IS unpublished changes, but
+     only the error tells you why, so it must not be masked by the milder note. */
+  if(lastSyncErr) setSync('err', lastSyncErr, '');
+  else if(isEditor() && dirty) setSync('warn', 'Unpublished changes', when);
+  else if(!S.m) setSync('', 'No board published yet', '');
+  else setSync('ok', 'Updated ' + ago(S.m), when);
+}
+let syncBusy = false, lastSyncErr = '';
+
+/* Pull the published board. Local unpublished edits are never clobbered, and a
+   hash newer than the remote copy (someone shared a link after the last
+   publish) wins too — otherwise opening a fresh link would silently roll back. */
+async function pull(manual){
+  if(syncBusy) return;
+  syncBusy = true; lastSyncErr = '';
+  setSync('sync', manual ? 'Refreshing…' : 'Checking…');
+  try{
+    const r = await remoteGet();
+    if(r.missing){
+      remoteSha = undefined; syncBusy = false;
+      lastSyncErr = isEditor() ? 'No board published yet — press Publish' : 'No board published yet';
+      renderSync(); return;
+    }
+    remoteSha = r.sha;
+    const remoteM = (r.state && r.state.m) || 0, localM = S.m || 0;
+    if(dirty && localM >= remoteM){
+      syncBusy = false; renderSync();
+      if(manual) toast('You have unpublished changes');
+      return;
+    }
+    if(remoteM >= localM){
+      S = Object.assign({}, BLANK, r.state);
+      dirty = false;
+      defaultPairings();
+      save();
+      syncBusy = false; renderSync(); render();
+      if(manual) toast('Board updated');
+      return;
+    }
+    syncBusy = false; renderSync();
+    if(manual) toast('Your copy is newer');
+  }catch(e){
+    syncBusy = false; lastSyncErr = e.message; renderSync();
+    if(manual) toast(e.message);
+  }
+}
+async function publish(){
+  if(!isEditor() || syncBusy) return;
+  syncBusy = true;
+  setSync('sync', 'Publishing…');
+  $('#pubBtn').disabled = true;
+  try{
+    S.m = Date.now(); save();
+    await remotePut();
+    dirty = false; lastSyncErr = '';
+    syncBusy = false; renderSync();
+    toast('Published');
+  }catch(e){
+    syncBusy = false; lastSyncErr = 'Publish failed — ' + e.message; renderSync();
+    toast('Publish failed');
+  }
+  $('#pubBtn').disabled = false;
+}
+/* Without a token the Enter and Pairings tabs are not rendered, so the other
+   eight get a clean read-only board on the same URL. This is tidiness, not
+   security — the real guard is that publishing needs the token, so an unhidden
+   tab only ever edits that person's own copy. */
+function applyMode(){
+  const ed = isEditor();
+  document.querySelectorAll('nav button').forEach(b=>{
+    if(b.dataset.v === 'enter' || b.dataset.v === 'pair') b.classList.toggle('hide', !ed);
+  });
+  if(!ed && (view === 'enter' || view === 'pair')) view = 'info';
+  renderSync();
 }
 function render(){
   renderRoundSel();
@@ -855,6 +1099,8 @@ document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()
   document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected', x===b?'true':'false'));
   window.scrollTo(0,0); render();
 }));
+$('#refreshBtn').addEventListener('click',()=>pull(true));
+$('#pubBtn').addEventListener('click',publish);
 $('#roundSel').addEventListener('change',e=>{ cur=+e.target.value; render(); });
 $('#prevR').addEventListener('click',()=>{ cur=Math.max(0,cur-1); render(); });
 $('#nextR').addEventListener('click',()=>{ cur=Math.min(R.length-1,cur+1); render(); });
@@ -874,7 +1120,10 @@ $('#nextR').addEventListener('click',()=>{ cur=Math.min(R.length-1,cur+1); rende
   defaultPairings();
   save();
   syncNav();
+  applyMode();
   render();
+  pull(false);                       // async; re-renders if the published board is newer
+  setInterval(renderSync, 60000);    // keeps "Updated 12 min ago" honest without polling GitHub
 })();
 </script>
 </body>

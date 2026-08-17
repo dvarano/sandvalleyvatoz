@@ -162,8 +162,14 @@ Today tab and the partner matrix.
 
 ## 4. The app
 
-Single self-contained `index.html`. No frameworks, no build, no external requests.
-**No localStorage** — deliberately, so it also runs inside the Claude artifact sandbox.
+Single self-contained `index.html`. No frameworks, no build, no bundled assets.
+The only network calls are to the GitHub contents API (§6), and they are optional —
+the app is fully usable offline with the URL-hash path alone.
+
+**localStorage is used for exactly one thing: the organiser's API token.** Every access
+is wrapped in try/catch, so in a sandbox that blocks storage the app degrades to the
+read-only board rather than breaking. Do not put app state there — the hash is the
+state, deliberately.
 
 ### State model
 
@@ -177,9 +183,15 @@ S = {
   p: { roundId: [[playerIdx,...], [playerIdx,...]] },// pairings
   o: { roundId: [playerIdx,...] },                   // sit-outs
   u: { roundId: 1 },                                 // rounds unlocked for auto-generate
+  m: 0,                                              // epoch ms of last user edit
   l: []                                              // legacy ledger, unused
 }
 ```
+
+`m` is what decides hash-versus-remote on load, so **it must only be stamped on genuine
+user edits**. That is why edits go through `edit()` and boot-time seeding calls `save()`
+directly — if simply opening the page stamped `m`, every viewer's untouched local copy
+would look newer than the published board and refuse to update.
 
 `decode()` fills missing keys with defaults, so **older shared links keep working** as the
 shape evolves. Preserve that when changing state.
@@ -196,6 +208,11 @@ shape evolves. Preserve that when changing state.
 | `generate(ids, sizes, hist, seed)` | seeded random-restart pairing search |
 | `defaultPairings()` | seeds `BASE_GRID`, falls back to `generate()` |
 | `isLocked(rd)` | true when the round has a baseline grid and isn't unlocked |
+| `save()` / `edit()` | `save()` writes the hash; `edit()` stamps `m`, flags dirty, then saves. **User edits call `edit()`** |
+| `remoteGet()` / `remotePut()` | contents API read / write; `remotePut` retries once on a stale-SHA 409 |
+| `pull(manual)` / `publish()` | fetch the published board (never clobbers unpublished edits) / push it |
+| `renderSync()` / `ago(ms)` | the last-updated header line and its relative-time formatting |
+| `applyMode()` | hides Enter and Pairings when there's no token |
 | `renderInfo / renderToday / renderEnter / renderStand / renderPair` | the five tabs |
 
 ### Tabs
@@ -233,27 +250,67 @@ without a page error.
 
 ---
 
-## 6. Planned next step — real hosting with a save layer
+## 6. The save layer — BUILT
 
-Currently on GitHub Pages with state in the URL. That works but means texting a long link after
-every update. The plan:
+One URL for everyone. The page reads `data.json` from the **repo contents API**; whoever holds
+a token can publish to it. No more texting a link after every round.
 
-1. Keep the static page on Pages.
-2. Drew holds a **fine-grained GitHub token** scoped to this repo with contents:write, kept in
-   `localStorage` (fine on a real hosted page).
-3. Save does a `PUT` to the **repo contents API**, committing `data.json`.
-4. **Readers fetch through the contents API, not the Pages URL or `raw.githubusercontent.com`** —
-   those are CDN-cached for up to ~10 minutes, which will feel broken when everyone refreshes
-   after a round. Unauthenticated API is 60 req/hour per IP, plenty for nine phones.
-5. The page checks for a token on load and **hides the Enter and Pairings tabs without one**, so
-   the other eight get a clean read-only board on the same URL.
+### Setup — Drew, once, before the trip
 
-Migration is small: everything already funnels through `save()` and `load()`, so it's roughly
-40 lines. The quota math, standings rule and pairing engine are untouched. Keep the URL-hash
-path working as a fallback.
+1. GitHub → Settings → Developer settings → **Fine-grained personal access tokens** → Generate.
+2. Repository access: **only `dvarano/sandvalleyvatoz`**. Permissions: **Contents → Read and write**.
+   Nothing else.
+3. Expiry: set it past the trip (e.g. 30 Nov 2026). Fine-grained tokens must have one.
+4. Open the site → **Info tab → "Organiser access"** → paste → Save.
 
-Alternatives considered: Cloudflare Workers + KV (faster, no token in the browser, but a second
-service), and Supabase/Firebase (proper, and overkill for nine guys and five rounds).
+The token lives in `localStorage` on that device only. **It is per-device-per-browser** — paste
+it again on the laptop if you'll score from both. It is never committed and never in the URL.
+It publishes to one repo, so the worst case if it leaks is a defaced golf site.
+
+### How the two modes work
+
+| | Token present | No token |
+|---|---|---|
+| Tabs | all five | Info, Today, Standings |
+| Header | last-updated + Refresh + **Publish** | last-updated + Refresh |
+| Writes | local hash *and* `data.json` | local hash only, never shared |
+
+Hiding the two tabs is **cosmetic, not a security boundary** — anyone can unhide them in dev
+tools. The real guard is that publishing needs the token, so an unhidden tab only ever edits
+that person's own copy, which vanishes on refresh. Don't "harden" the hiding; it isn't the point.
+
+### Decisions worth not re-litigating
+
+- **Explicit Publish, not autosave.** `save()` fires on every keystroke. Auto-pushing would mean
+  a commit per keystroke — unreadable history, and it would burn the rate limit. Publish also
+  means a half-entered round never shows up as the live leaderboard.
+- **The hash stays the local write path, always.** Sand Valley is rural Wisconsin and scores get
+  entered on one bar of signal. `edit()` writes the hash synchronously first, so a failed publish
+  can never lose a round. Verified by test: score survives a publish against a dead network.
+- **Reads go through the contents API**, not Pages or `raw.githubusercontent.com` — those are
+  CDN-cached for minutes and would feel broken when nine people refresh after a round.
+- **Refresh is manual, never polled.** Unauthenticated reads are 60/hour *per IP*, and on resort
+  wifi the whole group is behind one NAT — so that 60 is shared. Polling would blow it.
+- **Rate limiting is detected from the response body, not the `x-ratelimit-remaining` header**,
+  which is CORS-filtered and not reliably readable from the page.
+- **On conflict, newer `m` wins**, and unpublished local edits are never clobbered by a pull.
+
+Alternatives considered: Cloudflare Workers + KV (better on every axis — no browser token, no
+rate limit, no SHA dance — but a second service to stand up for nine guys and five rounds), and
+Supabase/Firebase (proper, and overkill).
+
+### Testing
+
+`verify.js` in the repo root (Playwright, GitHub API mocked via route interception) covers both
+modes, publish, the stale-SHA 409 retry, rate limiting, offline edit survival, and the pairing
+invariants — 31 assertions. Worth re-running after any change to the sync path.
+
+```
+npm i playwright && node verify.js      # no token and no network needed; the API is mocked
+```
+
+It drives the real `index.html` from disk, so it catches render regressions too. If Chromium
+isn't on the default path, set `executablePath` at the top of the file.
 
 ---
 
