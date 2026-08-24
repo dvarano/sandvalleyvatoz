@@ -118,6 +118,11 @@ extraction was garbled (summed to 47 against a stated par of 45), so the index r
 ### Money
 
 - **La Copa:** $150 each × 9 = $1,350, paying $700 / $350 / $300. Funds exactly at nine.
+  `PRIZES` and `ENTRY_FEE` in the code are the **single source** for every figure shown — the
+  pool table, the La Final cards, the Info tab and Thursday's match rules all read from them.
+  They are declared above `R` so the round definitions can quote them. Change the constant,
+  never a displayed number: the two drifted apart once and the app quoted $500/$300/$200 on
+  Thursday against $700/$350/$300 everywhere else.
   At eight buy-ins you'd be $150 short — scale the prizes or have the eight cover it.
 - **Each round can have its own money game inside the foursome.** These do not interfere with
   the Copa **as long as everyone plays their own ball**. All the suggested formats respect

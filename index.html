@@ -250,6 +250,11 @@ const TEES = {
 };
 
 /* ---------- The 8 rounds ---------- */
+/* La Copa money. Defined above R so the La Final round can quote these directly
+   rather than repeating the figures — they drifted apart once already. */
+const ENTRY_FEE = 150;
+const PRIZES = [700, 350, 300];
+
 const R = [
  {id:'r1', day:'Sun Oct 4', sd:'Sun 10/4', when:'PM', course:'Lawsonia Links', sc:'Links', key:'links',      tees:'1:40 / 1:50',
   counts:false, tag:'El Qualifier', game:'Bingo Bango Bongo', out:[8], ng:2, pin:true,
@@ -289,12 +294,10 @@ const R = [
  {id:'r8', day:'Thu Oct 8', sd:'Thu 10/8', when:'AM', course:'The Commons', sc:'Commons', key:'commons',    tees:'8:00 / 8:10',
   counts:false, tag:'La Final', game:'Match play', out:[], ng:2, binding:true,
   rules:['12 holes, par 45, 3,417 from the back tees.','8:00 &mdash; top 4 seeds. 8:10 &mdash; El Toilet Bowl.','Not USGA rated, so no quota here. Match strokes use the scorecard&rsquo;s own 65% rule.'],
-  gamerules:['Match A: Seed 1 v Seed 2 for $500 / $300.','Match B: Seed 3 v Seed 4 for $200 / nothing.','Seeds 1 and 3 start 1 UP. All square after 12 &rarr; higher seed wins.']}
+  gamerules:[`Match A: Seed 1 v Seed 2 for $${PRIZES[0]} / $${PRIZES[1]}.`,`Match B: Seed 3 v Seed 4 for $${PRIZES[2]} / nothing.`,'Seeds 1 and 3 start 1 UP. All square after 12 &rarr; higher seed wins.']}
 ];
 
 const COUNTING = R.filter(r=>r.counts).map(r=>r.id);
-const ENTRY_FEE = 150;
-const PRIZES = [700, 350, 300];
 
 /* The Commons is not USGA rated (you cannot post a score there), so there is no
    slope or course rating to run through the normal formula. The scorecard itself
