@@ -826,8 +826,8 @@ function renderInfo(){
 
   h+=`<div class="card">
     <p class="hero" style="font-size:22px">${TRIP_NAME}</p>
-    <p class="sub">Sand Valley &amp; Lawsonia &middot; October 4&ndash;8, 2026 &middot; nine Vatoz, eight rounds</p>
-    <p class="note" style="margin-top:10px">One individual competition runs the whole trip. Every round can also have its own team game or bets within the foursome. As long as everyone plays their own ball, it won&rsquo;t interfere with the trip competition.</p>
+    <p class="sub">Sand Valley &amp; Lawsonia &middot; October 4&ndash;8, 2026 &middot; Nine Vatoz, eight rounds</p>
+    <p class="note" style="margin-top:10px">One individual competition spans the whole trip. Every round can also have its own team game and bets within the foursome. As long as everyone plays their own ball, it won&rsquo;t interfere with the trip-wide competition.</p>
   </div>`;
 
   h+=`<div class="card"><h2>The competition &mdash; the quota game</h2>
@@ -840,7 +840,7 @@ function renderInfo(){
       <tr><td style="text-align:left">Double or worse</td><td><b>0</b></td></tr>
     </tbody></table>
     <p class="note" style="margin-top:10px">Your result for the round is <b>points minus quota</b>. Beat your number and you are positive. Because the double-bogey floor is zero, <b>pick up</b> once a hole is gone &mdash; it costs you nothing and Sand Valley enforces a 4:15 pace.</p>
-    <p class="note" style="margin-top:8px"><b>Default tees are listed</b> on the Today tab, but the quota target will be adjusted if different tees are played. Rating and slope are editable per player on the Enter tab.</p>
+    <p class="note" style="margin-top:8px"><b>Default tees are listed</b> on the Today tab, but the quota target will be adjusted if different tees are played.</p>
   </div>`;
 
   h+=`<div class="card"><h2>What counts</h2>
@@ -856,7 +856,6 @@ function renderInfo(){
   h+=`<div class="card"><h2>How standings work</h2>
     <p class="note"><b>Everyone drops their worst round (El Mulligan), then averages the rest.</b> Play five, average your best four. Play four, average your best three.</p>
     <p class="note" style="margin-top:8px">This exists because the round counts are uneven and cannot be made even: five counting rounds &times; eight tee-time slots is 40 player-rounds for nine players, so four of you play five rounds and five of you play four. Counting a fixed number instead would hand the five-round players a free discard the four-round players never get, worth over a point a round. Dropping one each way removes almost all of it.</p>
-    <p class="note" style="margin-top:8px"><b>Corollary:</b> whoever sits Mammoth or Sand Valley must be someone playing all other rounds.</p>
   </div>`;
 
   h+=`<div class="card"><h2>Seeding &amp; La Final</h2>
@@ -888,7 +887,6 @@ function renderInfo(){
       <li><b>Bookmark this URL.</b> It does not change. Drew publishes the board after each round &mdash; hit <b>Refresh</b> at the top to pull the latest.</li>
       <li>The header line tells you <b>when the board was last published</b>, so you always know whether you are looking at current numbers.</li>
       <li><b>One scorekeeper.</b> Drew enters the scores; everyone else reads. Quota is self-tallying, so you know your own number walking off 18.</li>
-      <li>Refresh by hand rather than leaving it open &mdash; on shared wifi the whole group shares one GitHub rate limit.</li>
     </ul>
     <p class="note" style="margin-top:10px"><a href="#" id="orgToggle" style="color:var(--accent)">Organiser access</a></p>
     <div id="orgBox" class="hide">
