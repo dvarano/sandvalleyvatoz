@@ -114,9 +114,21 @@ quota. The scorecard itself prescribes **65% of your handicap** for match alloca
 12 holes. Commons handicaps: Mike 4, Drew 5, Paul 5, Daniel 6, Eric 7, Brook 8, Matt 8, Tony 8,
 Ryan 9. Match strokes are the difference, given to the higher handicap.
 
-Stroke holes hardest-first: `[12, 9, 4, 10, 3, 11, 2, 6, 5, 8, 1, 7]`. **Read off the published
-scorecard PDF and worth verifying against the physical card** — the par row in the same
-extraction was garbled (summed to 47 against a stated par of 45), so the index row may be off too.
+**VERIFIED against the physical scorecard.** The HANDICAP row, per hole 1..12, is
+`COMMONS_SI = [11, 7, 5, 3, 9, 1, 8, 12, 10, 2, 4, 6]`, stored verbatim in the code with the
+hardest-first order **derived** from it rather than transcribed:
+`[6, 10, 4, 11, 3, 12, 2, 7, 5, 9, 1, 8]`.
+
+The earlier hand-transcription `[12, 9, 4, 10, 3, 11, 2, 6, 5, 8, 1, 7]` was **wrong in ten of
+twelve positions** and is now corrected. The suspicion recorded here was right. The par row,
+however, is fine: the card reads 5-3-4-4-3-4 / 4-3-4-4-3-4 and sums to exactly 45 — the "47"
+came from the bad PDF extraction, not the card.
+
+Checks that confirm the transcription (re-run these if anyone re-enters it): par sums to **45**;
+back/middle/forward yardages sum to **3,417 / 3,027 / 2,584**, each matching its printed total;
+and the indexes are a clean permutation of 1..12. Card also confirms the 65% rule directly —
+its HANDICAP CONVERSION box runs PLAYER → HI → 65% → MATCH HDCP → STROKE ALLOC — and states the
+holes are not USGA rated, so no score can be posted. Architect Jimmy Craig, est. 2026.
 
 ### Money
 
@@ -264,7 +276,8 @@ without a page error.
       are recomputed from the current index, so editing one after a counting round rewrites
       that round's result. Sunday doesn't count, which is why the committee's ±3 belongs
       Sunday night.
-- [ ] **Verify the Commons stroke-index row** against the physical scorecard.
+- [x] **Verify the Commons stroke-index row** against the physical scorecard. Done — the old row
+      was wrong in ten of twelve positions and is corrected. See §2.
 - [ ] **Lido** — group is waitlisted for 2–8 golfers. If it lands, rounds shuffle; regenerate
       affected pairings.
 - [ ] Confirm Brook's and Tony's exact skip rounds, and Ryan/Paul/Eric/Daniel's round plans.

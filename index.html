@@ -306,7 +306,17 @@ const COUNTING = R.filter(r=>r.counts).map(r=>r.id);
    slope or course rating to run through the normal formula. The scorecard itself
    prescribes 65% of your handicap for match allocation over the 12 holes. */
 const COMMONS_PCT = 0.65;
-const COMMONS_STROKE_HOLES = [12,9,4,10,3,11,2,6,5,8,1,7]; // holes, hardest first
+/* The HANDICAP row exactly as printed on the Commons scorecard: stroke index for
+   holes 1..12. Stored verbatim so it can be checked against the card at a glance,
+   with the hardest-first order derived rather than transcribed by hand — an
+   earlier hand-transcription was wrong in every position but two.
+   Verified against the physical card: par sums to 45, the back/middle/forward
+   yardages sum to 3417/3027/2584, and the indexes are a clean 1..12. */
+const COMMONS_SI = [11,7,5,3,9,1, 8,12,10,2,4,6];
+const COMMONS_STROKE_HOLES = COMMONS_SI
+  .map((si, i) => [si, i + 1])
+  .sort((a, b) => a[0] - b[0])
+  .map(x => x[1]);                                   // holes, hardest first
 function commonsHcp(idx){ return Math.round(COMMONS_PCT*idx); }
 
 /* ---------- Golf math ---------- */
