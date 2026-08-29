@@ -254,6 +254,9 @@ const TEES = {
    rather than repeating the figures — they drifted apart once already. */
 const ENTRY_FEE = 150;
 const PRIZES = [700, 350, 300];
+/* All-square rule, quoted by La Final's card, the Today tab and the Info tab.
+   Single source: these three drifted apart once. */
+const ALL_SQUARE = 'split the prizes, or agree on a playoff, chip-off or putt-off';
 
 const R = [
  {id:'r1', day:'Sun Oct 4', sd:'Sun 10/4', when:'PM', course:'Lawsonia Links', sc:'Links', key:'links',      tees:'1:40 / 1:50',
@@ -294,7 +297,7 @@ const R = [
  {id:'r8', day:'Thu Oct 8', sd:'Thu 10/8', when:'AM', course:'The Commons', sc:'Commons', key:'commons',    tees:'8:00 / 8:10',
   counts:false, tag:'La Final', game:'Match play', out:[], ng:2, binding:true,
   rules:['12 holes, par 45, 3,417 from the back tees.','8:00 &mdash; top 4 seeds. 8:10 &mdash; El Toilet Bowl.','Not USGA rated, so no quota here. Match strokes use the scorecard&rsquo;s own 65% rule.'],
-  gamerules:[`Match A: Seed 1 v Seed 2 for $${PRIZES[0]} / $${PRIZES[1]}.`,`Match B: Seed 3 v Seed 4 for $${PRIZES[2]} / nothing.`,'Seeds 1 and 3 start 1 UP. All square after 12 &rarr; higher seed wins.']}
+  gamerules:[`Match A: Seed 1 v Seed 2 for $${PRIZES[0]} / $${PRIZES[1]}.`,`Match B: Seed 3 v Seed 4 for $${PRIZES[2]} / nothing.`,`Seeds 1 and 3 start 1 UP. All square after 12 &rarr; ${ALL_SQUARE}.`]}
 ];
 
 const COUNTING = R.filter(r=>r.counts).map(r=>r.id);
@@ -792,7 +795,7 @@ function renderStand(){
       <div class="seedrow"><div class="seedno">3</div><div style="flex:1">${q[2].name}</div><div class="pill">1 UP</div></div>
       <div class="seedrow"><div class="seedno">4</div><div style="flex:1">${q[3].name}</div></div></div>
       <p class="note">${matchStrokes(q[0],q[1])}<br>${matchStrokes(q[2],q[3])}</p>
-      <p class="note" style="margin-top:6px">12 holes. The Commons is not USGA rated, so strokes come off the scorecard&rsquo;s 65% rule rather than a course handicap. All square after 12 &rarr; split the prizes, or agree on a playoff, chip-off or putt-off.</p>`;
+      <p class="note" style="margin-top:6px">12 holes. The Commons is not USGA rated, so strokes come off the scorecard&rsquo;s 65% rule rather than a course handicap. All square after 12 &rarr; ${ALL_SQUARE}.</p>`;
     const rest=rows.filter(r=>q.indexOf(r)<0).map(r=>r.name);
     h+=`<p class="note" style="margin-top:8px"><b>El Toilet Bowl (8:10):</b> ${rest.join(', ')}</p>`;
   }
@@ -866,7 +869,7 @@ function renderInfo(){
       <li><b>Sunday at Lawsonia</b> is warmup only. It does not award points. It sets adjusted indexes (the committee may move any index &plusmn;3 before Monday) and it is the <b>first tiebreak</b> for seeding. Second tiebreak is your best single round.</li>
       <li><b>Top 4 after Wednesday</b> tee at 8:00 Thursday at the Commons.</li>
       <li>Seed 1 v Seed 2 for <b>$${PRIZES[0]} / $${PRIZES[1]}</b>. Seed 3 v Seed 4 for <b>$${PRIZES[2]}</b>.</li>
-      <li><b>Seeds 1 and 3 start 1 up.</b> All square after 12 &rarr; split the prizes, or agree on a playoff, chip-off or putt-off.</li>
+      <li><b>Seeds 1 and 3 start 1 up.</b> All square after 12 &rarr; ${ALL_SQUARE}.</li>
       <li>The Commons is not USGA rated, so there is no quota and no course handicap. Strokes come off the scorecard&rsquo;s own <b>65% of index</b> rule, allocated hardest hole first.</li>
       <li>Everyone else plays <b>El Toilet Bowl</b> at 8:10.</li>
     </ul>

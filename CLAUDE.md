@@ -103,6 +103,9 @@ twice breaks the symmetry the rule depends on.
 - Match A: Seed 1 v Seed 2 for **$700 / $350**. Match B: Seed 3 v Seed 4 for **$300**.
 - **Seeds 1 and 3 start 1 up.**
 - All square after 12 → split the prizes, or agree on a playoff / chip-off / putt-off.
+  `ALL_SQUARE` in the code is the single source for this line — La Final's card, the Today
+  tab and the Info tab all quote it. They drifted once, with Thursday saying "higher seed
+  wins" against "split the prizes" everywhere else.
 
 ### The Commons is a special case
 
