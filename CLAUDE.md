@@ -183,10 +183,15 @@ holes are not USGA rated, so no score can be posted. Architect Jimmy Craig, est.
 |---|---|---|
 | r1 Links (pinned) | Mike, Drew, Paul, Tony | Eric, Brook, Matt, Ryan |
 | r2 SV / Mammoth | **Sand Valley 10:10** — Drew, Brook, Tony, Ryan | **Mammoth 10:30** — Mike, Paul, Eric, Matt |
-| r4 Sedge (Tue) | Paul, Daniel, Matt, Ryan | Mike, Drew, Eric, Tony |
+| r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Tony | **8:40** — Paul, Daniel, Matt, Ryan |
 | r5 Mammoth | Mike, Paul, Brook, Ryan | Daniel, Eric, Matt, Tony |
 | r6 Sedge (Wed) | Mike, Daniel, Eric, Ryan | Drew, Paul, Brook, Matt |
 | r7 Sand Valley | Paul, Eric, Tony, Ryan | Drew, Daniel, Brook, Matt |
+
+**Group order matters on the non-split rounds.** Group 1 tees first — the Today tab reads the
+two times straight off `rd.tees`. Drew's foursome is group 1 on Tuesday morning (8:30) by
+request. Swapping the two groups in `BASE_GRID` changes only who tees when; membership, pair
+counts and the pins are all order-independent.
 
 **Pinned by request — do not lose these when regenerating:**
 - **r1 Sunday** must have **Drew with Mike** and **Drew with Paul** and **Eric with Brook**.
