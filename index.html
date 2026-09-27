@@ -260,19 +260,19 @@ const ALL_SQUARE = 'split the prizes, or agree on a playoff, chip-off or putt-of
 
 const R = [
  {id:'r1', day:'Sun Oct 4', sd:'Sun 10/4', when:'PM', course:'Lawsonia Links', sc:'Links', key:'links',      tees:'1:40 / 1:50',
-  counts:false, backup:true, tag:'El Qualifier', game:'Bingo Bango Bongo', out:[8], ng:2, pin:true,
+  counts:false, backup:true, tag:'El Qualifier', game:'Six-Six-Six', out:[8], ng:2, pin:true,
   rules:['Warmup round. Everyone posts a gross score.','Committee (Drew + Matt) may adjust any index &plusmn;3 before Monday.','Does not count for Copa points. Sunday finish is the FIRST tiebreak for seeding.'],
-  gamerules:['Points per hole: first on green, closest once all are on, first in the hole.','Order of play is honest &mdash; furthest away goes first.','No handicap math. Everyone still plays their own ball.']},
+  gamerules:['Partners rotate every 6 holes so each player partners each other player.','Holes 1&ndash;6, 7&ndash;12, 13&ndash;18. Best ball each segment.','Fresh money each segment.']},
 
  {id:'r2', day:'Mon Oct 5', sd:'Mon 10/5', when:'AM', course:'Sand Valley / Mammoth', sc:'SV / Mammoth', key:'sandvalley',  tees:'10:10 / 10:30',
-  counts:true, tag:'Copa Round 1', game:'Six-Six-Six', out:[8], ng:2,
+  counts:true, tag:'Copa Round 1', game:'Nassau: front, back, total', out:[8], ng:2,
   /* Split round: the two groups play different courses. Everything per player —
      tee, course handicap, quota — resolves through legOf() below, so the split
      costs nobody anything. */
   split:[{key:'sandvalley', course:'Sand Valley', tee:'10:10'},
          {key:'mammoth',    course:'Mammoth Dunes', tee:'10:30'}],
   rules:['Counts for La Copa. Daniel sits.','Two courses: Group 1 at Sand Valley 10:10, Group 2 at Mammoth Dunes 10:30.','Your quota follows whichever course you play.'],
-  gamerules:['Partners rotate every 6 holes so each player partners each other player.','Holes 1&ndash;6, 7&ndash;12, 13&ndash;18. Best ball each segment.','Fresh money each segment.']},
+  gamerules:['2v2 better ball. Three separate bets: front nine, back nine, total.','Automatic press at 2 down.','Settle inside your own foursome &mdash; the two groups are on different courses.']},
 
  {id:'r3', day:'Mon Oct 5', sd:'Mon 10/5', when:'PM', course:'The Sandbox', sc:'Sandbox', key:'sandbox',    tees:'4:54 / 5:18',
   counts:false, tag:'Side Pot', game:'Gross skins + CTP', out:[], ng:2,

@@ -19,8 +19,8 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 
 | # | Day | Course | Tee times | Default tee | Counts? | Format idea | Out |
 |---|---|---|---|---|---|---|---|
-| r1 | Sun 10/4 PM | Lawsonia Links | 1:40 / 1:50 | White 72.0 / 133, par 72 | Backup only | Bingo Bango Bongo | Daniel |
-| r2 | Mon 10/5 AM | **Sand Valley / Mammoth (split)** | 10:10 / 10:30 | SV Orange 72.8/138 · Mammoth Orange 72.1/136 | **Yes** | Six-Six-Six | Daniel |
+| r1 | Sun 10/4 PM | Lawsonia Links | 1:40 / 1:50 | White 72.0 / 133, par 72 | Backup only | Six-Six-Six | Daniel |
+| r2 | Mon 10/5 AM | **Sand Valley / Mammoth (split)** | 10:10 / 10:30 | SV Orange 72.8/138 · Mammoth Orange 72.1/136 | **Yes** | Nassau (front/back/total) | Daniel |
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Brook |
 | r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Four-ball Nassau | Drew |
@@ -172,6 +172,12 @@ holes are not USGA rated, so no score can be posted. Architect Jimmy Craig, est.
   the Copa **as long as everyone plays their own ball**. All the suggested formats respect
   that; a scramble or alternate shot would break it.
 - **The Sandbox** is its own pot: gross skins with carryovers plus CTP on all 17. No handicaps.
+
+**Format ideas (Sep 2026).** Bingo Bango Bongo is dropped entirely. Sunday is Six-Six-Six, Monday
+is Nassau (front / back / total), Tuesday morning stays Wolf. `rd.game` is rendered through
+`esc()`, so it must be **plain text — no HTML entities**; `rd.gamerules` is not escaped and may
+use them. Two games now repeat later in the week: Nassau again on Tuesday PM (r5) and Six-Six-Six
+inside r6's "Nine Point / Six-Six-Six". Left as-is — they are suggestions, not fixtures.
 
 ---
 
