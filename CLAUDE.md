@@ -23,7 +23,7 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | r2 | Mon 10/5 AM | **Sand Valley / Mammoth (split)** | 10:10 / 10:30 | SV Orange 72.8/138 · Mammoth Orange 72.1/136 | **Yes** | Nassau (front/back/total) | Daniel |
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Brook |
-| r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Four-ball Nassau | Drew |
+| r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Gross skins | Drew |
 | r6 | Wed 10/7 AM | Sedge Valley | 7:40 / 7:50 | Back 68.7 / 130, par 68 | **Yes** | Nine Point / 6-6-6 | Tony |
 | r7 | Wed 10/7 PM | Sand Valley | 12:50 / 1:00 | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Mike |
 | r8 | Thu 10/8 AM | The Commons | 8:00 / 8:10 | 12 holes, par 45 | No — La Final | Match play | — |
@@ -174,10 +174,17 @@ holes are not USGA rated, so no score can be posted. Architect Jimmy Craig, est.
 - **The Sandbox** is its own pot: gross skins with carryovers plus CTP on all 17. No handicaps.
 
 **Format ideas (Sep 2026).** Bingo Bango Bongo is dropped entirely. Sunday is Six-Six-Six, Monday
-is Nassau (front / back / total), Tuesday morning stays Wolf. `rd.game` is rendered through
-`esc()`, so it must be **plain text — no HTML entities**; `rd.gamerules` is not escaped and may
-use them. Two games now repeat later in the week: Nassau again on Tuesday PM (r5) and Six-Six-Six
-inside r6's "Nine Point / Six-Six-Six". Left as-is — they are suggestions, not fixtures.
+is Nassau (front / back / total), Tuesday morning stays Wolf, Tuesday afternoon is **gross skins**
+— it was a second Nassau, identical to Monday's, until this was spotted. Skins now appears on one
+18-hole round; the Sandbox (r3) is a separate pot on 17 par 3s, not a duplicate.
+
+**Mammoth's skins are gross, deliberately.** The app carries no hole-by-hole stroke indexes — that
+is the whole reason the Copa is quota rather than net Stableford (§2) — so net skins would need
+data nobody has. Same basis as the Sandbox.
+
+`rd.game` is rendered through `esc()`, so it must be **plain text — no HTML entities**;
+`rd.gamerules` is not escaped and may use them. Six-Six-Six still appears twice: Sunday, and
+inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are suggestions.
 
 ---
 
