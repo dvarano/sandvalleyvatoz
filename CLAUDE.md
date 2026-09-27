@@ -360,6 +360,13 @@ S = {
 }
 ```
 
+**The hash is written stripped, like a publish** (Sep 2026): rounds still matching `BASE_GRID`
+are left out of `p`, and a `g` stamp (hash of `BASE_GRID`) is added. On load, a hash whose `g`
+differs from the running grid drops its `p` entirely. Before this, reload kept the hash, the hash
+carried the whole old grid, and `defaultPairings()` saw `S.p` already filled — so a reload showed
+last week's pairings until the tab was closed and the URL retyped. Published hand edits come back
+with the pull; only an *unpublished* local pairing edit is lost across a code update.
+
 `m` is what decides hash-versus-remote on load, so **it must only be stamped on genuine
 user edits**. That is why edits go through `edit()` and boot-time seeding calls `save()`
 directly — if simply opening the page stamped `m`, every viewer's untouched local copy
@@ -487,6 +494,18 @@ that person's own copy, which vanishes on refresh. Don't "harden" the hiding; it
   still match `BASE_GRID`; hand-edited rounds are published as-is. **If you change `BASE_GRID`,
   that is enough — do not also hand-write `data.json`.**
 
+- **Open tabs pick up code updates themselves** (Sep 2026). Pages serves `index.html` with a
+  10-minute cache and Safari holds it longer, so a code change (new pairings) would not show on
+  reload. `checkForUpdate()` fetches `location.pathname?cb=<now>` with `no-store` — the Pages URL,
+  **not** the API, so it costs nothing against the 60/hour limit — hashes the fetched inline script
+  and compares it with `BUILD`, the hash of the script actually running. On a mismatch it
+  `location.replace`s onto `?v=<build>`, a URL neither Safari nor the CDN has cached, keeping the
+  hash. Runs at boot, on Refresh, when the tab becomes visible, and on a bfcache restore; throttled
+  to once per 30s. **Loop guard:** if `?v=` already names the fresh build, it never redirects again.
+  **Unpublished edits hold the reload back** (toast instead). There is no manual build number to
+  bump — the version is derived from the script text, so any code change counts. Only runs on
+  http(s), so the file:// test path is unaffected. Covered by verify.js §15.
+
 Alternatives considered: Cloudflare Workers + KV (better on every axis — no browser token, no
 rate limit, no SHA dance — but a second service to stand up for nine guys and five rounds), and
 Supabase/Firebase (proper, and overkill).
@@ -498,8 +517,8 @@ modes, publish, the stale-SHA 409 retry, rate limiting, offline edit survival, i
 propagation, backward compatibility with pre-`i` links, the baseline-grid freeze guard, the
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
 Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
-guard, and the pairing invariants — 115
-assertions. Worth re-running after any change to the sync path.
+guard, the pairing invariants, and code updates reaching an open tab (§15, over a local HTTP
+server) — 124 assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked

@@ -376,8 +376,56 @@ function applyIdx(){
 }
 function idxDirty(){ return P.some((p,n)=>p.idx !== BASE_IDX[n]); }
 
+/* The hash is written with the same stripping as a publish: rounds that still
+   match BASE_GRID are left out, so reopening an old link (or pressing reload,
+   which keeps the hash) re-seeds them from the code you are running instead of
+   resurrecting last week's grid. `g` stamps which grid the hash was written
+   against; a hash from a different grid drops its pairings on load (see load()).
+   Published hand edits come back with the pull; only an unpublished local
+   pairing edit is lost across a code update, which is the right trade. */
+/* ---------- Picking up code updates ----------
+   GitHub Pages serves this file with a 10-minute cache, and Safari holds on to
+   it harder than that — a plain reload often shows the old grid. So the page
+   checks itself: it fetches a fresh copy (cache-busted, not the API, so it costs
+   nothing against the rate limit), hashes its script, and compares it with the
+   script actually running. If they differ it reloads onto `?v=<build>`, a URL
+   neither Safari nor the CDN has cached. `v` also stops a loop: if that exact
+   build is already in the URL, it never redirects again. Unpublished edits hold
+   the reload back — they are safe in the hash, but a reload would drop the
+   Publish prompt. */
+function strHash(str){
+  let h = 5381;
+  for(let i = 0; i < str.length; i++) h = (Math.imul(h, 33) ^ str.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+const SELF_SRC = (document.currentScript && document.currentScript.textContent) || '';
+const BUILD = strHash(SELF_SRC);
+let lastUpdCheck = 0;
+async function checkForUpdate(){
+  if(!SELF_SRC || !/^https?:$/.test(location.protocol)) return;
+  if(Date.now() - lastUpdCheck < 30000) return;
+  lastUpdCheck = Date.now();
+  let txt;
+  try{
+    const r = await fetch(location.pathname + '?cb=' + Date.now(), {cache:'no-store'});
+    if(!r.ok) return;
+    txt = await r.text();
+  }catch(e){ return; }
+  const el = new DOMParser().parseFromString(txt, 'text/html').querySelector('script');
+  if(!el) return;
+  const fresh = strHash(el.textContent);
+  if(fresh === BUILD) return;
+  if(new URLSearchParams(location.search).get('v') === fresh) return;
+  if(dirty){ toast('New version of the site — publish, then refresh'); return; }
+  location.replace(location.pathname + '?v=' + fresh + location.hash);
+}
+
+function gridVer(){ return strHash(JSON.stringify(BASE_GRID)); }
 function encode(){
-  try{ return btoa(unescape(encodeURIComponent(JSON.stringify(S)))).replace(/=+$/,''); }
+  try{
+    const o = Object.assign(publishPayload(), {g: gridVer()});
+    return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/=+$/,'');
+  }
   catch(e){ return ''; }
 }
 function decode(h){
@@ -400,7 +448,14 @@ let dirty = false;
 function edit(){ S.m = Date.now(); dirty = true; lastSyncErr = ''; save(); renderSync(); }
 function load(){
   const h = location.hash.replace(/^#/,'');
-  if(h){ const o = decode(h); if(o){ S = o; return true; } }
+  if(h){
+    const o = decode(h);
+    if(o){
+      if(o.g !== gridVer()) o.p = {};
+      delete o.g;
+      S = o; return true;
+    }
+  }
   return false;
 }
 
@@ -1269,7 +1324,7 @@ document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()
   document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected', x===b?'true':'false'));
   window.scrollTo(0,0); render();
 }));
-$('#refreshBtn').addEventListener('click',()=>pull(true));
+$('#refreshBtn').addEventListener('click',()=>{ lastUpdCheck = 0; checkForUpdate(); pull(true); });
 $('#pubBtn').addEventListener('click',publish);
 $('#roundSel').addEventListener('change',e=>{ cur=+e.target.value; render(); });
 $('#prevR').addEventListener('click',()=>{ cur=Math.max(0,cur-1); render(); });
@@ -1294,6 +1349,11 @@ $('#nextR').addEventListener('click',()=>{ cur=Math.min(R.length-1,cur+1); rende
   applyMode();
   render();
   pull(false);                       // async; re-renders if the published board is newer
+  checkForUpdate();                  // reloads onto the new build if the code changed
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'visible') checkForUpdate();
+  });
+  window.addEventListener('pageshow', e=>{ if(e.persisted) checkForUpdate(); });
   setInterval(renderSync, 60000);    // keeps "Updated 12 min ago" honest without polling GitHub
 })();
 </script>

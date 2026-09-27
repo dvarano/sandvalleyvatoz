@@ -556,6 +556,63 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(p.errs.length === 0, 'all five tabs render clean' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 
+  // ---- 15. Picking up code updates (Safari / Pages cache) -----------------
+  // Served over a local HTTP server: the update check only runs on http(s).
+  console.log('\n[15] Code updates reach an open tab; stale hashes do not freeze the grid');
+  {
+    const http = require('http'), fs = require('fs');
+    const NEW = fs.readFileSync(URL.replace('file://', ''), 'utf8');
+    const m7 = NEW.match(/"r7":(\[\[[\d,]+\],\[[\d,]+\]\])/);
+    // An "old build": same page with two players swapped between the r7 groups.
+    const cur7 = JSON.parse(m7[1]), old7 = cur7.map(g => g.slice());
+    [old7[0][0], old7[1][0]] = [cur7[1][0], cur7[0][0]];
+    const OLD = NEW.replace(m7[0], '"r7":' + JSON.stringify(old7));
+    let serve = OLD, staleV = false, hits = [];
+    const srv = http.createServer((q, r) => {
+      hits.push(q.url);
+      r.writeHead(200, { 'content-type': 'text/html', 'cache-control': 'max-age=600' });
+      r.end(q.url.includes('?v=') && staleV ? OLD : serve);
+    });
+    await new Promise(res => srv.listen(0, res));
+    const HURL = `http://localhost:${srv.address().port}/sandvalleyvatoz/`;
+    const grid = pg => pg.evaluate(() => JSON.stringify(S.p.r7.map(g => g.slice().sort()).sort()));
+    const want = await (async () => { const q = await newPage(browser); await q.goto(URL); await settle(q);
+      const g = await grid(q); await q.context().close(); return g; })();
+
+    p = await newPage(browser); await mockApi(p, makeRepo());
+    await p.goto(HURL); await settle(p);
+    ok(!p.url().includes('?v='), 'no reload when the running code is current');
+    ok(await grid(p) !== want, 'old build shows the old grid (test setup)');
+    const st = await p.evaluate(() => JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(1))))));
+    ok(Object.keys(st.p).length === 0 && !!st.g, 'baseline rounds stay out of the hash; grid stamp is in');
+
+    serve = NEW;
+    await p.evaluate(() => { lastUpdCheck = 0; checkForUpdate(); });
+    await p.waitForURL(/\?v=/, { timeout: 5000 }).catch(() => {}); await settle(p);
+    ok(p.url().includes('?v='), 'a code update reloads the tab onto ?v=<build>');
+    ok(await grid(p) === want, 'and the new grid shows');
+
+    staleV = true; hits = [];
+    const p2 = await p.context().newPage();
+    await p2.goto(HURL + '?v=zzz'); await p2.waitForTimeout(2000);
+    const loads = hits.filter(h => !h.includes('cb=')).length;
+    ok(loads <= 2, `no redirect loop when the CDN is stale (${loads} loads)`);
+    await p.context().close();
+
+    staleV = false;
+    const staleHash = Buffer.from(JSON.stringify({ v: 1, s: {}, t: {}, p: { r7: old7 }, o: {}, u: {}, i: {}, m: 0, l: [] })).toString('base64');
+    p = await newPage(browser); await mockApi(p, makeRepo());
+    await p.goto(HURL + '#' + staleHash); await settle(p);
+    ok(await grid(p) === want, 'an old link carrying a previous grid shows the current one');
+    await p.evaluate(() => { S.p.r4 = [[1, 4, 2, 6], [8, 0, 5, 3]]; edit(); });
+    await p.reload(); await settle(p);
+    ok(await p.evaluate(() => S.p.r4.map(g => g.slice().sort().join(',')).join('|')) === '1,2,4,6|0,3,5,8',
+       'an unpublished hand edit survives a reload');
+    ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+    await p.context().close();
+    srv.close();
+  }
+
   await browser.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
