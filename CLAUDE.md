@@ -195,7 +195,7 @@ inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are sug
 | Round | Group 1 | Group 2 |
 |---|---|---|
 | r1 Links (pinned) | Mike, Drew, Paul, Tony | Eric, Brook, Matt, Ryan |
-| r2 SV / Mammoth | **Sand Valley 10:10** — Drew, Brook, Tony, Ryan | **Mammoth 10:30** — Mike, Paul, Eric, Matt |
+| r2 SV / Mammoth | **Sand Valley 10:10** — Mike, Paul, Eric, Matt | **Mammoth 10:30** — Drew, Brook, Tony, Ryan |
 | r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Brook | **8:40** — Daniel, Matt, Tony, Ryan |
 | r5 Mammoth | Paul, Eric, Tony, Ryan | Mike, Daniel, Brook, Matt |
 | r6 Sedge (Wed) | **7:40** — Mike, Eric, Ryan *(three)* | **7:50** — Drew, Paul, Daniel, Matt |
@@ -279,9 +279,16 @@ so this is not cosmetic — getting it wrong would mis-quota half the field.
 
 Monday's groups **changed in Sep 2026** when Drew asked to play with Mike on Sunday: holding both
 Sunday and Monday fixed made the week infeasible (see §3). The course split is
-**Sand Valley 10:10** — Drew, Brook, Tony, Ryan; **Mammoth 10:30** — Mike, Paul, Eric, Matt.
-To swap which group plays which course, reorder the `split` array only — the groups in
-`BASE_GRID` do not move. Keep the round-level `tees` string chronological (`10:10 / 10:30`); it
+**Sand Valley 10:10** — Mike, Paul, Eric, Matt; **Mammoth 10:30** — Drew, Brook, Tony, Ryan.
+
+**Why this way round (Sep 2026): it is the only split where Drew and Mike both play both courses.**
+Drew sits Tuesday PM Mammoth and Mike sits Wednesday PM Sand Valley, so Monday is the only chance
+for Drew to play Mammoth and for Mike to play Sand Valley. Everyone else plays both courses either
+way. Do not flip it back unless those sit-outs change.
+
+To swap which group plays which course, swap the two groups in `BASE_GRID.r2` (done here, so the
+Today tab still lists Monday in tee-time order) or reorder the `split` array. Either is safe while
+`data.json` carries no `r2` pairing override. Keep the round-level `tees` string chronological (`10:10 / 10:30`); it
 feeds the Today header and the round selector, and listing it in group order reads like a typo.
 Per-group times come from the legs and are correct either way.
 The `woodlands` entry in `TEES` is kept, unused, in case the tee time is un-cancelled.
