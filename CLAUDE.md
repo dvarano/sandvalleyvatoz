@@ -19,8 +19,8 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 
 | # | Day | Course | Tee times | Default tee | Counts? | Format idea | Out |
 |---|---|---|---|---|---|---|---|
-| r1 | Sun 10/4 PM | Lawsonia Links | 1:40 / 1:50 | White 72.0 / 133, par 72 | No — El Qualifier | Bingo Bango Bongo | Daniel |
-| r2 | Mon 10/5 AM | Lawsonia Woodlands | 9:00 / 9:10 | Blue 71.6 / 131, par 72 | **Yes** | Six-Six-Six | Daniel |
+| r1 | Sun 10/4 PM | Lawsonia Links | 1:40 / 1:50 | White 72.0 / 133, par 72 | Backup | Bingo Bango Bongo | Daniel |
+| r2 | Mon 10/5 AM | Lawsonia Woodlands | 9:00 / 9:10 | Blue 71.6 / 131, par 72 | Backup | Six-Six-Six | Daniel |
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Brook |
 | r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Four-ball Nassau | Drew |
@@ -76,6 +76,21 @@ entirely. Eagle at 6 rather than 8 is deliberate, so a lucky eagle can't hijack 
 ### Standings — drop your worst (El Mulligan), average the rest
 
 Play five counting rounds, average your best four. Play four, average your best three.
+
+**Lawsonia is a conditional backup (added Sep 2026).** Only **Sand Valley resort 18-hole rounds**
+count. If a player ends up with fewer than `MIN_POOL` (4) of them — sat one out, arrived late —
+their **Lawsonia round is pulled in to top the pool back up to 4**, best Lawsonia round first.
+A player with a full Sand Valley pool never touches Lawsonia, however well they played it.
+
+Implemented as flags, not hardcoded rounds: `counts:true` = Sand Valley counting round,
+`backup:true` = Lawsonia. `results()` fills from `COUNTING`, then tops up from `BACKUP`.
+**This survives schedule changes** — move a round between the two flags and the maths follows.
+
+Under the current schedule (`COUNTING` = r4/r5/r6/r7, `BACKUP` = r1/r2) this lands everyone on a
+pool of exactly 4: the five who play all four Sand Valley rounds use those, and the four who sit
+one (Brook r4, Drew r5, Tony r6, Paul r7) draw one Lawsonia round. Daniel has no Lawsonia round
+at all — he sits both — but plays all four Sand Valley rounds, so he never needs one. **If Daniel
+ever sits a Sand Valley round he drops to a pool of 3 with nothing to backfill from.** Watch that.
 
 **Why this exact rule.** The round counts cannot be made even. Five counting rounds × eight
 tee-time slots = 40 player-rounds for nine players, so four people play five rounds and five
@@ -346,7 +361,8 @@ Supabase/Firebase (proper, and overkill).
 `verify.js` in the repo root (Playwright, GitHub API mocked via route interception) covers both
 modes, publish, the stale-SHA 409 retry, rate limiting, offline edit survival, index editing and
 propagation, backward compatibility with pre-`i` links, the baseline-grid freeze guard, the
-read-only viewer tab, index/course-handicap number formatting, and the pairing invariants — 81
+read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, and
+the pairing invariants — 91
 assertions. Worth re-running after any change to the sync path.
 
 ```

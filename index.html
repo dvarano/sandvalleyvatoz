@@ -260,12 +260,12 @@ const ALL_SQUARE = 'split the prizes, or agree on a playoff, chip-off or putt-of
 
 const R = [
  {id:'r1', day:'Sun Oct 4', sd:'Sun 10/4', when:'PM', course:'Lawsonia Links', sc:'Links', key:'links',      tees:'1:40 / 1:50',
-  counts:false, tag:'El Qualifier', game:'Bingo Bango Bongo', out:[8], ng:2, pin:true,
+  counts:false, backup:true, tag:'El Qualifier', game:'Bingo Bango Bongo', out:[8], ng:2, pin:true,
   rules:['Warmup round. Everyone posts a gross score.','Committee (Drew + Matt) may adjust any index &plusmn;3 before Monday.','Does not count for Copa points. Sunday finish is the FIRST tiebreak for seeding.'],
   gamerules:['Points per hole: first on green, closest once all are on, first in the hole.','Order of play is honest &mdash; furthest away goes first.','No handicap math. Everyone still plays their own ball.']},
 
  {id:'r2', day:'Mon Oct 5', sd:'Mon 10/5', when:'AM', course:'Lawsonia Woodlands', sc:'Woodlands', key:'woodlands',  tees:'9:00 / 9:10',
-  counts:true, tag:'Copa Round 1', game:'Six-Six-Six', out:[8], ng:2,
+  counts:false, backup:true, tag:'El Respaldo', game:'Six-Six-Six', out:[8], ng:2,
   rules:['Counts for La Copa.'],
   gamerules:['Partners rotate every 6 holes so each player partners each other player.','Holes 1&ndash;6, 7&ndash;12, 13&ndash;18. Best ball each segment.','Fresh money each segment.']},
 
@@ -301,6 +301,10 @@ const R = [
 ];
 
 const COUNTING = R.filter(r=>r.counts).map(r=>r.id);
+/* Lawsonia rounds. Warmups by default, but they top a player's pool back up to
+   MIN_POOL when Sand Valley is short — see results(). */
+const BACKUP = R.filter(r=>r.backup).map(r=>r.id);
+const MIN_POOL = 4;
 
 /* The Commons is not USGA rated (you cannot post a score there), so there is no
    slope or course rating to run through the normal formula. The scorecard itself
@@ -493,18 +497,30 @@ function playing(rd){
 }
 
 /* ---------- Standings: drop your worst, average the rest ---------- */
+function roundResult(pi, rid){
+  const rd = R.find(r=>r.id===rid);
+  if(!rd || sitOuts(rd).indexOf(pi)>=0) return null;
+  const row = S.s[rid];
+  const v = row ? row[pi] : null;
+  if(v===null||v===undefined||v==='') return null;
+  const t = teeFor(rd, pi);
+  return {rid:rid, course:rd.course, pts:v, q:quotaFor(P[pi].idx,t),
+          d:v - quotaFor(P[pi].idx,t), backup:!!rd.backup};
+}
+/* A player's scoring pool. Sand Valley resort rounds always count. If that
+   leaves fewer than MIN_POOL, Lawsonia tops it up — best round first — so
+   nobody is judged on a thinner pool than everyone else just because they
+   sat one out. A player with a full Sand Valley pool never uses Lawsonia. */
 function results(pi){
-  const out=[];
-  COUNTING.forEach(rid=>{
-    const rd = R.find(r=>r.id===rid);
-    if(sitOuts(rd).indexOf(pi)>=0) return;
-    const row = S.s[rid];
-    const v = row ? row[pi] : null;
-    if(v===null||v===undefined||v==='') return;
-    const t = teeFor(rd, pi);
-    out.push({rid:rid, course:rd.course, pts:v, q:quotaFor(P[pi].idx,t), d:v - quotaFor(P[pi].idx,t)});
-  });
-  return out;
+  const out = COUNTING.map(rid=>roundResult(pi,rid)).filter(Boolean);
+  if(out.length < MIN_POOL){
+    const spare = BACKUP.map(rid=>roundResult(pi,rid)).filter(Boolean)
+      .sort((a,b)=>b.d-a.d)
+      .slice(0, MIN_POOL - out.length);
+    out.push.apply(out, spare);
+  }
+  const order = rid => R.findIndex(r=>r.id===rid);
+  return out.sort((a,b)=>order(a.rid)-order(b.rid));
 }
 function standing(pi){
   const rs = results(pi);
@@ -863,20 +879,21 @@ function renderInfo(){
     <table><thead><tr><th style="text-align:left">Round</th><th>Counts?</th></tr></thead><tbody>`;
   R.forEach(rd=>{
     h+=`<tr><td style="text-align:left">${rd.course} <span style="color:var(--ink-3);font-size:12px">${rd.day.split(' ')[0]} ${rd.when}</span></td>
-      <td style="font-size:12px;color:${rd.counts?'var(--accent)':'var(--ink-3)'}">${rd.counts?'YES':'No &mdash; '+rd.tag}</td></tr>`;
+      <td style="font-size:12px;color:${rd.counts?'var(--accent)':(rd.backup?'var(--warn)':'var(--ink-3)')}">${rd.counts?'YES':(rd.backup?'Backup':'No &mdash; '+rd.tag)}</td></tr>`;
   });
   h+=`</tbody></table>
-    <p class="note" style="margin-top:10px"><b>Five counting rounds.</b> Sunday is a warmup, the Sandbox is its own pot, and Thursday is the final.</p>
+    <p class="note" style="margin-top:10px"><b>Sand Valley rounds count.</b> Lawsonia is a warmup &mdash; unless you end up short, in which case it backs you up. The Sandbox is its own pot and Thursday is the final.</p>
   </div>`;
 
   h+=`<div class="card"><h2>How standings work</h2>
     <p class="note"><b>Everyone drops their worst round (El Mulligan), then averages the rest.</b> Play five, average your best four. Play four, average your best three.</p>
-    <p class="note" style="margin-top:8px">This exists because the round counts are uneven and cannot be made even: five counting rounds &times; eight tee-time slots is 40 player-rounds for nine players, so four of you play five rounds and five of you play four. Counting a fixed number instead would hand the five-round players a free discard the four-round players never get, worth over a point a round. Dropping one each way removes almost all of it.</p>
+    <p class="note" style="margin-top:8px">This exists because the round counts are uneven and cannot be made even. Counting a fixed number instead would hand whoever plays most a free discard the others never get, worth over a point a round. Dropping one each way removes almost all of it.</p>
+    <p class="note" style="margin-top:8px"><b>Lawsonia is your backup.</b> Your ${MIN_POOL === 4 ? 'four' : MIN_POOL} Sand&nbsp;Valley rounds are what count. If you end up with only three &mdash; you sat one out, or arrived late &mdash; your Lawsonia round is pulled in as the fourth so you are not judged on a thinner pool than everyone else. Play your full Sand Valley schedule and Lawsonia stays a warmup.</p>
   </div>`;
 
   h+=`<div class="card"><h2>Seeding &amp; La Final</h2>
     <ul class="rules">
-      <li><b>Sunday at Lawsonia</b> is warmup only. It does not award points. It sets adjusted indexes (the committee may move any index &plusmn;3 before Monday) and it is the <b>first tiebreak</b> for seeding. Second tiebreak is your best single round.</li>
+      <li><b>Lawsonia is a warmup</b> that does not award points &mdash; unless you finish short of ${MIN_POOL} Sand Valley rounds, in which case it counts as your ${MIN_POOL}th. It also sets adjusted indexes (the committee may move any index &plusmn;3 before Monday) and Sunday is the <b>first tiebreak</b> for seeding. Second tiebreak is your best single round.</li>
       <li><b>Top 4 after Wednesday</b> tee at 8:00 Thursday at the Commons.</li>
       <li>Seed 1 v Seed 2 for <b>$${PRIZES[0]} / $${PRIZES[1]}</b>. Seed 3 v Seed 4 for <b>$${PRIZES[2]}</b>.</li>
       <li><b>Seeds 1 and 3 start 1 up.</b> All square after 12 &rarr; ${ALL_SQUARE}.</li>

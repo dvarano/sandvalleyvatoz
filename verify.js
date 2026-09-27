@@ -391,6 +391,51 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 
+  // ---- 13. Lawsonia as a conditional backup round ---------------------------
+  console.log('\n[13] Lawsonia backs up a short Sand Valley pool');
+  p = await newPage(browser);
+  await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+
+  const cfg = await p.evaluate(() => ({ counting: COUNTING, backup: BACKUP, min: MIN_POOL }));
+  ok(JSON.stringify(cfg.counting) === '["r4","r5","r6","r7"]', 'Sand Valley rounds are the counting pool: ' + cfg.counting.join(','));
+  ok(JSON.stringify(cfg.backup) === '["r1","r2"]', 'Lawsonia rounds are backups: ' + cfg.backup.join(','));
+  ok(cfg.min === 4, 'MIN_POOL is 4 (got ' + cfg.min + ')');
+
+  const pools = await p.evaluate(() => {
+    ['r1','r2','r4','r5','r6','r7'].forEach((rid, k) => { S.s[rid] = P.map((_, pi) => 20 + k * 2 + pi); });
+    return P.map((pl, pi) => {
+      const st = standing(pi);
+      return { name: pl.n, n: st.n, usedBackup: st.rs.some(r => r.backup) };
+    });
+  });
+  ok(pools.every(x => x.n === 4), 'every player ends on a pool of 4 (got ' + pools.map(x => x.n).join(',') + ')');
+  const drew = pools.filter(x => x.usedBackup).map(x => x.name).sort();
+  ok(JSON.stringify(drew) === JSON.stringify(['Brook','Drew','Paul','Tony']),
+     'only the four sit-out players draw on Lawsonia: ' + drew.join(','));
+  ok(pools.find(x => x.name === 'Daniel').n === 4 && !pools.find(x => x.name === 'Daniel').usedBackup,
+     'Daniel reaches a full pool without a Lawsonia round of his own');
+
+  // A full Sand Valley pool must ignore Lawsonia even when Lawsonia was the best round.
+  const full = await p.evaluate(() => { S.s.r1[0] = 60; const st = standing(0);
+    return { used: st.rs.some(r => r.backup), n: st.n }; });
+  ok(!full.used && full.n === 4, 'a full Sand Valley pool never pulls Lawsonia in');
+
+  // When short and both Lawsonia rounds exist, take the better one.
+  const pick = await p.evaluate(() => { S.s.r1[1] = 40; S.s.r2[1] = 22;
+    return standing(1).rs.filter(r => r.backup).map(r => r.rid); });
+  ok(pick.length === 1 && pick[0] === 'r1', 'pulls in only the better Lawsonia round (got ' + pick.join(',') + ')');
+
+  // Sitting a Sand Valley round must not shrink the pool below everyone else's.
+  const shrink = await p.evaluate(() => {
+    S.o.r6 = [0, 3];                       // Matt also sits Sedge Wed -> 3 SV rounds
+    const st = standing(0);
+    return { n: st.n, used: st.rs.some(r => r.backup) };
+  });
+  ok(shrink.n === 4 && shrink.used, 'a newly short player picks up Lawsonia automatically');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
   // every tab renders for the editor
   p = await newPage(browser, 'github_pat_TEST');
   await mockApi(p, makeRepo());
