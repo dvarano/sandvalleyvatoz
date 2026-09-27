@@ -433,6 +433,34 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 
+  // ---- 13b. The board must SHOW why a pool is what it is --------------------
+  console.log('\n[13b] Standings expose backup and short pools');
+  p = await newPage(browser);
+  await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+  await p.evaluate(() => {
+    ['r1','r2','r4','r5','r6','r7'].forEach((rid, k) => { S.s[rid] = P.map((_, pi) => 24 + k + pi); });
+    S.o.r5 = [1, 4];      // Brook skips Tue PM alongside Drew -> Lawsonia backfills
+    S.o.r6 = [3, 8];      // Daniel skips Wed AM -> 3 rounds, no Lawsonia to fall back on
+  });
+  await p.click('nav button[data-v="stand"]'); await p.waitForTimeout(400);
+  const marks = await p.evaluate(() => {
+    const cell = name => { const tr = [...document.querySelectorAll('#v-stand tbody tr')]
+      .find(t => new RegExp(name).test(t.textContent));
+      return tr ? tr.querySelectorAll('td')[2].textContent.trim() : null; };
+    const notes = [...document.querySelectorAll('#v-stand .note')].map(n => n.textContent);
+    return { brook: cell('Brook'), daniel: cell('Daniel'), matt: cell('Matt'),
+             starNote: notes.some(n => /Lawsonia round counts as one/.test(n)),
+             bangNote: notes.some(n => /no Lawsonia round to fall back on/.test(n)) };
+  });
+  ok(marks.brook === '4*', 'a backfilled pool is marked with * (got ' + marks.brook + ')');
+  ok(marks.daniel === '3!', 'a short pool with no backup is marked with ! (got ' + marks.daniel + ')');
+  ok(marks.matt === '5', 'a full pool carries no marker (got ' + marks.matt + ')');
+  ok(marks.starNote, 'the * footnote explains the Lawsonia backfill');
+  ok(marks.bangNote, 'the ! footnote explains the thin pool');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
   // ---- 14. Monday is a split round: two groups, two courses -----------------
   console.log('\n[14] Monday Sand Valley / Mammoth split');
   p = await newPage(browser);

@@ -561,7 +561,8 @@ function sundayDelta(pi){
 function board(){
   const rows = P.map((p,i)=>{
     const st = standing(i);
-    return {i:i, name:p.n, idx:p.idx, n:st.n, avg:st.avg, dropped:st.dropped, best:st.rs.length?Math.max.apply(null,st.rs.map(r=>r.d)):null, sun:sundayDelta(i)};
+    return {i:i, name:p.n, idx:p.idx, n:st.n, avg:st.avg, dropped:st.dropped, best:st.rs.length?Math.max.apply(null,st.rs.map(r=>r.d)):null, sun:sundayDelta(i),
+            backup:st.rs.some(r=>r.backup), short:st.rs.length>0 && st.rs.length<MIN_POOL};
   });
   rows.sort((a,b)=>{
     if(a.avg===null && b.avg===null) return a.name.localeCompare(b.name);
@@ -816,11 +817,13 @@ function renderStand(){
   rows.forEach((r,i)=>{
     h+=`<tr><td style="text-align:left;color:var(--ink-3)">${r.avg===null?'':i+1}</td>
       <td style="text-align:left">${r.name} <span style="color:var(--ink-3);font-size:12px">${fmtIdx(r.idx)}</span></td>
-      <td>${r.n||'&mdash;'}</td>
+      <td>${r.n||'&mdash;'}${r.backup?'<span style="color:var(--warn)" title="includes a Lawsonia round">*</span>':''}${r.short?'<span class="warn" title="fewer than '+MIN_POOL+' rounds and no Lawsonia round to fall back on">!</span>':''}</td>
       <td style="color:var(--ink-3);font-size:12px">${r.dropped?fmt(r.dropped.d):'&mdash;'}</td>
       <td class="${cls(r.avg)}"><b>${fmt(r.avg)}</b></td></tr>`;
   });
   h+=`</tbody></table>`;
+  if(rows.some(r=>r.backup)) h+=`<p class="note" style="margin-top:8px"><b style="color:var(--warn)">*</b> played fewer than ${MIN_POOL} Sand Valley rounds, so their Lawsonia round counts as one of the ${MIN_POOL}.</p>`;
+  if(rows.some(r=>r.short)) h+=`<p class="note" style="margin-top:4px"><b class="warn">!</b> under ${MIN_POOL} rounds with no Lawsonia round to fall back on &mdash; averaged on a thinner pool than everyone else.</p>`;
   if(scored.length){
     const anyNeg = scored.some(r=>r.avg<0);
     const zero = anyNeg ? 50 : 0, span = anyNeg ? 50 : 100;

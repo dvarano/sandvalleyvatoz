@@ -90,9 +90,22 @@ Under the current schedule (`COUNTING` = r2/r4/r5/r6/r7, `BACKUP` = r1) **nobody
 the backup**: four players get 5 Sand Valley rounds and five get 4. It is insurance — it fires the
 moment anyone misses a second Sand Valley round.
 
-**Daniel has no Lawsonia round at all** (he sits Sunday). He is fine on 4 Sand Valley rounds, but
-**if he ever sits one he drops to a pool of 3 with nothing to backfill from** — the only player
-who can. Keep him off the Sand Valley sit-out list.
+**Why the backup exists in practice:** the likely trigger is someone deciding not to play 36 in a
+day and skipping an afternoon or a morning — Tuesday PM Mammoth or Wednesday AM Sedge. Those
+scheduled for 36 on **both** days are Matt, Mike, Eric, Ryan and Daniel (Tuesday also Tony and
+Paul; Wednesday also Drew and Brook). Drew marks the skip on the Pairings tab (player → Sitting)
+and the pool recomputes on the spot; nothing else is needed.
+
+**Daniel is the exposure.** He sits Sunday, so he has **no Lawsonia round at all**, and he is
+scheduled for 36 on both Tuesday and Wednesday — so he is among the most likely to want to skip
+one and the only player the rule cannot protect. He is fine on 4 Sand Valley rounds, but **if he
+skips one he drops to a pool of 3, averaged over 2**, which is far noisier than everyone else's.
+Options if it comes up: let him play Sunday at Lawsonia so he has a backup, keep him off any Sand
+Valley skip, or accept the thin pool. **The board flags it either way** — see the markers below.
+
+**The standings say why.** A pool topped up from Lawsonia shows `4*`; a pool under `MIN_POOL` with
+nothing to backfill shows `3!`, each with a footnote. Without these, a Lawsonia round quietly
+counting looks identical to four Sand Valley rounds, and a thin pool looks like a normal one.
 
 **Why this exact rule.** The round counts cannot be made even. Five counting rounds × eight
 tee-time slots = 40 player-rounds for nine players, so four people play five rounds and five
@@ -378,7 +391,7 @@ Supabase/Firebase (proper, and overkill).
 modes, publish, the stale-SHA 409 retry, rate limiting, offline edit survival, index editing and
 propagation, backward compatibility with pre-`i` links, the baseline-grid freeze guard, the
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
-Monday split round, and the pairing invariants — 102
+Monday split round, the standings markers, and the pairing invariants — 108
 assertions. Worth re-running after any change to the sync path.
 
 ```
