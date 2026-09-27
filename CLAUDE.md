@@ -181,40 +181,48 @@ holes are not USGA rated, so no score can be posted. Architect Jimmy Craig, est.
 
 | Round | Group 1 | Group 2 |
 |---|---|---|
-| r1 Links (pinned) | Mike, Drew, Matt, Tony | Paul, Eric, Brook, Ryan |
-| r2 SV / Mammoth | **Sand Valley 10:10** — Drew, Eric, Brook, Tony | **Mammoth 10:30** — Mike, Paul, Matt, Ryan |
-| r4 Sedge (Tue) | Mike, Paul, Eric, Tony | Drew, Daniel, Matt, Ryan |
-| r5 Mammoth | Paul, Daniel, Eric, Tony | Mike, Brook, Matt, Ryan |
+| r1 Links (pinned) | Mike, Drew, Paul, Tony | Eric, Brook, Matt, Ryan |
+| r2 SV / Mammoth | **Sand Valley 10:10** — Drew, Brook, Tony, Ryan | **Mammoth 10:30** — Mike, Paul, Eric, Matt |
+| r4 Sedge (Tue) | Paul, Daniel, Matt, Ryan | Mike, Drew, Eric, Tony |
+| r5 Mammoth | Mike, Paul, Brook, Ryan | Daniel, Eric, Matt, Tony |
 | r6 Sedge (Wed) | Mike, Daniel, Eric, Ryan | Drew, Paul, Brook, Matt |
-| r7 Sand Valley | Drew, Paul, Tony, Ryan | Daniel, Eric, Brook, Matt |
+| r7 Sand Valley | Paul, Eric, Tony, Ryan | Drew, Daniel, Brook, Matt |
 
 **Pinned by request — do not lose these when regenerating:**
-- **r1 Sunday** must have **Drew with Mike** (Drew's request, Sep 2026) and **Eric with Brook**.
-  It no longer carries Drew with Paul — see the trade-off below.
+- **r1 Sunday** must have **Drew with Mike** and **Drew with Paul** and **Eric with Brook**.
 - **r4 Tuesday AM** must have **Matt with Daniel** (Daniel's first 18).
 - **Matt with Daniel at least twice** across the week.
-- **Drew with Paul at least twice** across the week (now r2 and r7, not Sunday).
+- **Drew with Paul at least twice** across the week.
+- **Drew with Mike at least twice** across the week.
 
 **Drew's partner preferences (Sep 2026):** more rounds with Mike, Brook and Tony; fewer with Ryan.
-Achieved: Ryan **3 → 2**, Tony **1 → 3**, Brook **1 → 2**, Mike stays at 1 (Sunday).
+All met — Mike **1 → 2**, Brook **1 → 3**, Tony **1 → 3**, Ryan **3 → 1** (the floor, since every
+pair must meet once).
 
-**Two hard limits found while fitting this, worth not rediscovering:**
-1. **Drew with Mike can essentially only happen once.** Drew sits r5 and Mike sits r7, so they
-   overlap in only four rounds, and full pair coverage with the 3-repeat cap consumes them.
-   Forcing a second Mike round is possible but costs Tony (drops to 1) — a swap, not a gain.
-2. **Sunday with Drew+Mike is infeasible if Monday is also held fixed** — some pair is always
-   forced over 3. Verified by exhaustive search, not a failed optimiser run. Monday had to move,
-   which is why the course split changed.
+**What unlocked it: dropping the index-balance constraint.** While balance was enforced, Drew with
+Mike could only happen once, and Sunday with Drew+Mike+Paul forced Ryan in as the only workable
+fourth — the exact opposite of the request. Balance was never a real constraint (see below), and
+removing it made all of it reachable at once. **Do not reintroduce it.**
 
-**Properties this grid satisfies:** all **36 possible pairs** play together at least once,
-**nobody paired more than 3 times** (and nobody paired zero times), and no round has its two
-groups more than **1.50 apart** in average index (1.75 before Drew's partner preferences,
-2.0 before that). The Sandbox is excluded from partner tracking
-because everyone plays it together; Thursday follows the standings.
+**Sunday with Drew+Mike is infeasible if Monday is also held fixed** — some pair is always forced
+over 3. Verified by exhaustive search, not a failed optimiser run. That is why Monday's course
+split moved.
 
-**How it was produced.** Not greedily round-by-round — that plateaus around 35/36 with a 4.25
-index gap. All six grouped rounds were optimized **jointly**: random restart plus hill-climbing
-on cross-group swaps, with the pinned rounds held fixed. Optimizer is in Appendix A.
+**Properties this grid satisfies:** all **36 possible pairs** play together at least once and
+**nobody is paired more than 3 times** (nor zero times). The Sandbox is excluded from partner
+tracking because everyone plays it together; Thursday follows the standings.
+
+**Index balance is NOT a property and must not be reintroduced (Sep 2026).** The group-average
+index gap is now 3.75 and that is fine. It appears in exactly one place in the code — a display
+label on the Pairings preview — and in none of `chcp`, `quotaFor`, `results`, `standing` or
+`board`. **Quota is `quotaFor(that player's index, that player's tee)`; the group is not an
+argument**, so the draw cannot move anyone's score. Enforcing balance bought nothing and blocked
+the pairings people actually asked for.
+
+**How it was produced.** Not greedily round-by-round — that plateaus around 35/36 pairs. All six
+grouped rounds were optimized **jointly**: random restart plus hill-climbing on cross-group swaps,
+with the pinned rounds held fixed and Drew's partner preferences as a soft objective. Optimizer is
+in Appendix A.
 
 ### Monday is a split round
 
@@ -229,7 +237,7 @@ so this is not cosmetic — getting it wrong would mis-quota half the field.
 
 Monday's groups **changed in Sep 2026** when Drew asked to play with Mike on Sunday: holding both
 Sunday and Monday fixed made the week infeasible (see §3). The course split is now
-**Sand Valley 10:10** — Drew, Eric, Brook, Tony; **Mammoth 10:30** — Mike, Paul, Matt, Ryan.
+**Sand Valley 10:10** — Drew, Brook, Tony, Ryan; **Mammoth 10:30** — Mike, Paul, Eric, Matt.
 The `woodlands` entry in `TEES` is kept, unused, in case the tee time is un-cancelled.
 
 ### In the app
@@ -438,7 +446,7 @@ lands, a new pairing gets pinned). Edit `OUT`, `FIXED_R1` and the `together()` c
 ```js
 const P=[13,7,6,13,12,10,14,8,9];                     // indexes, array order below
 const NAMES=['Matt','Drew','Mike','Tony','Brook','Eric','Ryan','Paul','Daniel'];
-const FIXED_R1=[[2,5,4,6],[1,7,0,3]];                 // Sunday, pinned
+const FIXED_R1=[[1,2,3,7],[0,4,5,6]];                 // Sunday: Drew+Mike+Tony+Paul | Matt+Brook+Eric+Ryan
 const OUT={r2:[8],r4:[4],r5:[1],r6:[3],r7:[2]};       // who sits each round (r7: Mike)
 const FREE=['r2','r4','r5','r6','r7'], ALL=['r1'].concat(FREE);
 const IDS={}; FREE.forEach(r=>{IDS[r]=[];for(let i=0;i<9;i++)if(OUT[r].indexOf(i)<0)IDS[r].push(i);});
@@ -458,7 +466,8 @@ function stats(plan){
 }
 function together(plan,r,a,b){return plan[r].some(g=>g.indexOf(a)>=0&&g.indexOf(b)>=0);}
 const MD=key(0,8), DP=key(1,7);                   // Matt+Daniel, Drew+Paul
-const cost=(s,plan)=>s.unmet*10000 + s.excess*60 + Math.max(0,s.max-3)*5000 + s.bal*8
+/* No s.bal term: index balance is deliberately not optimised — see §3. */
+const cost=(s,plan)=>s.unmet*10000 + s.excess*60 + Math.max(0,s.max-3)*5000
   + (together(plan,'r4',0,8)?0:1000000)           // Matt + Daniel, Tuesday AM
   + Math.max(0,2-(s.h[MD]||0))*1000000            // Matt + Daniel at least twice
   + Math.max(0,2-(s.h[DP]||0))*1000000;           // Drew + Paul at least twice
@@ -483,7 +492,7 @@ for(let seed=1;seed<=600;seed++){
   if(c<bestC){bestC=c;best=JSON.parse(JSON.stringify(plan));}
 }
 const st=stats(best);
-console.log(`pairs met ${st.met}/36 | max repeat ${st.max} | worst index gap ${st.bal.toFixed(2)}`);
+console.log(`pairs met ${st.met}/36 | max repeat ${st.max} | index gap ${st.bal.toFixed(2)} (informational only)`);
 ALL.forEach(r=>console.log('  '+r+'  '+best[r].map(g=>g.map(i=>NAMES[i]).join('/')).join('   |   ')));
 console.log('\nEMBED = '+JSON.stringify(best));
 ```

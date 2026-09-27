@@ -628,17 +628,24 @@ function generate(ids, sizes, hist, seed){
 }
 /* Baseline grid, found by optimising all six grouped rounds jointly rather than
    round by round. Every one of the 36 possible pairs plays together at least
-   once, nobody is paired more than three times, and no round has its two groups
-   more than 2.0 apart in average index. Four constraints are pinned by request &mdash;
-   Sunday's groups, Matt with Daniel on Tuesday morning (Daniel's first 18), and
-   Matt/Daniel and Drew/Paul together at least twice each across the week
-   &mdash; and the remaining rounds were optimised around those fixed points. The Sandbox is excluded (everyone plays
-   it together) and Thursday follows the standings. Edit freely on the Pairings
-   tab &mdash; the matrix there tracks what your changes do to those numbers. */
+   once and nobody is paired more than three times.
+
+   Group balance is deliberately NOT a constraint. Quota is computed per player
+   from his own index and his own tee, so who you are drawn with cannot help or
+   hurt your score; evening out the groups' average index bought nothing and
+   only blocked the pairings people actually wanted.
+
+   Pinned by request: Sunday's groups (Drew with Mike and with Paul, Eric with
+   Brook), Matt with Daniel on Tuesday morning for Daniel's first 18, and both
+   Matt/Daniel and Drew/Paul together at least twice across the week. The
+   remaining rounds are optimised around those, favouring Drew with Mike, Brook
+   and Tony over Drew with Ryan. The Sandbox is excluded (everyone plays it
+   together) and Thursday follows the standings. Edit freely on the Pairings
+   tab — the matrix there tracks what your changes do to those numbers. */
 const BASE_SEED = 3;
-const BASE_GRID = {"r1":[[0,1,2,3],[4,5,6,7]],"r2":[[4,1,5,3],[6,2,0,7]],
-                   "r4":[[2,3,5,7],[1,8,0,6]],"r5":[[8,3,5,7],[2,0,4,6]],
-                   "r6":[[6,8,2,5],[0,7,4,1]],"r7":[[3,6,7,1],[4,0,8,5]]};
+const BASE_GRID = {"r1":[[1,2,3,7],[0,4,5,6]],"r2":[[6,1,3,4],[2,5,7,0]],
+                   "r4":[[8,0,6,7],[5,1,2,3]],"r5":[[7,4,6,2],[0,8,3,5]],
+                   "r6":[[5,6,2,8],[4,1,7,0]],"r7":[[3,7,6,5],[8,0,1,4]]};
 /* Every round carrying a baseline grid starts locked, so a stray tap on
    auto-generate can't wipe a chosen pairing. Unlock per round on the Pairings
    tab. Manual moves are always allowed, locked or not. */

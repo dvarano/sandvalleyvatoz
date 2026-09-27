@@ -343,7 +343,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
              sit: sitOuts(R.find(r => r.id === 'r7')).map(i => N[i]).join() };
   });
   ok(g11.sit === 'Mike', 'r7 sit-out comes from code, not the published file (got ' + g11.sit + ')');
-  ok(/Drew\/Paul\/Ryan\/Tony/.test(g11.r7), 'r7 groups are the current code grid (got ' + g11.r7 + ')');
+  ok(/Brook\/Daniel\/Drew\/Matt/.test(g11.r7), 'r7 groups are the current code grid (got ' + g11.r7 + ')');
   await p.context().close();
 
   // ---- 12. Pairings tab is read-only for viewers, editable for the organiser
