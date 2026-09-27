@@ -230,12 +230,21 @@ split moved.
 **nobody is paired more than 3 times** (nor zero times).
 
 **The LIVE board deliberately breaks the 3-repeat cap (Sep 2026).** Drew hand-edited Wednesday
-morning in the app and published it, swapping Matt and Eric: `data.json` carries
-`p: {"r6": [[2,8,0,6],[1,7,5,4]]}` — Mike/Daniel/Matt/Ryan against Drew/Paul/Eric/Brook. That puts
-**Matt with Daniel 4 times**. Coverage is still 36/36 with no zero-time pairs. **Decided: leave
-it.** Do not regenerate the grid to "fix" this, and do not unlock r6 and auto-generate — that
-would silently discard the edit. `BASE_GRID`'s r6 is untouched and still satisfies the cap; the
-published override is what the group sees, which is `publishPayload()` working as designed. The Sandbox is excluded from partner
+morning in the app: `data.json` carries an `r6` override — Mike/Daniel/Matt/Ryan against
+Drew/Eric/Brook, with **Tony and Paul both sitting** (seven players). That puts **Matt with
+Daniel 4 times**. Coverage is still 36/36 with no zero-time pairs. **Decided: leave it**, and
+Wednesday may be reshuffled on the day depending on how tired everyone is.
+
+**Tuesday morning was briefly overridden too and has been switched back (Sep 2026).** An `r4`
+override had Matt and Eric swapped, which **broke the Matt-with-Daniel pin** for Daniel's first
+18. The two edits were pulling against each other: the r6 swap created the Matt/Daniel 4, and the
+r4 swap was quietly paying for it by taking one away. Switching r4 back restores the pin, improves
+the first-four spread 31 → 32, and moves Drew/Ryan 2 → 1 and Drew/Tony 2 → 3. The cost is that
+Matt/Daniel sits at 4, entirely inside the provisional Wednesday round.
+
+`BASE_GRID` is untouched throughout and still satisfies the cap; the published overrides are what
+the group sees, which is `publishPayload()` working as designed. To undo an override, **delete it
+from `data.json`** so the round falls back to the grid — do not write `BASE_GRID` into the file. The Sandbox is excluded from partner
 tracking because everyone plays it together; Thursday follows the standings.
 
 **Index balance is NOT a property and must not be reintroduced (Sep 2026).** The group-average
