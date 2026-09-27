@@ -286,7 +286,7 @@ const R = [
 
  {id:'r5', day:'Tue Oct 6', sd:'Tue 10/6', when:'PM', course:'Mammoth Dunes', sc:'Mammoth', key:'mammoth',    tees:'12:50 / 1:00',
   counts:true, tag:'Copa Round 3', game:'Four-ball Nassau', out:[1], ng:2,
-  rules:['Counts for La Copa. Drew sits (he volunteered).','If a 3rd tee time lands, switch to three groups of three and everyone plays.'],
+  rules:['Counts for La Copa. Drew sits.','If a 3rd tee time lands, switch to three groups of three and everyone plays.'],
   gamerules:['2v2 better ball. Front, back, total.','Automatic press at 2 down.','Wide and birdie-able &mdash; be aggressive.']},
 
  {id:'r6', day:'Wed Oct 7', sd:'Wed 10/7', when:'AM', course:'Sedge Valley', sc:'Sedge', key:'sedge',      tees:'7:40 / 7:50',
@@ -295,8 +295,8 @@ const R = [
   gamerules:['THREESOMES: Nine Point. 9 points a hole &mdash; 5 best, 3 middle, 1 worst.','FOURSOMES: Six-Six-Six, partners rotate every 6 holes.','Net scores.']},
 
  {id:'r7', day:'Wed Oct 7', sd:'Wed 10/7', when:'PM', course:'Sand Valley', sc:'Sand Valley', key:'sandvalley', tees:'12:50 / 1:00',
-  counts:true, tag:'Copa Round 5', game:'Vegas', out:[7], ng:2,
-  rules:['Final counting round. Standings lock after this.','One player sits (placeholder: Paul). Must be someone who has not already taken a drop.'],
+  counts:true, tag:'Copa Round 5', game:'Vegas', out:[2], ng:2,
+  rules:['Final counting round. Standings lock after this.','Mike sits.'],
   gamerules:['2v2. Combine partners&rsquo; scores into a two-digit number, low digit first.','A birdie by the opposing side FLIPS your number. This is how people lose money.','Double stakes. It is the marquee round.']},
 
  {id:'r8', day:'Thu Oct 8', sd:'Thu 10/8', when:'AM', course:'The Commons', sc:'Commons', key:'commons',    tees:'8:00 / 8:10',
@@ -637,8 +637,8 @@ function generate(ids, sizes, hist, seed){
    tab &mdash; the matrix there tracks what your changes do to those numbers. */
 const BASE_SEED = 3;
 const BASE_GRID = {"r1":[[2,5,4,6],[1,7,0,3]],"r2":[[6,7,5,1],[2,0,3,4]],
-                   "r4":[[8,0,7,6],[5,1,2,3]],"r5":[[2,7,4,6],[8,0,3,5]],
-                   "r6":[[8,1,6,4],[0,7,5,2]],"r7":[[6,8,3,2],[5,4,1,0]]};
+                   "r4":[[0,6,1,8],[2,7,5,3]],"r5":[[0,4,5,7],[2,8,6,3]],
+                   "r6":[[4,7,8,6],[5,0,1,2]],"r7":[[5,3,8,0],[1,6,4,7]]};
 /* Every round carrying a baseline grid starts locked, so a stray tap on
    auto-generate can't wipe a chosen pairing. Unlock per round on the Pairings
    tab. Manual moves are always allowed, locked or not. */

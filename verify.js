@@ -163,7 +163,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(inv.max <= 3, 'max repeat ' + inv.max + ' <= 3');
   ok(inv.md >= 2, 'Matt+Daniel ' + inv.md + ' >= 2');
   ok(inv.dp >= 2, 'Drew+Paul ' + inv.dp + ' >= 2');
-  ok(inv.r5 === 'Drew' && inv.r7 === 'Paul', 'sit-outs intact (r5 ' + inv.r5 + ', r7 ' + inv.r7 + ')');
+  ok(inv.r5 === 'Drew' && inv.r7 === 'Mike', 'sit-outs intact (r5 ' + inv.r5 + ', r7 ' + inv.r7 + ')');
 
   await p.context().close();
 
@@ -342,8 +342,8 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
     return { r7: S.p.r7.map(g => g.map(i => N[i]).sort().join('/')).sort().join(' | '),
              sit: sitOuts(R.find(r => r.id === 'r7')).map(i => N[i]).join() };
   });
-  ok(g11.sit === 'Paul', 'r7 sit-out comes from code, not the published file (got ' + g11.sit + ')');
-  ok(/Brook\/Drew\/Eric\/Matt/.test(g11.r7), 'r7 groups are the current code grid (got ' + g11.r7 + ')');
+  ok(g11.sit === 'Mike', 'r7 sit-out comes from code, not the published file (got ' + g11.sit + ')');
+  ok(/Brook\/Drew\/Paul\/Ryan/.test(g11.r7), 'r7 groups are the current code grid (got ' + g11.r7 + ')');
   await p.context().close();
 
   // ---- 12. Pairings tab is read-only for viewers, editable for the organiser

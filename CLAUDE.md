@@ -25,7 +25,7 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Brook |
 | r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Four-ball Nassau | Drew |
 | r6 | Wed 10/7 AM | Sedge Valley | 7:40 / 7:50 | Back 68.7 / 130, par 68 | **Yes** | Nine Point / 6-6-6 | Tony |
-| r7 | Wed 10/7 PM | Sand Valley | 12:50 / 1:00 | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Paul |
+| r7 | Wed 10/7 PM | Sand Valley | 12:50 / 1:00 | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Mike |
 | r8 | Thu 10/8 AM | The Commons | 8:00 / 8:10 | 12 holes, par 45 | No — La Final | Match play | — |
 
 Alternate tees available in the app: Woodlands White 70.2/128; Sedge Back/Middle 67.0/126;
@@ -181,22 +181,25 @@ holes are not USGA rated, so no score can be posted. Architect Jimmy Craig, est.
 
 | Round | Group 1 | Group 2 |
 |---|---|---|
-| r1 Links | Mike, Eric, Brook, Ryan | Drew, Paul, Matt, Tony |
-| r2 Woodlands | Drew, Paul, Eric, Ryan | Mike, Brook, Matt, Tony |
-| r4 Sedge (Tue) | Paul, Daniel, Matt, Ryan | Mike, Drew, Eric, Tony |
-| r5 Mammoth | Mike, Paul, Brook, Ryan | Daniel, Eric, Matt, Tony |
-| r6 Sedge (Wed) | Drew, Daniel, Brook, Ryan | Mike, Paul, Eric, Matt |
-| r7 Sand Valley | Mike, Daniel, Tony, Ryan | Drew, Eric, Brook, Matt |
+| r1 Links (pinned) | Mike, Eric, Brook, Ryan | Drew, Paul, Matt, Tony |
+| r2 SV / Mammoth | **Sand Valley 10:10** — Drew, Paul, Eric, Ryan | **Mammoth 10:30** — Mike, Brook, Matt, Tony |
+| r4 Sedge (Tue) | Drew, Daniel, Matt, Ryan | Mike, Paul, Eric, Tony |
+| r5 Mammoth | Paul, Eric, Brook, Matt | Mike, Daniel, Tony, Ryan |
+| r6 Sedge (Wed) | Paul, Daniel, Brook, Ryan | Mike, Drew, Eric, Matt |
+| r7 Sand Valley | Daniel, Eric, Tony, Matt | Drew, Paul, Brook, Ryan |
 
 **Pinned by request — do not lose these when regenerating:**
-- **r1 Sunday** is exactly the grid Drew picked.
+- **r1 Sunday** is exactly the grid Drew picked. It already satisfies **Drew with Paul** and
+  **Eric with Brook** on Sunday, which Drew asked for — being pinned, it cannot drift.
 - **r4 Tuesday AM** must have **Matt with Daniel** (Daniel's first 18).
-- **Matt with Daniel at least twice** across the week (r4 and r5).
-- **Drew with Paul at least twice** across the week (r1 and r2).
+- **Matt with Daniel at least twice** across the week.
+- **Drew with Paul at least twice** across the week.
+- **r2 Monday** groups are held as-is so the Sand Valley / Mammoth course split does not move.
 
 **Properties this grid satisfies:** all **36 possible pairs** play together at least once,
 **nobody paired more than 3 times** (and nobody paired zero times), and no round has its two
-groups more than **2.0 apart** in average index. The Sandbox is excluded from partner tracking
+groups more than **1.75 apart** in average index (tightened from 2.0 when the grid was
+regenerated for Mike's Wednesday sit-out). The Sandbox is excluded from partner tracking
 because everyone plays it together; Thursday follows the standings.
 
 **How it was produced.** Not greedily round-by-round — that plateaus around 35/36 with a 4.25
@@ -214,7 +217,8 @@ tee presets on Enter and the labels on Today all follow whichever course that pl
 played. A round without `split` behaves exactly as before. Slopes differ (SV 138 vs Mammoth 136),
 so this is not cosmetic — getting it wrong would mis-quota half the field.
 
-Groups are unchanged from the old Woodlands pairing, by request; Drew expects to tweak them later.
+Groups are unchanged from the old Woodlands pairing, by request, and were held fixed again when
+r4–r7 were regenerated for Mike's Wednesday sit-out. Drew expects to tweak them later.
 The `woodlands` entry in `TEES` is kept, unused, in case the tee time is un-cancelled.
 
 ### In the app
@@ -304,16 +308,18 @@ without a page error.
 
 ## 5. Open items
 
-- [x] **Who sits Mammoth (Tue PM) and Sand Valley (Wed PM).** Settled: **Drew sits Mammoth**
-      (he volunteered), **Paul sits Sand Valley**. Both play every other round, so both drop
-      from five counting rounds to four and the corollary above holds. Revisit only if the
-      third tee time lands (see below), which would make them moot.
+- [x] **Who sits Mammoth (Tue PM) and Sand Valley (Wed PM).** **Drew sits Mammoth**; **Mike sits
+      Sand Valley** (he may try to get on Lido as a solo that afternoon). Both play every other
+      round, so both drop from five counting rounds to four and the corollary above holds.
+      Neither sit-out is attributed on the Info or Today tabs — the rounds just name who sits.
+      Revisit only if the third tee time lands (see below), which would make them moot.
 - [ ] **Ask Sand Valley for a third tee time** on those two rounds. Turns them into 3/3/3 so
       everyone plays, and threesomes walk faster.
 - [ ] **Tuesday's turn is tight.** Sedge at 8:30/8:40 finishing at the resort's 4:15 pace lands
       12:45–12:55 against a 12:50 Mammoth tee. Moving Tuesday's Sedge earlier is worth more than
       the extra tee times. (Wednesday is fine: 7:40 is a pre-8am speed slot, under 4 hours.)
-- [ ] **Confirm real handicap indexes.** All nine are still placeholders, but they no longer
+- [ ] **Confirm real handicap indexes.** Drew expects them mid-week. Two are in (Drew 7.3,
+      Mike 6.9); seven are still placeholders, but they no longer
       need a code change: edit them on the **Pairings tab → Handicap indexes** and Publish.
       The hardcoded `P` array is only the fallback. **Lock them before Monday** — round results
       are recomputed from the current index, so editing one after a counting round rewrites
@@ -422,7 +428,7 @@ lands, a new pairing gets pinned). Edit `OUT`, `FIXED_R1` and the `together()` c
 const P=[13,7,6,13,12,10,14,8,9];                     // indexes, array order below
 const NAMES=['Matt','Drew','Mike','Tony','Brook','Eric','Ryan','Paul','Daniel'];
 const FIXED_R1=[[2,5,4,6],[1,7,0,3]];                 // Sunday, pinned
-const OUT={r2:[8],r4:[4],r5:[1],r6:[3],r7:[7]};       // who sits each round
+const OUT={r2:[8],r4:[4],r5:[1],r6:[3],r7:[2]};       // who sits each round (r7: Mike)
 const FREE=['r2','r4','r5','r6','r7'], ALL=['r1'].concat(FREE);
 const IDS={}; FREE.forEach(r=>{IDS[r]=[];for(let i=0;i<9;i++)if(OUT[r].indexOf(i)<0)IDS[r].push(i);});
 function mul(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
