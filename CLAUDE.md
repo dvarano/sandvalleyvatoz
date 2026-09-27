@@ -96,12 +96,10 @@ scheduled for 36 on **both** days are Matt, Mike, Eric, Ryan and Daniel (Tuesday
 Paul; Wednesday also Drew and Brook). Drew marks the skip on the Pairings tab (player → Sitting)
 and the pool recomputes on the spot; nothing else is needed.
 
-**Daniel is the exposure.** He sits Sunday, so he has **no Lawsonia round at all**, and he is
-scheduled for 36 on both Tuesday and Wednesday — so he is among the most likely to want to skip
-one and the only player the rule cannot protect. He is fine on 4 Sand Valley rounds, but **if he
-skips one he drops to a pool of 3, averaged over 2**, which is far noisier than everyone else's.
-Options if it comes up: let him play Sunday at Lawsonia so he has a backup, keep him off any Sand
-Valley skip, or accept the thin pool. **The board flags it either way** — see the markers below.
+**Daniel is the one player with no Lawsonia round** (he sits Sunday), so the backup cannot cover
+him. **Settled: Drew expects Daniel to play both 36-hole days**, giving him 4 Sand Valley rounds
+and no need for a backup. Nothing to do — but if that changes and he skips one, he drops to a pool
+of 3 averaged over 2, and the board marks it with `!` rather than hiding it.
 
 **The standings say why.** A pool topped up from Lawsonia shows `4*`; a pool under `MIN_POOL` with
 nothing to backfill shows `3!`, each with a footnote. Without these, a Lawsonia round quietly
@@ -125,11 +123,12 @@ twice breaks the symmetry the rule depends on.
 
 ### Seeding and La Final
 
-- Sunday at Lawsonia is a **warmup only**. No points. It sets adjusted indexes (committee —
-  Drew and Matt — may move any index ±3 before Monday) and it is the **first tiebreak** for
-  seeding. Second tiebreak is best single round.
-- Top 4 after Wednesday tee at 8:00 Thursday at the Commons. Everyone else is **El Toilet Bowl**
-  at 8:10.
+- Sunday at Lawsonia is a **warmup only** (see the backup rule above). It is the **first tiebreak**
+  for seeding; second tiebreak is best single round. The committee (Drew and Matt) may still move
+  any index ±3 before Monday — that is an index decision, deliberately **not** described on the
+  Info tab as part of the Lawsonia round.
+- Top 4 after Wednesday tee **last, at 8:10** Thursday at the Commons. **El Toilet Bowl goes off
+  first at 8:00.** (Swapped Sep 2026 — the final group should finish last.)
 - Match A: Seed 1 v Seed 2 for **$700 / $350**. Match B: Seed 3 v Seed 4 for **$300**.
 - **Seeds 1 and 3 start 1 up.**
 - All square after 12 → split the prizes, or agree on a playoff / chip-off / putt-off.

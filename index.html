@@ -301,7 +301,7 @@ const R = [
 
  {id:'r8', day:'Thu Oct 8', sd:'Thu 10/8', when:'AM', course:'The Commons', sc:'Commons', key:'commons',    tees:'8:00 / 8:10',
   counts:false, tag:'La Final', game:'Match play', out:[], ng:2, binding:true,
-  rules:['12 holes, par 45, 3,417 from the back tees.','8:00 &mdash; top 4 seeds. 8:10 &mdash; El Toilet Bowl.','Not USGA rated, so no quota here. Match strokes use the scorecard&rsquo;s own 65% rule.'],
+  rules:['12 holes, par 45, 3,417 from the back tees.','8:00 &mdash; El Toilet Bowl. 8:10 &mdash; top 4 seeds, off last.','Not USGA rated, so no quota here. Match strokes use the scorecard&rsquo;s own 65% rule.'],
   gamerules:[`Match A: Seed 1 v Seed 2 for $${PRIZES[0]} / $${PRIZES[1]}.`,`Match B: Seed 3 v Seed 4 for $${PRIZES[2]} / nothing.`,`Seeds 1 and 3 start 1 UP. All square after 12 &rarr; ${ALL_SQUARE}.`]}
 ];
 
@@ -699,7 +699,7 @@ function renderToday(){
         h+=`</ul></div>`;
       });
     } else if(rd.id==='r8'){
-      h+=`<p class="note">Thursday's groups come from the standings. Top 4 tee at 8:00 for La Final; everyone else is El Toilet Bowl at 8:10.</p>`;
+      h+=`<p class="note">Thursday's groups come from the standings. El Toilet Bowl goes off first at 8:00; the top 4 tee last at 8:10 for La Final.</p>`;
     } else {
       h+=`<p class="note">No groups set yet. Open the Pairings tab.</p>`;
     }
@@ -841,7 +841,7 @@ function renderStand(){
   h+=`<p class="note" style="margin-top:10px">Ties broken by Sunday finish at Lawsonia, then best single round.</p></div>`;
 
   const q=rows.filter(r=>r.avg!==null).slice(0,4);
-  h+=`<div class="card"><h2>La Final &mdash; Thursday at the Commons</h2>`;
+  h+=`<div class="card"><h2>La Final &mdash; Thursday at the Commons, 8:10</h2>`;
   if(q.length<4){
     h+=`<p class="note">Seeds set once the counting rounds are in. ${q.length} of 4 places filled.</p>`;
   } else {
@@ -854,7 +854,7 @@ function renderStand(){
       <p class="note">${matchStrokes(q[0],q[1])}<br>${matchStrokes(q[2],q[3])}</p>
       <p class="note" style="margin-top:6px">12 holes. The Commons is not USGA rated, so strokes come off the scorecard&rsquo;s 65% rule rather than a course handicap. All square after 12 &rarr; ${ALL_SQUARE}.</p>`;
     const rest=rows.filter(r=>q.indexOf(r)<0).map(r=>r.name);
-    h+=`<p class="note" style="margin-top:8px"><b>El Toilet Bowl (8:10):</b> ${rest.join(', ')}</p>`;
+    h+=`<p class="note" style="margin-top:8px"><b>El Toilet Bowl (8:00):</b> ${rest.join(', ')}</p>`;
   }
   h+=`</div>`;
 
@@ -910,26 +910,26 @@ function renderInfo(){
     <table><thead><tr><th style="text-align:left">Round</th><th>Counts?</th></tr></thead><tbody>`;
   R.forEach(rd=>{
     h+=`<tr><td style="text-align:left">${rd.course} <span style="color:var(--ink-3);font-size:12px">${rd.day.split(' ')[0]} ${rd.when}</span></td>
-      <td style="font-size:12px;color:${rd.counts?'var(--accent)':(rd.backup?'var(--warn)':'var(--ink-3)')}">${rd.counts?'YES':(rd.backup?'Backup':'No &mdash; '+rd.tag)}</td></tr>`;
+      <td style="font-size:12px;color:${rd.counts?'var(--accent)':(rd.backup?'var(--warn)':'var(--ink-3)')}">${rd.counts?'YES':(rd.backup?'Warmup/Backup':rd.tag)}</td></tr>`;
   });
   h+=`</tbody></table>
     <p class="note" style="margin-top:10px"><b>Sand Valley rounds count.</b> Lawsonia is a warmup &mdash; unless you end up short, in which case it backs you up. The Sandbox is its own pot and Thursday is the final.</p>
   </div>`;
 
   h+=`<div class="card"><h2>How standings work</h2>
-    <p class="note"><b>Everyone drops their worst round (El Mulligan), then averages the rest.</b> Play five, average your best four. Play four, average your best three.</p>
+    <p class="note"><b>Everyone drops their worst round at Sand Valley (El Mulligan), then averages their remaining 3 or 4 round quota scores.</b></p>
     <p class="note" style="margin-top:8px">This exists because the round counts are uneven and cannot be made even. Counting a fixed number instead would hand whoever plays most a free discard the others never get, worth over a point a round. Dropping one each way removes almost all of it.</p>
-    <p class="note" style="margin-top:8px"><b>Lawsonia is your backup.</b> Your ${MIN_POOL === 4 ? 'four' : MIN_POOL} Sand&nbsp;Valley rounds are what count. If you end up with only three &mdash; you sat one out, or arrived late &mdash; your Lawsonia round is pulled in as the fourth so you are not judged on a thinner pool than everyone else. Play your full Sand Valley schedule and Lawsonia stays a warmup.</p>
+    <p class="note" style="margin-top:8px"><b>Lawsonia is your backup.</b> Your four or five Sand&nbsp;Valley rounds are what count. If you end up with only three &mdash; you sat one out, or arrived late &mdash; your Lawsonia round is pulled in as the fourth so you are not judged on a thinner pool than everyone else. Play your full Sand Valley schedule and Lawsonia stays a warmup.</p>
   </div>`;
 
   h+=`<div class="card"><h2>Seeding &amp; La Final</h2>
     <ul class="rules">
-      <li><b>Lawsonia is a warmup</b> that does not award points &mdash; unless you finish short of ${MIN_POOL} Sand Valley rounds, in which case it counts as your ${MIN_POOL}th. It also sets adjusted indexes (the committee may move any index &plusmn;3 before Monday) and Sunday is the <b>first tiebreak</b> for seeding. Second tiebreak is your best single round.</li>
-      <li><b>Top 4 after Wednesday</b> tee at 8:00 Thursday at the Commons.</li>
+      <li><b>Lawsonia is a warmup</b> that does not award points &mdash; unless you finish short of ${MIN_POOL} Sand Valley rounds, in which case it counts as your ${MIN_POOL}th. Sunday is the <b>first tiebreak</b> for seeding. Second tiebreak is your best single round.</li>
+      <li><b>Top 4 after Wednesday</b> tee <b>last, at 8:10</b> Thursday at the Commons.</li>
       <li>Seed 1 v Seed 2 for <b>$${PRIZES[0]} / $${PRIZES[1]}</b>. Seed 3 v Seed 4 for <b>$${PRIZES[2]}</b>.</li>
       <li><b>Seeds 1 and 3 start 1 up.</b> All square after 12 &rarr; ${ALL_SQUARE}.</li>
       <li>The Commons is not USGA rated, so there is no quota and no course handicap. Strokes come off the scorecard&rsquo;s own <b>65% of index</b> rule, allocated hardest hole first.</li>
-      <li>Everyone else plays <b>El Toilet Bowl</b> at 8:10.</li>
+      <li>Everyone else plays <b>El Toilet Bowl</b>, off first at 8:00.</li>
     </ul>
   </div>`;
 
