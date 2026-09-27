@@ -646,10 +646,10 @@ const BASE_SEED = 3;
 const BASE_GRID = {"r1":[[1,2,3,7],[0,4,5,6]],"r2":[[6,1,3,4],[2,5,7,0]],
                    "r4":[[5,1,2,3],[8,0,6,7]],"r5":[[7,4,6,2],[0,8,3,5]],
                    "r6":[[5,6,2,8],[4,1,7,0]],"r7":[[3,7,6,5],[8,0,1,4]]};
-/* Every round carrying a baseline grid starts locked, so a stray tap on
-   auto-generate can't wipe a chosen pairing. Unlock per round on the Pairings
-   tab. Manual moves are always allowed, locked or not. */
-function isLocked(rd){ return !!BASE_GRID[rd.id] && !S.u[rd.id]; }
+/* There is no user-facing auto-generate: the grid was chosen deliberately and a
+   stray tap should not be able to redraw it. generate() below is kept as an
+   internal fallback only — defaultPairings() calls it when a sit-out change
+   means the baseline no longer covers the players who are in. */
 function defaultPairings(){
   R.forEach((rd,i)=>{
     if(S.p[rd.id]) return;
@@ -698,7 +698,7 @@ function renderToday(){
     <p class="sub">${rd.day} &middot; tee times ${rd.tees}${t0?` &middot; ${t0[0][0]} tees by default`:''}</p>
   </div>`;
 
-  h+=`<div class="card"><h2>Groups${isLocked(rd)?' <span class="pill">Locked</span>':''}</h2>`;
+  h+=`<div class="card"><h2>Groups</h2>`;
   if(rd.id==='r3'){
     h+=`<p class="note">All nine play. Fivesomes are fine at the Sandbox, so no groups to set and it is left out of the partner tracking.</p>`;
   } else {
@@ -952,8 +952,8 @@ function renderInfo(){
      does not need to know how the draw is made. Count comes from BASE_GRID so it
      cannot drift — it said "eight" while there were six. */
   if(isEditor()) h+=`<div class="card"><h2>How pairings work</h2>
-    <p class="note">Groups are re-drawn every round and are <b>fully editable by hand</b> on the Pairings tab. Auto-generate balances the groups by handicap while favouring partners you have not played with yet; then move anyone you like. The matrix at the bottom of that tab tracks who still does not play with whom and updates with every change.</p>
-    <p class="note" style="margin-top:8px">All ${Object.keys(BASE_GRID).length} grouped rounds start <b>locked</b>, so auto-generate cannot wipe a pairing by accident. Moving people by hand always works; unlock a round only if you want it re-drawn from scratch.</p>
+    <p class="note">The ${Object.keys(BASE_GRID).length} grouped rounds use a grid chosen so every pair plays together at least once and nobody is paired more than three times. Move anyone by hand with the dropdowns on the Pairings tab; the matrix at the bottom of that tab tracks who still does not play with whom and updates with every change.</p>
+    <p class="note" style="margin-top:8px">There is <b>no auto-generate</b> &mdash; nothing can redraw a round out from under you. If a sit-out change leaves a round the grid cannot cover, that one round is re-drawn automatically and the rest are untouched.</p>
   </div>`;
 
   h+=`<div class="card"><h2>Money</h2>
@@ -1099,19 +1099,13 @@ function renderPair(){
     h+=`<div class="asgn"><span>${p.n} <i>${fmtIdx(p.idx)}</i></span><select data-asg="${i}">${opts}</select></div>`;
   });
   const over=counts.some((c,i)=>c>4);
-  const locked = isLocked(rd);
   h+=`<div class="seg" style="margin-top:12px">
       <button data-ng="2" aria-pressed="${ng===2}">2 groups</button>
       <button data-ng="3" aria-pressed="${ng===3}">3 groups</button></div>
     <p class="note">${counts.map((c,i)=>`Group ${i+1}: ${c}`).join(' &middot; ')} &middot; sitting ${asg.filter(x=>x<0).length}
-      ${over?'<br><span class="warn">A group has more than 4. You will need another tee time.</span>':''}</p>`;
-  if(locked){
-    h+=`<p class="note" style="margin-top:10px"><span class="pill">Locked</span> This round is set to the baseline grid${rd.id==='r1'?' you picked for Sunday':(rd.id==='r4'?', with Matt and Daniel paired as requested':'')}. You can still move people by hand above; auto-generate is disabled so it can&rsquo;t wipe it.</p>
-        <button class="act ghost" id="unlock">Unlock auto-generate</button></div>`;
-  } else {
-    h+=`<button class="act" id="gen">Auto-generate</button>
-        <button class="act ghost" id="reroll">Try another arrangement</button></div>`;
-  }
+      ${over?'<br><span class="warn">A group has more than 4. You will need another tee time.</span>':''}</p>
+    <p class="note" style="margin-top:10px">Move anyone with the dropdowns above. There is no
+      auto-generate: the grid was chosen deliberately, so the only way it changes is by hand.</p></div>`;
 
   const hist=historyUpTo(R.indexOf(rd));
   if(gs.filter(g=>g.length).length){
@@ -1148,17 +1142,6 @@ function renderPair(){
   $('#v-pair').querySelectorAll('[data-ng]').forEach(b=>b.addEventListener('click',()=>{
     const n=+b.dataset.ng, a=asg.map(g=>g>=n?-1:g); apply(a,n);
   }));
-  const doGen=(seed)=>{
-    const ids=playing(rd);
-    S.p[rd.id]=generate(ids, sizesFor(ids.length,ng), historyUpTo(R.indexOf(rd)), seed);
-    edit(); renderPair(); renderToday();
-  };
-  if(locked){
-    $('#unlock').addEventListener('click',()=>{ S.u[rd.id]=1; edit(); renderPair(); });
-  } else {
-    $('#gen').addEventListener('click',()=>doGen(BASE_SEED));
-    $('#reroll').addEventListener('click',()=>doGen(Math.floor(Math.random()*1e9)));
-  }
 }
 
 /* ---------- Chrome ---------- */

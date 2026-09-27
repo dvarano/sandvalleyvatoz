@@ -391,7 +391,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   await p.click('nav button[data-v="info"]'); await p.waitForTimeout(250);
   const infoE = await p.evaluate(() => ({
     cards: [...document.querySelectorAll('#v-info .card h2')].map(x => x.textContent),
-    count: (document.querySelector('#v-info').innerText.match(/All (\d+) grouped rounds/) || [])[1]
+    count: (document.querySelector('#v-info').innerText.match(/The (\d+) grouped rounds/) || [])[1]
   }));
   ok(infoE.cards.includes('How pairings work'), 'organiser does get the pairings-mechanics card');
   ok(infoE.count === '6', 'grouped-round count is derived from BASE_GRID (got ' + infoE.count + ')');

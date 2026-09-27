@@ -245,6 +245,16 @@ label on the Pairings preview — and in none of `chcp`, `quotaFor`, `results`, 
 argument**, so the draw cannot move anyone's score. Enforcing balance bought nothing and blocked
 the pairings people actually asked for.
 
+**First four rounds — checked Sep 2026, no tweak available.** Drew asked whether the spread over
+Sunday, Monday and the two Tuesday rounds could be improved, given Wednesday may be reshuffled.
+It cannot, without cost. Current: **32/36 pairs met in the first four**, 4 pairs at 3+. The
+absolute ceiling is **34/36** — Daniel plays only 2 of those 4 rounds (he sits Sunday and Monday),
+so at most 6 of his 8 pairs are reachable and 2 are structurally impossible. Exhaustive search
+over every legal r2/r4/r5 arrangement: the best that still completes to a valid full week is
+**exactly the current 32/36**, and all 6 arrangements that reach 34/36 **cannot** be completed to
+a 36/36 week with max 3. So the 2-pair gain costs the week-long guarantee. **Left as-is.**
+Three of the four first-four gaps are Daniel's and unavoidable; the fourth is Matt/Drew.
+
 **How it was produced.** Not greedily round-by-round — that plateaus around 35/36 pairs. All six
 grouped rounds were optimized **jointly**: random restart plus hill-climbing on cross-group swaps,
 with the pinned rounds held fixed and Drew's partner preferences as a soft objective. Optimizer is
@@ -276,10 +286,16 @@ The Info tab's **"How pairings work" card is organiser-only** — it describes c
 can see, and the group does not need the mechanics. Its grouped-round count is derived from
 `BASE_GRID` rather than written out; it read "eight" while there were six.
 
-**Two different generators, on purpose.** The in-app `generate()` still balances groups by index
-(`scorePartition` weights repeats 12× and index variance 1×) — that is fine, it only runs when a
-round is unlocked and re-drawn by hand. The offline optimiser in Appendix A no longer optimises
-balance at all (§3). Do not "fix" one to match the other.
+**There is NO user-facing auto-generate (removed Sep 2026).** The Auto-generate / Try another
+arrangement / Unlock buttons, the per-round lock and `isLocked()` are all gone, along with the
+`Locked` pill. The grid was chosen deliberately after a lot of iteration; a button that could
+redraw a round out from under it was pure downside, and it had already caused trouble via the
+sit-out path. **Do not add it back.** Pairings change only through the per-player dropdowns.
+
+`generate()` and `scorePartition()` are **kept as an internal fallback**: `defaultPairings()`
+calls them when a sit-out change means the baseline no longer covers the players who are in, so
+that one round re-draws and the rest are untouched. `S.u` (unlock flags) is now vestigial —
+still in `BLANK` so old links decode, never read or written.
 
 **`defaultPairings()` uses the baseline whenever it still covers exactly the players who are in**,
 compared as a set. It used to test `!S.o[rd.id]`, which threw the chosen grid away the moment ANY
@@ -288,10 +304,8 @@ Pairings dropdowns create just by being touched and set back. That silently rege
 morning on the live board in Sep 2026 and pushed Eric/Paul to 4. A genuine sit-out change still
 falls through to `generate()`, as it should. Covered by verify.js §13c.
 
-All rounds carrying a baseline grid **start locked** so a stray tap on auto-generate can't wipe
-a chosen pairing. Unlock is per round. Manual per-player dropdowns (Sitting / Group 1 / 2 / 3)
-always work, locked or not, and every change re-renders the group preview, the sit-outs, the
-Today tab and the partner matrix.
+Manual per-player dropdowns (Sitting / Group 1 / 2 / 3) are the only way to change a pairing, and
+every change re-renders the group preview, the sit-outs, the Today tab and the partner matrix.
 
 ---
 
