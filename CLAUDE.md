@@ -22,9 +22,9 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | r1 | Sun 10/4 PM | Lawsonia Links | 1:40 / 1:50 | White 72.0 / 133, par 72 | Backup only | Six-Six-Six | Daniel |
 | r2 | Mon 10/5 AM | **Sand Valley / Mammoth (split)** | 10:10 / 10:30 | SV Orange 72.8/138 · Mammoth Orange 72.1/136 | **Yes** | Nassau (front/back/total) | Daniel |
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
-| r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Brook |
+| r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Paul |
 | r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Gross skins | Drew |
-| r6 | Wed 10/7 AM | Sedge Valley | 7:40 / 7:50 | Back 68.7 / 130, par 68 | **Yes** | Nine Point / 6-6-6 | Tony |
+| r6 | Wed 10/7 AM | Sedge Valley | 7:40 / 7:50 | Back 68.7 / 130, par 68 | **Yes** | Nine Point / 6-6-6 | Tony, Brook |
 | r7 | Wed 10/7 PM | Sand Valley | 12:50 / 1:00 | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Mike |
 | r8 | Thu 10/8 AM | The Commons | 8:00 / 8:10 | 12 holes, par 45 | No — La Final | Match play | — |
 
@@ -196,10 +196,10 @@ inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are sug
 |---|---|---|
 | r1 Links (pinned) | Mike, Drew, Paul, Tony | Eric, Brook, Matt, Ryan |
 | r2 SV / Mammoth | **Sand Valley 10:10** — Drew, Brook, Tony, Ryan | **Mammoth 10:30** — Mike, Paul, Eric, Matt |
-| r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Tony | **8:40** — Paul, Daniel, Matt, Ryan |
-| r5 Mammoth | Mike, Paul, Brook, Ryan | Daniel, Eric, Matt, Tony |
-| r6 Sedge (Wed) | Mike, Daniel, Eric, Ryan | Drew, Paul, Brook, Matt |
-| r7 Sand Valley | Paul, Eric, Tony, Ryan | Drew, Daniel, Brook, Matt |
+| r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Brook | **8:40** — Daniel, Matt, Tony, Ryan |
+| r5 Mammoth | Paul, Eric, Tony, Ryan | Mike, Daniel, Brook, Matt |
+| r6 Sedge (Wed) | Drew, Paul, Daniel, Matt | Mike, Eric, Ryan *(three)* |
+| r7 Sand Valley | Paul, Brook, Matt, Ryan | Drew, Daniel, Eric, Tony |
 
 **Group order matters on the non-split rounds.** Group 1 tees first — the Today tab reads the
 two times straight off `rd.tees`. Drew's foursome is group 1 on Tuesday morning (8:30) by
@@ -213,9 +213,14 @@ counts and the pins are all order-independent.
 - **Drew with Paul at least twice** across the week.
 - **Drew with Mike at least twice** across the week.
 
+**Sedge sit-outs (Sep 2026).** Paul, Brook and Tony each skip one of the two Sedge rounds:
+**Paul sits Tuesday**, **Tony and Brook sit Wednesday**. Wednesday Sedge therefore runs with
+**seven players — one four and one three** (`ng:2`, `sizesFor(7,2)` → `[4,3]`). Nobody drops below
+four Sand Valley rounds, so the Lawsonia backup stays dormant. Loads are now **three players on
+five** (Matt, Eric, Ryan) and **six on four**.
+
 **Drew's partner preferences (Sep 2026):** more rounds with Mike, Brook and Tony; fewer with Ryan.
-All met — Mike **1 → 2**, Brook **1 → 3**, Tony **1 → 3**, Ryan **3 → 1** (the floor, since every
-pair must meet once).
+Met — Mike 2, Brook 2, Tony 3, Ryan **1** (the floor, since every pair must meet once).
 
 **What unlocked it: dropping the index-balance constraint.** While balance was enforced, Drew with
 Mike could only happen once, and Sunday with Drew+Mike+Paul forced Ryan in as the only workable
@@ -229,22 +234,14 @@ split moved.
 **Properties this grid satisfies:** all **36 possible pairs** play together at least once and
 **nobody is paired more than 3 times** (nor zero times).
 
-**The LIVE board deliberately breaks the 3-repeat cap (Sep 2026).** Drew hand-edited Wednesday
-morning in the app: `data.json` carries an `r6` override — Mike/Daniel/Matt/Ryan against
-Drew/Eric/Brook, with **Tony and Paul both sitting** (seven players). That puts **Matt with
-Daniel 4 times**. Coverage is still 36/36 with no zero-time pairs. **Decided: leave it**, and
-Wednesday may be reshuffled on the day depending on how tired everyone is.
+**All hand overrides are now cleared.** An earlier round of in-app edits left `r4` and `r6`
+pairing/sit-out overrides in `data.json` — at one point putting Matt with Daniel four times,
+breaking the Matt-with-Daniel pin, and dropping Drew/Paul to 1. The Sedge sit-out change above
+redefined both rounds in code, so `data.json` carries **no `p` or `o` overrides at all** and the
+whole week comes from `BASE_GRID`. That also resolved the Matt/Daniel 4 — **nobody is over 3 now**.
 
-**Tuesday morning was briefly overridden too and has been switched back (Sep 2026).** An `r4`
-override had Matt and Eric swapped, which **broke the Matt-with-Daniel pin** for Daniel's first
-18. The two edits were pulling against each other: the r6 swap created the Matt/Daniel 4, and the
-r4 swap was quietly paying for it by taking one away. Switching r4 back restores the pin, improves
-the first-four spread 31 → 32, and moves Drew/Ryan 2 → 1 and Drew/Tony 2 → 3. The cost is that
-Matt/Daniel sits at 4, entirely inside the provisional Wednesday round.
-
-`BASE_GRID` is untouched throughout and still satisfies the cap; the published overrides are what
-the group sees, which is `publishPayload()` working as designed. To undo an override, **delete it
-from `data.json`** so the round falls back to the grid — do not write `BASE_GRID` into the file. The Sandbox is excluded from partner
+To undo an override in future, **delete it from `data.json`** so the round falls back to the grid
+— do not write `BASE_GRID` into the file. The Sandbox is excluded from partner
 tracking because everyone plays it together; Thursday follows the standings.
 
 **Index balance is NOT a property and must not be reintroduced (Sep 2026).** The group-average

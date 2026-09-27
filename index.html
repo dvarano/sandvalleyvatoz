@@ -280,8 +280,8 @@ const R = [
   gamerules:['GROSS skins, no handicaps. Ties carry over.','Closest to the pin on every hole.','Expect a monster carryover on the closing holes.']},
 
  {id:'r4', day:'Tue Oct 6', sd:'Tue 10/6', when:'AM', course:'Sedge Valley', sc:'Sedge', key:'sedge',      tees:'8:30 / 8:40',
-  counts:true, tag:'Copa Round 2', game:'Wolf', out:[4], ng:2,
-  rules:['Counts for La Copa. Brook sits (no 36 Tuesday).','TIGHT TURN: at 4:15 pace you finish 12:45&ndash;12:55 and Mammoth is 12:50. Play fast.'],
+  counts:true, tag:'Copa Round 2', game:'Wolf', out:[7], ng:2,
+  rules:['Counts for La Copa. Paul sits.','TIGHT TURN: at 4:15 pace you finish 12:45&ndash;12:55 and Mammoth is 12:50. Play fast.'],
   gamerules:['Rotating Wolf order, changes every hole.','Wolf tees off last, picks a partner after watching drives, or goes Lone Wolf for double.','Net scores. Best terrain on the trip for this game.']},
 
  {id:'r5', day:'Tue Oct 6', sd:'Tue 10/6', when:'PM', course:'Mammoth Dunes', sc:'Mammoth', key:'mammoth',    tees:'12:50 / 1:00',
@@ -290,8 +290,8 @@ const R = [
   gamerules:['Low gross score on a hole wins the skin. Tie and it carries to the next hole.','No handicaps, same as the Sandbox &mdash; no stroke index needed.','Mammoth is wide and birdie-able, so carryovers build and the closing holes get expensive.']},
 
  {id:'r6', day:'Wed Oct 7', sd:'Wed 10/7', when:'AM', course:'Sedge Valley', sc:'Sedge', key:'sedge',      tees:'7:40 / 7:50',
-  counts:true, tag:'Copa Round 4', game:'Nine Point / Six-Six-Six', out:[3], ng:2,
-  rules:['Counts for La Copa. Tony sits (his no-36 day).','Pre-8am = resort speed slot, under 4 hours. You will finish ~11:40 with time to spare.'],
+  counts:true, tag:'Copa Round 4', game:'Nine Point / Six-Six-Six', out:[3,4], ng:2,
+  rules:['Counts for La Copa. Tony and Brook sit, so seven play &mdash; one four and one three.','Pre-8am = resort speed slot, under 4 hours. You will finish ~11:40 with time to spare.'],
   gamerules:['THREESOMES: Nine Point. 9 points a hole &mdash; 5 best, 3 middle, 1 worst.','FOURSOMES: Six-Six-Six, partners rotate every 6 holes.','Net scores.']},
 
  {id:'r7', day:'Wed Oct 7', sd:'Wed 10/7', when:'PM', course:'Sand Valley', sc:'Sand Valley', key:'sandvalley', tees:'12:50 / 1:00',
@@ -644,8 +644,8 @@ function generate(ids, sizes, hist, seed){
    tab — the matrix there tracks what your changes do to those numbers. */
 const BASE_SEED = 3;
 const BASE_GRID = {"r1":[[1,2,3,7],[0,4,5,6]],"r2":[[6,1,3,4],[2,5,7,0]],
-                   "r4":[[5,1,2,3],[8,0,6,7]],"r5":[[7,4,6,2],[0,8,3,5]],
-                   "r6":[[5,6,2,8],[4,1,7,0]],"r7":[[3,7,6,5],[8,0,1,4]]};
+                   "r4":[[1,4,2,5],[8,0,6,3]],"r5":[[7,3,5,6],[2,8,4,0]],
+                   "r6":[[1,0,8,7],[2,5,6]],"r7":[[0,7,4,6],[5,8,1,3]]};
 /* There is no user-facing auto-generate: the grid was chosen deliberately and a
    stray tap should not be able to redraw it. generate() below is kept as an
    internal fallback only — defaultPairings() calls it when a sit-out change

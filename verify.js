@@ -343,7 +343,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
              sit: sitOuts(R.find(r => r.id === 'r7')).map(i => N[i]).join() };
   });
   ok(g11.sit === 'Mike', 'r7 sit-out comes from code, not the published file (got ' + g11.sit + ')');
-  ok(/Brook\/Daniel\/Drew\/Matt/.test(g11.r7), 'r7 groups are the current code grid (got ' + g11.r7 + ')');
+  ok(/Brook\/Matt\/Paul\/Ryan/.test(g11.r7), 'r7 groups are the current code grid (got ' + g11.r7 + ')');
   await p.context().close();
 
   // ---- 12. Pairings tab is read-only for viewers, editable for the organiser
@@ -422,8 +422,8 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   });
   ok(pools.every(x => x.n >= 4), 'nobody falls below a pool of 4 (got ' + pools.map(x => x.n).join(',') + ')');
   ok(!pools.some(x => x.usedBackup), 'on the full schedule nobody needs the backup');
-  ok(pools.filter(x => x.n === 5).length === 4 && pools.filter(x => x.n === 4).length === 5,
-     'four players on 5 rounds, five on 4 (got ' + pools.map(x => x.n).join(',') + ')');
+  ok(pools.filter(x => x.n === 5).length === 3 && pools.filter(x => x.n === 4).length === 6,
+     'three players on 5 rounds, six on 4 (got ' + pools.map(x => x.n).join(',') + ')');
 
   // Drew sits a second Sand Valley round -> 3 SV rounds -> Lawsonia backfills.
   const short = await p.evaluate(() => {
@@ -453,8 +453,8 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   await p.goto(URL); await settle(p);
   await p.evaluate(() => {
     ['r1','r2','r4','r5','r6','r7'].forEach((rid, k) => { S.s[rid] = P.map((_, pi) => 24 + k + pi); });
-    S.o.r5 = [1, 4];      // Brook skips Tue PM alongside Drew -> Lawsonia backfills
-    S.o.r6 = [3, 8];      // Daniel skips Wed AM -> 3 rounds, no Lawsonia to fall back on
+    S.o.r5 = [1, 4];         // Brook also skips Tue PM -> 3 Sand Valley rounds, Lawsonia backfills
+    S.o.r6 = [3, 4, 8];      // Tony+Brook as usual, plus Daniel -> 3 rounds and no Lawsonia for him
   });
   await p.click('nav button[data-v="stand"]'); await p.waitForTimeout(400);
   const marks = await p.evaluate(() => {
@@ -478,7 +478,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   console.log('\n[13c] Baseline survives a no-op sit-out override');
   p = await newPage(browser);
   // Published board carries o.r4 = [Brook], which is exactly the default sit-out.
-  await mockApi(p, { file: JSON.stringify({ v:1, s:{}, t:{}, p:{}, o:{ r4:[4] }, u:{}, i:{}, m: Date.now(), l:[] }),
+  await mockApi(p, { file: JSON.stringify({ v:1, s:{}, t:{}, p:{}, o:{ r4:[7] }, u:{}, i:{}, m: Date.now(), l:[] }),
                      sha:'s1', puts:[], commits:[] });
   await p.goto(URL); await settle(p);
   const noop = await p.evaluate(() => {
@@ -489,12 +489,12 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   });
   ok(JSON.stringify(noop.live) === JSON.stringify(noop.base),
      'r4 still uses BASE_GRID despite a no-op sit-out override (got ' + noop.live.join(' | ') + ')');
-  ok(noop.sit === 'Brook', 'sit-out unchanged (got ' + noop.sit + ')');
+  ok(noop.sit === 'Paul', 'sit-out unchanged (got ' + noop.sit + ')');
 
   // A REAL sit-out change must still fall through to generate().
   const real = await p.evaluate(() => {
     const N = P.map(x => x.n);
-    S.p = {}; S.o.r4 = [4, 6];              // Brook AND Ryan now sit
+    S.p = {}; S.o.r4 = [7, 6];              // Paul AND Ryan now sit
     defaultPairings();
     return { n: S.p.r4.reduce((a,g)=>a+g.length,0), has: S.p.r4.flat().includes(6) };
   });
