@@ -264,9 +264,14 @@ const R = [
   rules:['Warmup round. Everyone posts a gross score.','Committee (Drew + Matt) may adjust any index &plusmn;3 before Monday.','Does not count for Copa points. Sunday finish is the FIRST tiebreak for seeding.'],
   gamerules:['Points per hole: first on green, closest once all are on, first in the hole.','Order of play is honest &mdash; furthest away goes first.','No handicap math. Everyone still plays their own ball.']},
 
- {id:'r2', day:'Mon Oct 5', sd:'Mon 10/5', when:'AM', course:'Lawsonia Woodlands', sc:'Woodlands', key:'woodlands',  tees:'9:00 / 9:10',
-  counts:false, backup:true, tag:'El Respaldo', game:'Six-Six-Six', out:[8], ng:2,
-  rules:['Counts for La Copa.'],
+ {id:'r2', day:'Mon Oct 5', sd:'Mon 10/5', when:'AM', course:'Sand Valley / Mammoth', sc:'SV / Mammoth', key:'sandvalley',  tees:'10:10 / 10:30',
+  counts:true, tag:'Copa Round 1', game:'Six-Six-Six', out:[8], ng:2,
+  /* Split round: the two groups play different courses. Everything per player —
+     tee, course handicap, quota — resolves through legOf() below, so the split
+     costs nobody anything. */
+  split:[{key:'sandvalley', course:'Sand Valley', tee:'10:10'},
+         {key:'mammoth',    course:'Mammoth Dunes', tee:'10:30'}],
+  rules:['Counts for La Copa. Daniel sits.','Two courses: Group 1 at Sand Valley 10:10, Group 2 at Mammoth Dunes 10:30.','Your quota follows whichever course you play.'],
   gamerules:['Partners rotate every 6 holes so each player partners each other player.','Holes 1&ndash;6, 7&ndash;12, 13&ndash;18. Best ball each segment.','Fresh money each segment.']},
 
  {id:'r3', day:'Mon Oct 5', sd:'Mon 10/5', when:'PM', course:'The Sandbox', sc:'Sandbox', key:'sandbox',    tees:'4:54 / 5:18',
@@ -326,8 +331,24 @@ function commonsHcp(idx){ return Math.round(COMMONS_PCT*idx); }
 /* ---------- Golf math ---------- */
 function chcp(idx, tee){ return Math.round(idx*tee[2]/113 + (tee[1]-tee[3])); }
 function quotaFor(idx, tee){ return 36 - chcp(idx, tee); }
+/* Which group a player is in, and which leg of a split round that puts them on.
+   Falls back to the first leg before pairings are set, so nothing renders blank. */
+function groupOf(rd, pi){
+  const gs = S.p[rd.id]; if(!gs) return -1;
+  for(let g=0; g<gs.length; g++) if(gs[g].indexOf(pi)>=0) return g;
+  return -1;
+}
+function legOf(rd, pi){
+  if(!rd.split) return null;
+  const g = groupOf(rd, pi);
+  return rd.split[g>=0 ? Math.min(g, rd.split.length-1) : 0];
+}
+function keyFor(rd, pi){ const leg = legOf(rd,pi); return leg ? leg.key : rd.key; }
+function courseOf(rd, pi){ const leg = legOf(rd,pi); return leg ? leg.course : rd.course; }
+function teeListFor(rd, pi){ return TEES[keyFor(rd,pi)]; }
+
 function teeFor(rd, pi){
-  const list = TEES[rd.key]; if(!list) return null;
+  const list = teeListFor(rd, pi); if(!list) return null;
   const ov = S.t[rd.id] && S.t[rd.id][pi];
   if(ov && ov.length===2) return ['Custom', ov[0], ov[1], list[0][3]];
   return list[0];
@@ -504,7 +525,7 @@ function roundResult(pi, rid){
   const v = row ? row[pi] : null;
   if(v===null||v===undefined||v==='') return null;
   const t = teeFor(rd, pi);
-  return {rid:rid, course:rd.course, pts:v, q:quotaFor(P[pi].idx,t),
+  return {rid:rid, course:courseOf(rd,pi), pts:v, q:quotaFor(P[pi].idx,t),
           d:v - quotaFor(P[pi].idx,t), backup:!!rd.backup};
 }
 /* A player's scoring pool. Sand Valley resort rounds always count. If that
@@ -668,7 +689,9 @@ function renderToday(){
     const gs=(S.p[rd.id]||[]).filter(g=>g.length);
     if(gs.length){
       gs.forEach((g,i)=>{
-        const tee = rd.tees.split('/')[i] ? rd.tees.split('/')[i].trim() : '';
+        const leg = rd.split && rd.split[Math.min(i, rd.split.length-1)];
+        const tee = leg ? `${esc(leg.course)} &middot; ${leg.tee}`
+                        : (rd.tees.split('/')[i] ? rd.tees.split('/')[i].trim() : '');
         h+=`<div class="grp"><h3>Group ${i+1} <small>${tee}</small></h3><ul>`;
         g.forEach(pi=>{ const t=teeFor(rd,pi);
           h+=`<li>${P[pi].n}<span>${t?('quota '+quotaFor(P[pi].idx,t)):('idx '+fmtIdx(P[pi].idx))}</span></li>`; });
@@ -696,9 +719,10 @@ function renderToday(){
       <p class="note" style="margin-top:8px">Strokes fall hardest hole first: ${COMMONS_STROKE_HOLES.slice(0,6).map(x=>'#'+x).join(', ')} &hellip;</p></div>`;
   }
   if(t0){
-    h+=`<div class="card"><h2>Quotas &mdash; ${esc(rd.course)}</h2><table><thead><tr><th>Player</th><th>Idx</th><th>Tee</th><th>CH</th><th>Quota</th></tr></thead><tbody>`;
+    h+=`<div class="card"><h2>Quotas &mdash; ${esc(rd.course)}</h2><table><thead><tr><th>Player</th><th>Idx</th><th>${rd.split?'Course':'Tee'}</th><th>CH</th><th>Quota</th></tr></thead><tbody>`;
     play.forEach(pi=>{ const t=teeFor(rd,pi);
-      h+=`<tr><td>${P[pi].n}</td><td>${fmtIdx(P[pi].idx)}</td><td style="font-size:12px;color:var(--ink-3)">${t[0]}</td><td>${chcp(P[pi].idx,t)}</td><td><b>${quotaFor(P[pi].idx,t)}</b></td></tr>`; });
+      const where = rd.split ? courseOf(rd,pi) : t[0];
+      h+=`<tr><td>${P[pi].n}</td><td>${fmtIdx(P[pi].idx)}</td><td style="font-size:12px;color:var(--ink-3)">${esc(where)}</td><td>${chcp(P[pi].idx,t)}</td><td><b>${quotaFor(P[pi].idx,t)}</b></td></tr>`; });
     h+=`</tbody></table></div>`;
   }
   $('#v-today').innerHTML=h;
@@ -714,17 +738,20 @@ function renderEnter(){
     $('#v-enter').innerHTML=h; return;
   }
   h+=`<p class="note" style="margin-bottom:4px">Type each player&rsquo;s total quota points. Bogey 1, par 2, birdie 4, eagle 6. Gross double or worse is 0.</p>
-      <p class="note" style="margin-bottom:6px">Rating and slope default to the ${list[0][0]} tees (par ${list[0][3]}). Change them for anyone who played a different tee and their quota follows.</p>`;
+      <p class="note" style="margin-bottom:6px">${rd.split
+        ? `Two courses today. Rating and slope follow each player&rsquo;s group &mdash; ${rd.split.map(l=>esc(l.course)+' '+l.tee).join(', ')}. Change them for anyone who played a different tee.`
+        : `Rating and slope default to the ${list[0][0]} tees (par ${list[0][3]}). Change them for anyone who played a different tee and their quota follows.`}</p>`;
   const row = S.s[rd.id]||[];
   play.forEach(pi=>{
     const t=teeFor(rd,pi), q=quotaFor(P[pi].idx,t);
+    const mine=teeListFor(rd,pi)||list;                 // split rounds: this player's course
     const v=(row[pi]===null||row[pi]===undefined)?'':row[pi];
     const d=(v===''?null:v-q);
-    const presets = list.map((t2,ti)=>`<option value="${ti}"${t[0]===t2[0]?' selected':''}>${t2[0]}</option>`).join('')
+    const presets = mine.map((t2,ti)=>`<option value="${ti}"${t[0]===t2[0]?' selected':''}>${t2[0]}</option>`).join('')
                   + `<option value="c"${t[0]==='Custom'?' selected':''}>Custom</option>`;
     h+=`<div class="prow">
       <div class="entry">
-        <label>${P[pi].n}<em>index ${fmtIdx(P[pi].idx)} &middot; CH ${chcp(P[pi].idx,t)}</em></label>
+        <label>${P[pi].n}<em>${rd.split?esc(courseOf(rd,pi))+' &middot; ':''}index ${fmtIdx(P[pi].idx)} &middot; CH ${chcp(P[pi].idx,t)}</em></label>
         <input type="number" inputmode="numeric" data-pts="${pi}" value="${v}" placeholder="&ndash;">
         <span class="delta ${cls(d)}">${d===null?'':fmt(d)}</span>
       </div>
@@ -743,7 +770,7 @@ function renderEnter(){
 
   const setTee=(pi,cr,sl)=>{
     if(!S.t[rd.id]) S.t[rd.id]=new Array(NP).fill(0);
-    const base=list[0];
+    const base=(teeListFor(rd,pi)||list)[0];          // split rounds: this player's course
     if(+cr===base[1] && +sl===base[2]) S.t[rd.id][pi]=0;   // back to default, keep the URL small
     else S.t[rd.id][pi]=[+cr,+sl];
     edit(); renderEnter();
@@ -756,7 +783,8 @@ function renderEnter(){
   }));
   $('#v-enter').querySelectorAll('[data-preset]').forEach(el=>el.addEventListener('change',()=>{
     if(el.value==='c') return;
-    const t2=list[+el.value]; setTee(+el.dataset.preset, t2[1], t2[2]);
+    const pi=+el.dataset.preset;
+    const t2=(teeListFor(rd,pi)||list)[+el.value]; setTee(pi, t2[1], t2[2]);
   }));
   $('#v-enter').querySelectorAll('[data-cr],[data-sl]').forEach(el=>el.addEventListener('change',()=>{
     const pi=+(el.dataset.cr!==undefined?el.dataset.cr:el.dataset.sl);

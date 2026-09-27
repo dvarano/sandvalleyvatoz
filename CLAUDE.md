@@ -19,8 +19,8 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 
 | # | Day | Course | Tee times | Default tee | Counts? | Format idea | Out |
 |---|---|---|---|---|---|---|---|
-| r1 | Sun 10/4 PM | Lawsonia Links | 1:40 / 1:50 | White 72.0 / 133, par 72 | Backup | Bingo Bango Bongo | Daniel |
-| r2 | Mon 10/5 AM | Lawsonia Woodlands | 9:00 / 9:10 | Blue 71.6 / 131, par 72 | Backup | Six-Six-Six | Daniel |
+| r1 | Sun 10/4 PM | Lawsonia Links | 1:40 / 1:50 | White 72.0 / 133, par 72 | Backup only | Bingo Bango Bongo | Daniel |
+| r2 | Mon 10/5 AM | **Sand Valley / Mammoth (split)** | 10:10 / 10:30 | SV Orange 72.8/138 · Mammoth Orange 72.1/136 | **Yes** | Six-Six-Six | Daniel |
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Brook |
 | r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Four-ball Nassau | Drew |
@@ -86,11 +86,13 @@ Implemented as flags, not hardcoded rounds: `counts:true` = Sand Valley counting
 `backup:true` = Lawsonia. `results()` fills from `COUNTING`, then tops up from `BACKUP`.
 **This survives schedule changes** — move a round between the two flags and the maths follows.
 
-Under the current schedule (`COUNTING` = r4/r5/r6/r7, `BACKUP` = r1/r2) this lands everyone on a
-pool of exactly 4: the five who play all four Sand Valley rounds use those, and the four who sit
-one (Brook r4, Drew r5, Tony r6, Paul r7) draw one Lawsonia round. Daniel has no Lawsonia round
-at all — he sits both — but plays all four Sand Valley rounds, so he never needs one. **If Daniel
-ever sits a Sand Valley round he drops to a pool of 3 with nothing to backfill from.** Watch that.
+Under the current schedule (`COUNTING` = r2/r4/r5/r6/r7, `BACKUP` = r1) **nobody actually needs
+the backup**: four players get 5 Sand Valley rounds and five get 4. It is insurance — it fires the
+moment anyone misses a second Sand Valley round.
+
+**Daniel has no Lawsonia round at all** (he sits Sunday). He is fine on 4 Sand Valley rounds, but
+**if he ever sits one he drops to a pool of 3 with nothing to backfill from** — the only player
+who can. Keep him off the Sand Valley sit-out list.
 
 **Why this exact rule.** The round counts cannot be made even. Five counting rounds × eight
 tee-time slots = 40 player-rounds for nine players, so four people play five rounds and five
@@ -188,6 +190,20 @@ because everyone plays it together; Thursday follows the standings.
 **How it was produced.** Not greedily round-by-round — that plateaus around 35/36 with a 4.25
 index gap. All six grouped rounds were optimized **jointly**: random restart plus hill-climbing
 on cross-group swaps, with the pinned rounds held fixed. Optimizer is in Appendix A.
+
+### Monday is a split round
+
+r2 is the only round where the two groups play **different courses**: Sand Valley at 10:10 and
+Mammoth Dunes at 10:30, replacing the cancelled Lawsonia Woodlands tee time. Daniel sits.
+
+The round carries a `split:[{key,course,tee},…]` array indexed by group. `legOf()/keyFor()/
+courseOf()/teeListFor()` resolve **per player via their group**, so course handicap, quota, the
+tee presets on Enter and the labels on Today all follow whichever course that player actually
+played. A round without `split` behaves exactly as before. Slopes differ (SV 138 vs Mammoth 136),
+so this is not cosmetic — getting it wrong would mis-quota half the field.
+
+Groups are unchanged from the old Woodlands pairing, by request; Drew expects to tweak them later.
+The `woodlands` entry in `TEES` is kept, unused, in case the tee time is un-cancelled.
 
 ### In the app
 
@@ -361,8 +377,8 @@ Supabase/Firebase (proper, and overkill).
 `verify.js` in the repo root (Playwright, GitHub API mocked via route interception) covers both
 modes, publish, the stale-SHA 409 retry, rate limiting, offline edit survival, index editing and
 propagation, backward compatibility with pre-`i` links, the baseline-grid freeze guard, the
-read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, and
-the pairing invariants — 91
+read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
+Monday split round, and the pairing invariants — 102
 assertions. Worth re-running after any change to the sync path.
 
 ```

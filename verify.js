@@ -398,41 +398,81 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   await p.goto(URL); await settle(p);
 
   const cfg = await p.evaluate(() => ({ counting: COUNTING, backup: BACKUP, min: MIN_POOL }));
-  ok(JSON.stringify(cfg.counting) === '["r4","r5","r6","r7"]', 'Sand Valley rounds are the counting pool: ' + cfg.counting.join(','));
-  ok(JSON.stringify(cfg.backup) === '["r1","r2"]', 'Lawsonia rounds are backups: ' + cfg.backup.join(','));
+  ok(JSON.stringify(cfg.counting) === '["r2","r4","r5","r6","r7"]', 'five Sand Valley counting rounds: ' + cfg.counting.join(','));
+  ok(JSON.stringify(cfg.backup) === '["r1"]', 'Lawsonia Links is the only backup: ' + cfg.backup.join(','));
   ok(cfg.min === 4, 'MIN_POOL is 4 (got ' + cfg.min + ')');
 
   const pools = await p.evaluate(() => {
     ['r1','r2','r4','r5','r6','r7'].forEach((rid, k) => { S.s[rid] = P.map((_, pi) => 20 + k * 2 + pi); });
-    return P.map((pl, pi) => {
-      const st = standing(pi);
-      return { name: pl.n, n: st.n, usedBackup: st.rs.some(r => r.backup) };
-    });
+    return P.map((pl, pi) => { const st = standing(pi);
+      return { name: pl.n, n: st.n, usedBackup: st.rs.some(r => r.backup) }; });
   });
-  ok(pools.every(x => x.n === 4), 'every player ends on a pool of 4 (got ' + pools.map(x => x.n).join(',') + ')');
-  const drew = pools.filter(x => x.usedBackup).map(x => x.name).sort();
-  ok(JSON.stringify(drew) === JSON.stringify(['Brook','Drew','Paul','Tony']),
-     'only the four sit-out players draw on Lawsonia: ' + drew.join(','));
-  ok(pools.find(x => x.name === 'Daniel').n === 4 && !pools.find(x => x.name === 'Daniel').usedBackup,
-     'Daniel reaches a full pool without a Lawsonia round of his own');
+  ok(pools.every(x => x.n >= 4), 'nobody falls below a pool of 4 (got ' + pools.map(x => x.n).join(',') + ')');
+  ok(!pools.some(x => x.usedBackup), 'on the full schedule nobody needs the backup');
+  ok(pools.filter(x => x.n === 5).length === 4 && pools.filter(x => x.n === 4).length === 5,
+     'four players on 5 rounds, five on 4 (got ' + pools.map(x => x.n).join(',') + ')');
 
-  // A full Sand Valley pool must ignore Lawsonia even when Lawsonia was the best round.
+  // Drew sits a second Sand Valley round -> 3 SV rounds -> Lawsonia backfills.
+  const short = await p.evaluate(() => {
+    S.o.r6 = [3, 1];                                   // Tony (already) + Drew
+    const st = standing(1);
+    return { n: st.n, used: st.rs.some(r => r.backup), pool: st.rs.map(r => r.rid).join(' ') };
+  });
+  ok(short.n === 4 && short.used, 'a newly short player backfills from Lawsonia (pool ' + short.pool + ')');
+  ok(/r1/.test(short.pool), 'the backfilled round is Lawsonia Links');
+
+  // A full Sand Valley pool ignores Lawsonia even when Lawsonia was the best round.
   const full = await p.evaluate(() => { S.s.r1[0] = 60; const st = standing(0);
     return { used: st.rs.some(r => r.backup), n: st.n }; });
-  ok(!full.used && full.n === 4, 'a full Sand Valley pool never pulls Lawsonia in');
+  ok(!full.used && full.n === 5, 'a full Sand Valley pool never pulls Lawsonia in');
 
-  // When short and both Lawsonia rounds exist, take the better one.
-  const pick = await p.evaluate(() => { S.s.r1[1] = 40; S.s.r2[1] = 22;
-    return standing(1).rs.filter(r => r.backup).map(r => r.rid); });
-  ok(pick.length === 1 && pick[0] === 'r1', 'pulls in only the better Lawsonia round (got ' + pick.join(',') + ')');
+  // Daniel has no Lawsonia round at all; he must still reach a full pool.
+  const daniel = await p.evaluate(() => { const st = standing(8);
+    return { n: st.n, used: st.rs.some(r => r.backup) }; });
+  ok(daniel.n === 4 && !daniel.used, 'Daniel reaches a pool of 4 without any Lawsonia round');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
 
-  // Sitting a Sand Valley round must not shrink the pool below everyone else's.
-  const shrink = await p.evaluate(() => {
-    S.o.r6 = [0, 3];                       // Matt also sits Sedge Wed -> 3 SV rounds
-    const st = standing(0);
-    return { n: st.n, used: st.rs.some(r => r.backup) };
+  // ---- 14. Monday is a split round: two groups, two courses -----------------
+  console.log('\n[14] Monday Sand Valley / Mammoth split');
+  p = await newPage(browser);
+  await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+
+  const split = await p.evaluate(() => {
+    const rd = R.find(x => x.id === 'r2'), N = P.map(x => x.n);
+    return {
+      course: rd.course, tees: rd.tees, counts: rd.counts,
+      sit: sitOuts(rd).map(i => N[i]).join(','),
+      groups: S.p.r2.map(grp => grp.map(pi => ({
+        name: N[pi], course: courseOf(rd, pi), slope: teeFor(rd, pi)[2],
+        quota: quotaFor(P[pi].idx, teeFor(rd, pi))
+      })))
+    };
   });
-  ok(shrink.n === 4 && shrink.used, 'a newly short player picks up Lawsonia automatically');
+  ok(split.counts === true, 'Monday counts toward La Copa');
+  ok(split.sit === 'Daniel', 'Daniel sits Monday morning (got ' + split.sit + ')');
+  ok(split.groups[0].every(x => x.course === 'Sand Valley'), 'group 1 plays Sand Valley');
+  ok(split.groups[1].every(x => x.course === 'Mammoth Dunes'), 'group 2 plays Mammoth Dunes');
+  ok(split.groups[0][0].slope === 138 && split.groups[1][0].slope === 136,
+     'each group gets its own slope (SV 138 / Mammoth 136)');
+  ok(split.groups.every(g => g.every(x => x.quota > 0 && Number.isInteger(x.quota))),
+     'quotas resolve on both legs');
+
+  await p.click('nav button[data-v="today"]'); await p.waitForTimeout(200);
+  await p.selectOption('#roundSel', '1'); await p.waitForTimeout(300);
+  const todayTxt = await p.evaluate(() => document.querySelector('#v-today').innerText);
+  ok(/Sand Valley . 10:10/.test(todayTxt) && /Mammoth Dunes . 10:30/.test(todayTxt),
+     'Today labels each group with its own course and tee time');
+  ok(!/Woodlands/i.test(todayTxt), 'no Woodlands on Today');
+
+  // Enter tab must offer each player the presets for the course they played.
+  await p.click('nav button[data-v="enter"]').catch(() => {});
+  await p.waitForTimeout(250);
+  const enterTxt = await p.evaluate(() => {
+    const el = document.querySelector('#v-enter'); return el ? el.innerText : '';
+  });
+  ok(!/Woodlands/i.test(enterTxt), 'no Woodlands on Enter');
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 
