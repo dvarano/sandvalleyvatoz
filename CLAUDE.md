@@ -127,7 +127,7 @@ twice breaks the symmetry the rule depends on.
   for seeding; second tiebreak is best single round. The committee (Drew and Matt) may still move
   any index ±3 before Monday — that is an index decision, deliberately **not** described on the
   Info tab as part of the Lawsonia round.
-- Top 4 after Wednesday tee **last, at 8:10** Thursday at the Commons. **El Toilet Bowl goes off
+- Top 4 after Wednesday tee off **last, at 8:10** Thursday at the Commons. **El Toilet Bowl goes off
   first at 8:00.** (Swapped Sep 2026 — the final group should finish last.)
 - Match A: Seed 1 v Seed 2 for **$700 / $350**. Match B: Seed 3 v Seed 4 for **$300**.
 - **Seeds 1 and 3 start 1 up.**
