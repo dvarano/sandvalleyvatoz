@@ -20,7 +20,7 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | # | Day | Course | Tee times | Default tee | Counts? | Format idea | Out |
 |---|---|---|---|---|---|---|---|
 | r1 | Sun 10/4 PM | Lawsonia Links | 1:40 / 1:50 | White 72.0 / 133, par 72 | Backup only | Bingo Bango Bongo | Daniel |
-| r2 | Mon 10/5 AM | **Sand Valley / Mammoth (split)** | 10:10 / 10:30 | SV Orange 72.8/138 · Mammoth Orange 72.1/136 | **Yes** | Six-Six-Six | Daniel |
+| r2 | Mon 10/5 AM | **Mammoth / Sand Valley (split)** | 10:10 / 10:30 | Mammoth Orange 72.1/136 · SV Orange 72.8/138 | **Yes** | Six-Six-Six | Daniel |
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Brook |
 | r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Four-ball Nassau | Drew |
@@ -182,7 +182,7 @@ holes are not USGA rated, so no score can be posted. Architect Jimmy Craig, est.
 | Round | Group 1 | Group 2 |
 |---|---|---|
 | r1 Links (pinned) | Mike, Drew, Paul, Tony | Eric, Brook, Matt, Ryan |
-| r2 SV / Mammoth | **Sand Valley 10:10** — Drew, Brook, Tony, Ryan | **Mammoth 10:30** — Mike, Paul, Eric, Matt |
+| r2 Mammoth / SV | **Mammoth 10:30** — Drew, Brook, Tony, Ryan | **Sand Valley 10:10** — Mike, Paul, Eric, Matt |
 | r4 Sedge (Tue) | Paul, Daniel, Matt, Ryan | Mike, Drew, Eric, Tony |
 | r5 Mammoth | Mike, Paul, Brook, Ryan | Daniel, Eric, Matt, Tony |
 | r6 Sedge (Wed) | Mike, Daniel, Eric, Ryan | Drew, Paul, Brook, Matt |
@@ -226,8 +226,8 @@ in Appendix A.
 
 ### Monday is a split round
 
-r2 is the only round where the two groups play **different courses**: Sand Valley at 10:10 and
-Mammoth Dunes at 10:30, replacing the cancelled Lawsonia Woodlands tee time. Daniel sits.
+r2 is the only round where the two groups play **different courses**: Mammoth Dunes at 10:30 and
+Sand Valley at 10:10, replacing the cancelled Lawsonia Woodlands tee time. Daniel sits.
 
 The round carries a `split:[{key,course,tee},…]` array indexed by group. `legOf()/keyFor()/
 courseOf()/teeListFor()` resolve **per player via their group**, so course handicap, quota, the
@@ -237,7 +237,10 @@ so this is not cosmetic — getting it wrong would mis-quota half the field.
 
 Monday's groups **changed in Sep 2026** when Drew asked to play with Mike on Sunday: holding both
 Sunday and Monday fixed made the week infeasible (see §3). The course split is now
-**Sand Valley 10:10** — Drew, Brook, Tony, Ryan; **Mammoth 10:30** — Mike, Paul, Eric, Matt.
+**Mammoth 10:30** — Drew, Brook, Tony, Ryan; **Sand Valley 10:10** — Mike, Paul, Eric, Matt.
+Flipped Sep 2026 at Drew's request: same foursomes, courses swapped. To flip it again, reorder
+the `split` array only — the groups in `BASE_GRID` do not move. The round-level `tees` string is
+listed chronologically for the header and round selector; per-group times come from the legs.
 The `woodlands` entry in `TEES` is kept, unused, in case the tee time is un-cancelled.
 
 ### In the app

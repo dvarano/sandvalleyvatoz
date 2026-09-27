@@ -264,14 +264,14 @@ const R = [
   rules:['Warmup round. Everyone posts a gross score.','Committee (Drew + Matt) may adjust any index &plusmn;3 before Monday.','Does not count for Copa points. Sunday finish is the FIRST tiebreak for seeding.'],
   gamerules:['Points per hole: first on green, closest once all are on, first in the hole.','Order of play is honest &mdash; furthest away goes first.','No handicap math. Everyone still plays their own ball.']},
 
- {id:'r2', day:'Mon Oct 5', sd:'Mon 10/5', when:'AM', course:'Sand Valley / Mammoth', sc:'SV / Mammoth', key:'sandvalley',  tees:'10:10 / 10:30',
+ {id:'r2', day:'Mon Oct 5', sd:'Mon 10/5', when:'AM', course:'Mammoth / Sand Valley', sc:'Mammoth / SV', key:'mammoth',  tees:'10:10 / 10:30',
   counts:true, tag:'Copa Round 1', game:'Six-Six-Six', out:[8], ng:2,
   /* Split round: the two groups play different courses. Everything per player —
      tee, course handicap, quota — resolves through legOf() below, so the split
      costs nobody anything. */
-  split:[{key:'sandvalley', course:'Sand Valley', tee:'10:10'},
-         {key:'mammoth',    course:'Mammoth Dunes', tee:'10:30'}],
-  rules:['Counts for La Copa. Daniel sits.','Two courses: Group 1 at Sand Valley 10:10, Group 2 at Mammoth Dunes 10:30.','Your quota follows whichever course you play.'],
+  split:[{key:'mammoth',    course:'Mammoth Dunes', tee:'10:30'},
+         {key:'sandvalley', course:'Sand Valley', tee:'10:10'}],
+  rules:['Counts for La Copa. Daniel sits.','Two courses: Group 1 at Mammoth Dunes 10:30, Group 2 at Sand Valley 10:10.','Your quota follows whichever course you play.'],
   gamerules:['Partners rotate every 6 holes so each player partners each other player.','Holes 1&ndash;6, 7&ndash;12, 13&ndash;18. Best ball each segment.','Fresh money each segment.']},
 
  {id:'r3', day:'Mon Oct 5', sd:'Mon 10/5', when:'PM', course:'The Sandbox', sc:'Sandbox', key:'sandbox',    tees:'4:54 / 5:18',
