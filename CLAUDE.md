@@ -198,7 +198,7 @@ inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are sug
 | r2 SV / Mammoth | **Sand Valley 10:10** — Drew, Brook, Tony, Ryan | **Mammoth 10:30** — Mike, Paul, Eric, Matt |
 | r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Brook | **8:40** — Daniel, Matt, Tony, Ryan |
 | r5 Mammoth | Paul, Eric, Tony, Ryan | Mike, Daniel, Brook, Matt |
-| r6 Sedge (Wed) | Drew, Paul, Daniel, Matt | Mike, Eric, Ryan *(three)* |
+| r6 Sedge (Wed) | **7:40** — Mike, Eric, Ryan *(three)* | **7:50** — Drew, Paul, Daniel, Matt |
 | r7 Sand Valley | Paul, Brook, Matt, Ryan | Drew, Daniel, Eric, Tony |
 
 **Group order matters on the non-split rounds.** Group 1 tees first — the Today tab reads the
