@@ -264,6 +264,15 @@ The `woodlands` entry in `TEES` is kept, unused, in case the tee time is un-canc
 
 ### In the app
 
+The Info tab's **"How pairings work" card is organiser-only** — it describes controls nobody else
+can see, and the group does not need the mechanics. Its grouped-round count is derived from
+`BASE_GRID` rather than written out; it read "eight" while there were six.
+
+**Two different generators, on purpose.** The in-app `generate()` still balances groups by index
+(`scorePartition` weights repeats 12× and index variance 1×) — that is fine, it only runs when a
+round is unlocked and re-drawn by hand. The offline optimiser in Appendix A no longer optimises
+balance at all (§3). Do not "fix" one to match the other.
+
 All rounds carrying a baseline grid **start locked** so a stray tap on auto-generate can't wipe
 a chosen pairing. Unlock is per round. Manual per-player dropdowns (Sitting / Group 1 / 2 / 3)
 always work, locked or not, and every change re-renders the group preview, the sit-outs, the
@@ -437,7 +446,8 @@ Supabase/Firebase (proper, and overkill).
 modes, publish, the stale-SHA 409 retry, rate limiting, offline edit survival, index editing and
 propagation, backward compatibility with pre-`i` links, the baseline-grid freeze guard, the
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
-Monday split round, the standings markers, and the pairing invariants — 108
+Monday split round, the standings markers, the organiser-only Info card, and the pairing
+invariants — 111
 assertions. Worth re-running after any change to the sync path.
 
 ```

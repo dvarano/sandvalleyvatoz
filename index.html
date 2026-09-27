@@ -940,9 +940,12 @@ function renderInfo(){
     </ul>
   </div>`;
 
-  h+=`<div class="card"><h2>How pairings work</h2>
+  /* Organiser only: this describes controls nobody else can see, and the group
+     does not need to know how the draw is made. Count comes from BASE_GRID so it
+     cannot drift — it said "eight" while there were six. */
+  if(isEditor()) h+=`<div class="card"><h2>How pairings work</h2>
     <p class="note">Groups are re-drawn every round and are <b>fully editable by hand</b> on the Pairings tab. Auto-generate balances the groups by handicap while favouring partners you have not played with yet; then move anyone you like. The matrix at the bottom of that tab tracks who still does not play with whom and updates with every change.</p>
-    <p class="note" style="margin-top:8px">All eight grouped rounds start <b>locked</b>, so auto-generate cannot wipe a pairing by accident. Moving people by hand always works; unlock a round only if you want it re-drawn from scratch.</p>
+    <p class="note" style="margin-top:8px">All ${Object.keys(BASE_GRID).length} grouped rounds start <b>locked</b>, so auto-generate cannot wipe a pairing by accident. Moving people by hand always works; unlock a round only if you want it re-drawn from scratch.</p>
   </div>`;
 
   h+=`<div class="card"><h2>Money</h2>

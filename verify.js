@@ -365,6 +365,10 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(!ro.oldName, 'old "Who has played with whom" wording is gone');
   ok(ro.showsIdx, 'viewer can still read the index values');
   ok(ro.rselHidden, 'round selector hidden (both cards are round-independent)');
+  // The "How pairings work" card describes organiser-only controls.
+  await p.click('nav button[data-v="info"]'); await p.waitForTimeout(250);
+  const infoV = await p.evaluate(() => [...document.querySelectorAll('#v-info .card h2')].map(x => x.textContent));
+  ok(!infoV.includes('How pairings work'), 'viewer does not get the pairings-mechanics card');
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 
@@ -383,6 +387,15 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(ed12.asgSelects === 9, 'organiser still has the assignment dropdowns (got ' + ed12.asgSelects + ')');
   ok(ed12.heads.includes('Who plays with whom'), 'organiser matrix also renamed: ' + JSON.stringify(ed12.heads));
   ok(!ed12.rselHidden, 'round selector visible for the organiser');
+
+  await p.click('nav button[data-v="info"]'); await p.waitForTimeout(250);
+  const infoE = await p.evaluate(() => ({
+    cards: [...document.querySelectorAll('#v-info .card h2')].map(x => x.textContent),
+    count: (document.querySelector('#v-info').innerText.match(/All (\d+) grouped rounds/) || [])[1]
+  }));
+  ok(infoE.cards.includes('How pairings work'), 'organiser does get the pairings-mechanics card');
+  ok(infoE.count === '6', 'grouped-round count is derived from BASE_GRID (got ' + infoE.count + ')');
+  await p.click('nav button[data-v="pair"]'); await p.waitForTimeout(250);
 
   // and the index edit still works end to end
   await p.fill('[data-idx="2"]', '4'); await p.dispatchEvent('[data-idx="2"]', 'change');
