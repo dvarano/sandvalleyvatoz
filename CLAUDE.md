@@ -198,13 +198,22 @@ inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are sug
 | r2 SV / Mammoth | **Sand Valley 10:10** — Mike, Paul, Eric, Matt | **Mammoth 10:30** — Drew, Brook, Tony, Ryan |
 | r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Brook | **8:40** — Daniel, Matt, Tony, Ryan |
 | r5 Mammoth | Paul, Eric, Tony, Ryan | Mike, Daniel, Brook, Matt |
-| r6 Sedge (Wed) | **7:40** — Mike, Eric, Ryan *(three)* | **7:50** — Drew, Paul, Daniel, Matt |
-| r7 Sand Valley | Paul, Brook, Matt, Ryan | Drew, Daniel, Eric, Tony |
+| r6 Sedge (Wed) | **7:40** — Mike, Matt, Ryan *(three)* | **7:50** — Drew, Paul, Daniel, Eric |
+| r7 Sand Valley | Paul, Brook, Daniel, Ryan | Drew, Matt, Eric, Tony |
 
 **Group order matters on the non-split rounds.** Group 1 tees first — the Today tab reads the
 two times straight off `rd.tees`. Drew's foursome is group 1 on Tuesday morning (8:30) by
 request. Swapping the two groups in `BASE_GRID` changes only who tees when; membership, pair
 counts and the pins are all order-independent.
+
+**Wednesday swap (Sep 2026), from the group's feedback:** on Wednesday PM they asked to keep
+Tony with Eric and move Brook and/or Matt into that group. Checked exhaustively:
+**Brook and Matt both is infeasible** (no week keeps 36/36 with max 3); Wed PM alone can't do it
+either (always a 0 or a 4). The smallest fix is **Matt in, with Wed AM swapping Matt and Eric**
+and Wed PM swapping Matt and Daniel. Brook-only needed Tuesday PM reshuffled too and took Drew
+out of Tony's group, so it was not taken. Drew's counts after: Matt 1, Mike 2, Tony 3, Brook 2,
+Eric 3, Ryan 1, Paul 2, Daniel 1.
+- **r7 Wednesday PM** must have **Tony with Eric and Matt**.
 
 **Pinned by request — do not lose these when regenerating:**
 - **r1 Sunday** must have **Drew with Mike** and **Drew with Paul** and **Eric with Brook**.
@@ -410,8 +419,8 @@ without a page error.
 - [ ] **Tuesday's turn is tight.** Sedge at 8:30/8:40 finishing at the resort's 4:15 pace lands
       12:45–12:55 against a 12:50 Mammoth tee. Moving Tuesday's Sedge earlier is worth more than
       the extra tee times. (Wednesday is fine: 7:40 is a pre-8am speed slot, under 4 hours.)
-- [ ] **Confirm real handicap indexes.** Drew expects them mid-week. Two are in (Drew 7.3,
-      Mike 6.9); seven are still placeholders, but they no longer
+- [ ] **Confirm real handicap indexes.** Drew expects them mid-week. Three are in (Drew 7.3,
+      Mike 7.7, Paul 8.8); six are still placeholders, but they no longer
       need a code change: edit them on the **Pairings tab → Handicap indexes** and Publish.
       The hardcoded `P` array is only the fallback. **Lock them before Monday** — round results
       are recomputed from the current index, so editing one after a counting round rewrites
