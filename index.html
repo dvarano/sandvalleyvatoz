@@ -636,9 +636,9 @@ function generate(ids, sizes, hist, seed){
    it together) and Thursday follows the standings. Edit freely on the Pairings
    tab &mdash; the matrix there tracks what your changes do to those numbers. */
 const BASE_SEED = 3;
-const BASE_GRID = {"r1":[[2,5,4,6],[1,7,0,3]],"r2":[[6,7,5,1],[2,0,3,4]],
-                   "r4":[[0,6,1,8],[2,7,5,3]],"r5":[[0,4,5,7],[2,8,6,3]],
-                   "r6":[[4,7,8,6],[5,0,1,2]],"r7":[[5,3,8,0],[1,6,4,7]]};
+const BASE_GRID = {"r1":[[0,1,2,3],[4,5,6,7]],"r2":[[4,1,5,3],[6,2,0,7]],
+                   "r4":[[2,3,5,7],[1,8,0,6]],"r5":[[8,3,5,7],[2,0,4,6]],
+                   "r6":[[6,8,2,5],[0,7,4,1]],"r7":[[3,6,7,1],[4,0,8,5]]};
 /* Every round carrying a baseline grid starts locked, so a stray tap on
    auto-generate can't wipe a chosen pairing. Unlock per round on the Pairings
    tab. Manual moves are always allowed, locked or not. */

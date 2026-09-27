@@ -181,25 +181,35 @@ holes are not USGA rated, so no score can be posted. Architect Jimmy Craig, est.
 
 | Round | Group 1 | Group 2 |
 |---|---|---|
-| r1 Links (pinned) | Mike, Eric, Brook, Ryan | Drew, Paul, Matt, Tony |
-| r2 SV / Mammoth | **Sand Valley 10:10** — Drew, Paul, Eric, Ryan | **Mammoth 10:30** — Mike, Brook, Matt, Tony |
-| r4 Sedge (Tue) | Drew, Daniel, Matt, Ryan | Mike, Paul, Eric, Tony |
-| r5 Mammoth | Paul, Eric, Brook, Matt | Mike, Daniel, Tony, Ryan |
-| r6 Sedge (Wed) | Paul, Daniel, Brook, Ryan | Mike, Drew, Eric, Matt |
-| r7 Sand Valley | Daniel, Eric, Tony, Matt | Drew, Paul, Brook, Ryan |
+| r1 Links (pinned) | Mike, Drew, Matt, Tony | Paul, Eric, Brook, Ryan |
+| r2 SV / Mammoth | **Sand Valley 10:10** — Drew, Eric, Brook, Tony | **Mammoth 10:30** — Mike, Paul, Matt, Ryan |
+| r4 Sedge (Tue) | Mike, Paul, Eric, Tony | Drew, Daniel, Matt, Ryan |
+| r5 Mammoth | Paul, Daniel, Eric, Tony | Mike, Brook, Matt, Ryan |
+| r6 Sedge (Wed) | Mike, Daniel, Eric, Ryan | Drew, Paul, Brook, Matt |
+| r7 Sand Valley | Drew, Paul, Tony, Ryan | Daniel, Eric, Brook, Matt |
 
 **Pinned by request — do not lose these when regenerating:**
-- **r1 Sunday** is exactly the grid Drew picked. It already satisfies **Drew with Paul** and
-  **Eric with Brook** on Sunday, which Drew asked for — being pinned, it cannot drift.
+- **r1 Sunday** must have **Drew with Mike** (Drew's request, Sep 2026) and **Eric with Brook**.
+  It no longer carries Drew with Paul — see the trade-off below.
 - **r4 Tuesday AM** must have **Matt with Daniel** (Daniel's first 18).
 - **Matt with Daniel at least twice** across the week.
-- **Drew with Paul at least twice** across the week.
-- **r2 Monday** groups are held as-is so the Sand Valley / Mammoth course split does not move.
+- **Drew with Paul at least twice** across the week (now r2 and r7, not Sunday).
+
+**Drew's partner preferences (Sep 2026):** more rounds with Mike, Brook and Tony; fewer with Ryan.
+Achieved: Ryan **3 → 2**, Tony **1 → 3**, Brook **1 → 2**, Mike stays at 1 (Sunday).
+
+**Two hard limits found while fitting this, worth not rediscovering:**
+1. **Drew with Mike can essentially only happen once.** Drew sits r5 and Mike sits r7, so they
+   overlap in only four rounds, and full pair coverage with the 3-repeat cap consumes them.
+   Forcing a second Mike round is possible but costs Tony (drops to 1) — a swap, not a gain.
+2. **Sunday with Drew+Mike is infeasible if Monday is also held fixed** — some pair is always
+   forced over 3. Verified by exhaustive search, not a failed optimiser run. Monday had to move,
+   which is why the course split changed.
 
 **Properties this grid satisfies:** all **36 possible pairs** play together at least once,
 **nobody paired more than 3 times** (and nobody paired zero times), and no round has its two
-groups more than **1.75 apart** in average index (tightened from 2.0 when the grid was
-regenerated for Mike's Wednesday sit-out). The Sandbox is excluded from partner tracking
+groups more than **1.50 apart** in average index (1.75 before Drew's partner preferences,
+2.0 before that). The Sandbox is excluded from partner tracking
 because everyone plays it together; Thursday follows the standings.
 
 **How it was produced.** Not greedily round-by-round — that plateaus around 35/36 with a 4.25
@@ -217,8 +227,9 @@ tee presets on Enter and the labels on Today all follow whichever course that pl
 played. A round without `split` behaves exactly as before. Slopes differ (SV 138 vs Mammoth 136),
 so this is not cosmetic — getting it wrong would mis-quota half the field.
 
-Groups are unchanged from the old Woodlands pairing, by request, and were held fixed again when
-r4–r7 were regenerated for Mike's Wednesday sit-out. Drew expects to tweak them later.
+Monday's groups **changed in Sep 2026** when Drew asked to play with Mike on Sunday: holding both
+Sunday and Monday fixed made the week infeasible (see §3). The course split is now
+**Sand Valley 10:10** — Drew, Eric, Brook, Tony; **Mammoth 10:30** — Mike, Paul, Matt, Ryan.
 The `woodlands` entry in `TEES` is kept, unused, in case the tee time is un-cancelled.
 
 ### In the app
