@@ -654,9 +654,17 @@ function defaultPairings(){
   R.forEach((rd,i)=>{
     if(S.p[rd.id]) return;
     if(rd.id==='r3' || rd.id==='r8') return;   // Sandbox is one big group; Thursday follows standings
-    if(BASE_GRID[rd.id] && !S.o[rd.id]){
-      S.p[rd.id] = BASE_GRID[rd.id].map(g=>g.slice().sort((a,b)=>P[a].idx-P[b].idx));
-      return;
+    /* Use the baseline whenever it still covers exactly the players who are in.
+       Testing `!S.o[rd.id]` instead threw the chosen grid away the moment ANY
+       sit-out override existed — even one identical to the default, which the
+       Pairings dropdowns create just by being touched and set back. */
+    const base = BASE_GRID[rd.id];
+    if(base){
+      const key = a => a.slice().sort((x,y)=>x-y).join(',');
+      if(key(base.reduce((a,g)=>a.concat(g),[])) === key(playing(rd))){
+        S.p[rd.id] = base.map(g=>g.slice().sort((a,b)=>P[a].idx-P[b].idx));
+        return;
+      }
     }
     const ids = playing(rd);
     S.p[rd.id] = generate(ids, sizesFor(ids.length, ids.length>8?3:2), historyUpTo(i), BASE_SEED);

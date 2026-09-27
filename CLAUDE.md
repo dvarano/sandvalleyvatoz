@@ -281,6 +281,13 @@ can see, and the group does not need the mechanics. Its grouped-round count is d
 round is unlocked and re-drawn by hand. The offline optimiser in Appendix A no longer optimises
 balance at all (§3). Do not "fix" one to match the other.
 
+**`defaultPairings()` uses the baseline whenever it still covers exactly the players who are in**,
+compared as a set. It used to test `!S.o[rd.id]`, which threw the chosen grid away the moment ANY
+sit-out override existed for that round — **including one identical to the default**, which the
+Pairings dropdowns create just by being touched and set back. That silently regenerated Tuesday
+morning on the live board in Sep 2026 and pushed Eric/Paul to 4. A genuine sit-out change still
+falls through to `generate()`, as it should. Covered by verify.js §13c.
+
 All rounds carrying a baseline grid **start locked** so a stray tap on auto-generate can't wipe
 a chosen pairing. Unlock is per round. Manual per-player dropdowns (Sitting / Group 1 / 2 / 3)
 always work, locked or not, and every change re-renders the group preview, the sit-outs, the
@@ -454,8 +461,8 @@ Supabase/Firebase (proper, and overkill).
 modes, publish, the stale-SHA 409 retry, rate limiting, offline edit survival, index editing and
 propagation, backward compatibility with pre-`i` links, the baseline-grid freeze guard, the
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
-Monday split round, the standings markers, the organiser-only Info card, and the pairing
-invariants — 111
+Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
+guard, and the pairing invariants — 115
 assertions. Worth re-running after any change to the sync path.
 
 ```

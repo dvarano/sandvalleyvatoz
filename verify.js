@@ -474,6 +474,34 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 
+  // ---- 13c. A redundant sit-out override must not discard the baseline -------
+  console.log('\n[13c] Baseline survives a no-op sit-out override');
+  p = await newPage(browser);
+  // Published board carries o.r4 = [Brook], which is exactly the default sit-out.
+  await mockApi(p, { file: JSON.stringify({ v:1, s:{}, t:{}, p:{}, o:{ r4:[4] }, u:{}, i:{}, m: Date.now(), l:[] }),
+                     sha:'s1', puts:[], commits:[] });
+  await p.goto(URL); await settle(p);
+  const noop = await p.evaluate(() => {
+    const N = P.map(x => x.n);
+    const base = BASE_GRID.r4.map(g => g.slice().sort((a,b)=>P[a].idx-P[b].idx).map(i=>N[i]).join('/'));
+    const live = S.p.r4.map(g => g.map(i=>N[i]).join('/'));
+    return { base, live, sit: sitOuts(R.find(r=>r.id==='r4')).map(i=>N[i]).join(',') };
+  });
+  ok(JSON.stringify(noop.live) === JSON.stringify(noop.base),
+     'r4 still uses BASE_GRID despite a no-op sit-out override (got ' + noop.live.join(' | ') + ')');
+  ok(noop.sit === 'Brook', 'sit-out unchanged (got ' + noop.sit + ')');
+
+  // A REAL sit-out change must still fall through to generate().
+  const real = await p.evaluate(() => {
+    const N = P.map(x => x.n);
+    S.p = {}; S.o.r4 = [4, 6];              // Brook AND Ryan now sit
+    defaultPairings();
+    return { n: S.p.r4.reduce((a,g)=>a+g.length,0), has: S.p.r4.flat().includes(6) };
+  });
+  ok(real.n === 7 && !real.has, 'a genuine sit-out change regenerates the round (7 playing, Ryan out)');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
   // ---- 14. Monday is a split round: two groups, two courses -----------------
   console.log('\n[14] Monday Sand Valley / Mammoth split');
   p = await newPage(browser);
