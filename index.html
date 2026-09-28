@@ -226,7 +226,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-09-28T22:37Z');
+const SITE_UPDATED = Date.parse('2026-09-28T22:42Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -797,7 +797,9 @@ function renderToday(){
 
   h+=`<div class="card"><h2>${rd.binding?'Final match rules':`Format idea &mdash; ${esc(rd.game)}`}</h2><ul class="rules">${rd.gamerules.map(x=>`<li>${x}</li>`).join('')}</ul>
       ${rd.binding?'':'<p class="note" style="margin-top:8px">A suggestion, not a rule. Any group can run its own game as long as everyone plays their own ball.</p>'}</div>`;
-  h+=`<div class="card"><h2>Notes</h2><ul class="rules">${rd.rules.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+  /* Every 18-hole round (anything with a tee list) also gets the tee caveat. */
+  const notes = rd.rules.concat(t0 ? ['Default tees are shown. Quotas will be adjusted if different tees are played.'] : []);
+  h+=`<div class="card"><h2>Notes</h2><ul class="rules">${notes.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
 
   if(rd.key==='commons'){
     h+=`<div class="card"><h2>Commons handicaps &mdash; 65% of index</h2>
