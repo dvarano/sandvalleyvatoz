@@ -290,8 +290,10 @@ like every other Sand Valley resort 18.
 (default), Navy/White 74.1/146, Navy 75.2/149, White/Green 70.7/141, Green 69.6/134, all par 72.
 Drew and Matt can pick a different tee per player on the Enter tab.
 
-**Consequence: Drew no longer plays Mammoth at all** (Lido Monday, sits Tuesday PM Mammoth). The
-"everyone plays both courses" reasoning below predates Lido.
+**Consequence: Drew no longer plays Mammoth with the group** (Lido Monday, sits Tuesday PM
+Mammoth). The "everyone plays both courses" reasoning below predates Lido. **Drew will probably
+play Mammoth as a solo on Tuesday PM** — deliberately **not** on the site: it is not a group round,
+does not count for the Copa, and Drew stays marked as sitting r5. Do not add it.
 
 **Coverage broke:** with Drew and Matt out of the two foursomes, **Matt/Paul and Drew/Ryan dropped
 to zero**. Exhaustive search (Sunday, Monday, Matt+Daniel Tuesday AM, Drew+Paul ≥2, Drew+Mike ≥2,
@@ -456,8 +458,8 @@ without a page error.
 - [ ] **Tuesday's turn is tight.** Sedge at 8:30/8:40 finishing at the resort's 4:15 pace lands
       12:45–12:55 against a 12:50 Mammoth tee. Moving Tuesday's Sedge earlier is worth more than
       the extra tee times. (Wednesday is fine: 7:40 is a pre-8am speed slot, under 4 hours.)
-- [ ] **Confirm real handicap indexes.** Drew expects them mid-week. Three are in (Drew 7.3,
-      Mike 7.7, Paul 8.8); six are still placeholders, but they no longer
+- [ ] **Confirm real handicap indexes.** Drew expects them mid-week. Seven are in (Matt 14.1, Drew 7.3,
+      Mike 7.7, Tony 13.1, Brook 12.7, Eric 6.4, Paul 8.8); Ryan and Daniel are still placeholders, but they no longer
       need a code change: edit them on the **Pairings tab → Handicap indexes** and Publish.
       The hardcoded `P` array is only the fallback. **Lock them before Monday** — round results
       are recomputed from the current index, so editing one after a counting round rewrites
