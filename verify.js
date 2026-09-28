@@ -613,6 +613,24 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
     srv.close();
   }
 
+  // ---- 16. Header "last updated" covers code changes, not just publishes -----
+  console.log('\n[16] Header reflects the newer of the last publish and the last site update');
+  p = await newPage(browser); await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+  const hdr = await p.evaluate(() => {
+    const out = {};
+    syncBusy = false; lastSyncErr = ''; dirty = false;   // isolate from the boot pull
+    S.m = SITE_UPDATED - 86400000; renderSync();          // board published a day before the site changed
+    out.older = document.querySelector('#syncTxt').title === new Date(SITE_UPDATED).toLocaleString();
+    S.m = SITE_UPDATED + 3600000; renderSync();           // publish after the site change
+    out.newer = document.querySelector('#syncTxt').title === new Date(S.m).toLocaleString();
+    return out;
+  });
+  ok(hdr.older, 'a site update newer than the last publish shows as the update time');
+  ok(hdr.newer, 'a publish newer than the site update shows as the update time');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
   await browser.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);

@@ -219,6 +219,12 @@ nav button[aria-selected=true]{color:var(--ink-1);font-weight:600}
    ============================================================ */
 
 const TRIP_NAME = "La Copa De Vatoz";
+/* When the site itself last changed in a way the group would notice (pairings,
+   schedule, rules text). Bump it with every such code change. The header shows
+   whichever is newer — this or the last publish of data.json — so a pairing
+   change pushed as code reads as an update just like a published score does.
+   Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
+const SITE_UPDATED = Date.parse('2026-09-28T15:35Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -263,7 +269,7 @@ const ALL_SQUARE = 'split the prizes, or agree on a playoff, chip-off or putt-of
 const R = [
  {id:'r1', day:'Sun Oct 4', sd:'Sun 10/4', when:'PM', course:'Lawsonia Links', sc:'Links', key:'links',      tees:'1:40 / 1:50',
   counts:false, backup:true, tag:'El Qualifier', game:'Six-Six-Six', out:[8], ng:2, pin:true,
-  rules:['Warmup round. Everyone posts a gross score.','Committee (Drew + Matt) may adjust any index &plusmn;3 before Monday.','Does not count for Copa points. Sunday finish is the FIRST tiebreak for seeding.'],
+  rules:['Warmup round. Everyone posts a gross score.','Committee (Drew + Matt) may adjust indexes before Monday.','Does not count for Copa points. Sunday finish is the FIRST tiebreak for seeding.'],
   gamerules:['Partners rotate every 6 holes so each player partners each other player.','Holes 1&ndash;6, 7&ndash;12, 13&ndash;18. Best ball each segment.','Fresh money each segment.']},
 
  {id:'r2', day:'Mon Oct 5', sd:'Mon 10/5', when:'AM', course:'Sand Valley / Mammoth', sc:'SV / Mammoth', key:'sandvalley',  tees:'10:10 / 10:30',
@@ -1042,7 +1048,7 @@ function renderInfo(){
   h+=`<div class="card"><h2>Using this page</h2>
     <ul class="rules">
       <li><b>Bookmark this URL.</b> It does not change. Drew publishes the board after each round &mdash; hit <b>Refresh</b> at the top to pull the latest.</li>
-      <li>The header line tells you <b>when the board was last published</b>, so you always know whether you are looking at current numbers.</li>
+      <li>The header line tells you <b>when the board was last updated</b> &mdash; scores, indexes or pairings &mdash; so you always know whether you are looking at current numbers.</li>
       <li><b>One scorekeeper.</b> Drew enters the scores; everyone else reads. Quota is self-tallying, so you know your own number walking off 18.</li>
     </ul>
     <p class="note" style="margin-top:10px"><a href="#" id="orgToggle" style="color:var(--accent)">Organiser access</a></p>
@@ -1114,7 +1120,7 @@ function rosterCard(){
   const custom = idxDirty();
   let h=`<div class="card"><h2>Handicap indexes</h2>
     <p class="note" style="margin-bottom:4px">Quotas, course handicaps and the Commons 65% strokes all derive from these. Change one and everything recalculates.</p>
-    <p class="note" style="margin-bottom:8px"><b>Lock these before Monday.</b> Round results are recomputed from the current index, so editing one after a counting round rewrites that round&rsquo;s result. Sunday does not count, which is why the committee&rsquo;s &plusmn;3 adjustment belongs Sunday night.</p>`;
+    <p class="note" style="margin-bottom:8px"><b>Lock these before Monday.</b> Round results are recomputed from the current index, so editing one after a counting round rewrites that round&rsquo;s result. Sunday does not count, which is why any committee adjustment belongs Sunday night.</p>`;
   P.forEach((p,n)=>{
     const moved = p.idx !== BASE_IDX[n];
     h+=`<div class="asgn"><span>${p.n} <i>${moved?`was ${fmtIdx(BASE_IDX[n])}`:'placeholder'}</i></span>
@@ -1250,13 +1256,17 @@ function setSync(state, msg, title){
 function renderSync(){
   const pub = $('#pubBtn'); if(pub) pub.classList.toggle('hide', !isEditor());
   if(syncBusy) return;
-  const when = S.m ? new Date(S.m).toLocaleString() : '';
+  /* Last update = the newer of the published board and the site itself. S.m
+     alone missed pairing changes made in code, which never touch data.json.
+     Only the display uses this; publish/pull still compare S.m. */
+  const last = Math.max(S.m || 0, SITE_UPDATED || 0);
+  const when = last ? new Date(last).toLocaleString() : '';
   /* Errors outrank the dirty flag: a failed publish IS unpublished changes, but
      only the error tells you why, so it must not be masked by the milder note. */
   if(lastSyncErr) setSync('err', lastSyncErr, '');
   else if(isEditor() && dirty) setSync('warn', 'Unpublished changes', when);
-  else if(!S.m) setSync('', 'No board published yet', '');
-  else setSync('ok', 'Updated ' + ago(S.m), when);
+  else if(!last) setSync('', 'No board published yet', '');
+  else setSync('ok', 'Updated ' + ago(last), when);
 }
 let syncBusy = false, lastSyncErr = '';
 

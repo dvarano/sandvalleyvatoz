@@ -124,9 +124,10 @@ twice breaks the symmetry the rule depends on.
 ### Seeding and La Final
 
 - Sunday at Lawsonia is a **warmup only** (see the backup rule above). It is the **first tiebreak**
-  for seeding; second tiebreak is best single round. The committee (Drew and Matt) may still move
-  any index ±3 before Monday — that is an index decision, deliberately **not** described on the
-  Info tab as part of the Lawsonia round.
+  for seeding; second tiebreak is best single round. The committee (Drew and Matt) may still adjust
+  indexes before Monday — that is an index decision, deliberately **not** described on the
+  Info tab as part of the Lawsonia round. **The site says only that indexes may be adjusted; it
+  deliberately gives no number** (it used to say ±3; Drew asked to keep it vague, Sep 2026).
 - **La Final:** the top 4 after Wednesday play the final Thursday at the Commons, teeing off **last, at 8:10**. **El Toilet Bowl goes off
   first at 8:00.** (Swapped Sep 2026 — the final group should finish last.)
 - Match A: Seed 1 v Seed 2 for **$700 / $350**. Match B: Seed 3 v Seed 4 for **$300**.
@@ -434,7 +435,7 @@ without a page error.
       need a code change: edit them on the **Pairings tab → Handicap indexes** and Publish.
       The hardcoded `P` array is only the fallback. **Lock them before Monday** — round results
       are recomputed from the current index, so editing one after a counting round rewrites
-      that round's result. Sunday doesn't count, which is why the committee's ±3 belongs
+      that round's result. Sunday doesn't count, which is why any committee adjustment belongs
       Sunday night.
 - [x] **Verify the Commons stroke-index row** against the physical scorecard. Done — the old row
       was wrong in ten of twelve positions and is corrected. See §2.
@@ -497,6 +498,13 @@ that person's own copy, which vanishes on refresh. Don't "harden" the hiding; it
   still match `BASE_GRID`; hand-edited rounds are published as-is. **If you change `BASE_GRID`,
   that is enough — do not also hand-write `data.json`.**
 
+- **"Updated X ago" covers code changes too** (Sep 2026). The header used to show only `S.m`,
+  the last publish of `data.json`, so a pairing change pushed as code never moved it.
+  `renderSync()` now shows the newer of `S.m` and **`SITE_UPDATED`**, a timestamp constant at the
+  top of the script. **Bump `SITE_UPDATED` in every commit that changes something the group sees**
+  (pairings, schedule, rules or Info text) — set it to the current UTC time. Do not bump it for
+  tests, docs or refactors. Display only: publish and pull still compare `S.m` alone, so this
+  cannot affect the hash-versus-remote decision. Covered by verify.js §16.
 - **Open tabs pick up code updates themselves** (Sep 2026). Pages serves `index.html` with a
   10-minute cache and Safari holds it longer, so a code change (new pairings) would not show on
   reload. `checkForUpdate()` fetches `location.pathname?cb=<now>` with `no-store` — the Pages URL,
@@ -521,7 +529,7 @@ propagation, backward compatibility with pre-`i` links, the baseline-grid freeze
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
 Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
 guard, the pairing invariants, and code updates reaching an open tab (§15, over a local HTTP
-server) — 124 assertions. Worth re-running after any change to the sync path.
+server) and the header's last-updated time (§16) — 127 assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked
