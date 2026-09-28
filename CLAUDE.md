@@ -429,7 +429,10 @@ shape evolves. Preserve that when changing state.
 
 ### Tabs
 
-**Info** (landing, unless opened during the trip dates → then Today) · **Today** (groups, format,
+**Info** (landing, unless opened during the trip dates → then Today) · **Today** (groups — **each
+group box names its course (split days) and default tees in bold with rating/slope, right under
+the tee time**; the old "X tees by default" in the header was dropped since it was wrong on split
+days — format,
 quotas, and **Plays off** — strokes against the lowest course handicap *in that player's own
 group*, for the side games; rows grouped, low man first at 0; split rounds put the course on the
 group header instead of a column so it fits a phone. Uses course handicaps, so tee overrides and

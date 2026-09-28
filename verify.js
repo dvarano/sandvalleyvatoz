@@ -533,8 +533,9 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   await p.click('nav button[data-v="today"]'); await p.waitForTimeout(200);
   await p.selectOption('#roundSel', '1'); await p.waitForTimeout(300);
   const todayTxt = await p.evaluate(() => document.querySelector('#v-today').innerText);
-  ok(/Sand Valley . 10:10/.test(todayTxt) && /The Lido . 10:30/.test(todayTxt) && /Mammoth Dunes . 10:30/.test(todayTxt),
-     'Today labels each group with its own course and tee time');
+  ok(/Group 1\s*10:10\s*Sand Valley . Orange tees/.test(todayTxt) && /Group 2\s*10:30\s*The Lido . White tees/.test(todayTxt)
+     && /Group 3\s*10:30\s*Mammoth Dunes . Orange tees/.test(todayTxt),
+     'Today labels each group with its own course, tees and tee time');
   ok(!/Woodlands/i.test(todayTxt), 'no Woodlands on Today');
 
   // Enter tab must offer each player the presets for the course they played.

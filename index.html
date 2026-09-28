@@ -79,6 +79,8 @@ tr.grprow td{text-align:left;font-size:11px;color:var(--ink-3);text-transform:up
 .grp h3{margin:0 0 6px;font-size:13px;display:flex;justify-content:space-between}
 .grp h3 small{color:var(--ink-3);font-weight:400;font-variant-numeric:tabular-nums}
 .grp ul{margin:0;padding-left:0;list-style:none}
+.grptee{margin:-2px 0 8px;font-size:14px}
+.grptee span{color:var(--ink-3);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums;margin-left:4px}
 .grp li{display:flex;justify-content:space-between;padding:3px 0;font-size:14px}
 .grp li span{color:var(--ink-3);font-variant-numeric:tabular-nums}
 .entry{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid var(--grid)}
@@ -224,7 +226,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-09-28T21:17Z');
+const SITE_UPDATED = Date.parse('2026-09-28T22:37Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -763,7 +765,7 @@ function renderToday(){
   h+=`<div class="card">
     <span class="pill ${rd.counts?'count':''}">${rd.tag}</span>
     <p class="hero" style="margin-top:8px">${rd.course}</p>
-    <p class="sub">${rd.day} &middot; tee times ${rd.tees}${t0 && !rd.split?` &middot; ${t0[0][0]} tees by default`:''}</p>
+    <p class="sub">${rd.day} &middot; tee times ${rd.tees}</p>
   </div>`;
 
   h+=`<div class="card"><h2>Groups</h2>`;
@@ -773,10 +775,13 @@ function renderToday(){
     const gs=(S.p[rd.id]||[]).filter(g=>g.length);
     if(gs.length){
       gs.forEach((g,i)=>{
+        /* Each group says which course and which tees, right above its players —
+           on a split day the three groups are on three different courses. */
         const leg = rd.split && rd.split[Math.min(i, rd.split.length-1)];
-        const tee = leg ? `${esc(leg.course)} &middot; ${leg.tee}`
-                        : (rd.tees.split('/')[i] ? rd.tees.split('/')[i].trim() : '');
-        h+=`<div class="grp"><h3>Group ${i+1} <small>${tee}</small></h3><ul>`;
+        const time = leg ? leg.tee : (rd.tees.split('/')[i] ? rd.tees.split('/')[i].trim() : '');
+        const dt = (TEES[leg ? leg.key : rd.key] || [])[0];
+        const teeLine = dt ? `<p class="grptee">${leg ? esc(leg.course)+' &middot; ' : ''}<b>${esc(dt[0])} tees</b> <span>${dt[1].toFixed(1)} / ${dt[2]}</span></p>` : '';
+        h+=`<div class="grp"><h3>Group ${i+1} <small>${time}</small></h3>${teeLine}<ul>`;
         g.forEach(pi=>{ const t=teeFor(rd,pi);
           h+=`<li>${P[pi].n}<span>${t?('quota '+quotaFor(P[pi].idx,t)):('idx '+fmtIdx(P[pi].idx))}</span></li>`; });
         h+=`</ul></div>`;
