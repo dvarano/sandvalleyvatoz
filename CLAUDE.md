@@ -20,7 +20,7 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | # | Day | Course | Tee times | Default tee | Counts? | Format idea | Out |
 |---|---|---|---|---|---|---|---|
 | r1 | Sun 10/4 PM | Lawsonia Links | 1:40 / 1:50 | White 72.0 / 133, par 72 | Backup only | Six-Six-Six | Daniel |
-| r2 | Mon 10/5 AM | **Sand Valley / Mammoth (split)** | 10:10 / 10:30 | SV Orange 72.8/138 · Mammoth Orange 72.1/136 | **Yes** | Nassau (front/back/total) | Daniel |
+| r2 | Mon 10/5 AM | **Sand Valley / Lido / Mammoth (split)** | 10:10 / 10:30 / 10:30 | SV Orange 72.8/138 · Lido White 72.5/144 · Mammoth Orange 72.1/136 | **Yes** | Nassau (front/back/total) | Daniel |
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Paul |
 | r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Gross skins | Drew |
@@ -196,7 +196,7 @@ inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are sug
 | Round | Group 1 | Group 2 |
 |---|---|---|
 | r1 Links (pinned) | Mike, Drew, Paul, Tony | Eric, Brook, Matt, Ryan |
-| r2 SV / Mammoth | **Sand Valley 10:10** — Mike, Paul, Eric, Matt | **Mammoth 10:30** — Drew, Brook, Tony, Ryan |
+| r2 SV / Lido / Mammoth | **Sand Valley 10:10** — Mike, Paul, Eric · **Lido 10:30** — Drew, Matt | **Mammoth 10:30** — Brook, Tony, Ryan |
 | r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Brook | **8:40** — Daniel, Matt, Tony, Ryan |
 | r5 Mammoth | Paul, Eric, Tony, Ryan | Mike, Daniel, Brook, Matt |
 | r6 Sedge (Wed) | **7:40** — Mike, Matt, Ryan *(three)* | **7:50** — Drew, Paul, Daniel, Eric |
@@ -277,6 +277,25 @@ with the pinned rounds held fixed and Drew's partner preferences as a soft objec
 in Appendix A.
 
 ### Monday is a split round
+
+**Lido landed (Sep 2026).** Two Lido tee times at 10:30 replaced one spot each from the Sand Valley
+and Mammoth groups: **Drew and Matt play the Lido as a twosome**, leaving threesomes on Sand Valley
+(Mike, Paul, Eric) and Mammoth (Brook, Tony, Ryan). Daniel still sits. The round is now a
+three-leg split (`ng:3`, `split` = SV / Lido / Mammoth in `BASE_GRID.r2` order). Lido counts
+like every other Sand Valley resort 18.
+
+**Lido ratings are from a web search, not the card** — White 72.5/144 (default), Navy/White
+74.1/146, White/Green 70.7/141, Green 69.6/134, all par 72. The scorecard sites were blocked from
+the build environment, so **confirm on the day**; a wrong number only mis-quotas Drew and Matt, and
+either can be corrected per player on the Enter tab or once in `TEES.lido`.
+
+**Consequence: Drew no longer plays Mammoth at all** (Lido Monday, sits Tuesday PM Mammoth). The
+"everyone plays both courses" reasoning below predates Lido.
+
+**Coverage broke:** with Drew and Matt out of the two foursomes, **Matt/Paul and Drew/Ryan dropped
+to zero**. Exhaustive search (Sunday, Monday, Matt+Daniel Tuesday AM, Drew+Paul ≥2, Drew+Mike ≥2,
+Matt+Daniel ≥2, Tony+Eric+Matt Wednesday PM all held) finds 23 full-coverage weeks; **none keeps
+Drew/Ryan at zero**, and **none gives Drew more than 2 rounds with Tony**. Fix pending Drew's choice.
 
 r2 is the only round where the two groups play **different courses**: Sand Valley at 10:10 and
 Mammoth Dunes at 10:30, replacing the cancelled Lawsonia Woodlands tee time. Daniel sits.
@@ -439,8 +458,9 @@ without a page error.
       Sunday night.
 - [x] **Verify the Commons stroke-index row** against the physical scorecard. Done — the old row
       was wrong in ten of twelve positions and is corrected. See §2.
-- [ ] **Lido** — group is waitlisted for 2–8 golfers. If it lands, rounds shuffle; regenerate
-      affected pairings.
+- [x] **Lido** — landed for Monday: Drew and Matt, 10:30. See §3 Monday.
+- [ ] **Confirm Lido rating/slope** on the card (web-sourced White 72.5/144 in use).
+- [ ] **Restore 36/36 coverage** after the Lido change — Matt/Paul and Drew/Ryan are at zero.
 - [ ] Confirm Brook's and Tony's exact skip rounds, and Ryan/Paul/Eric/Daniel's round plans.
 
 ---

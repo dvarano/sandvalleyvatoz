@@ -224,7 +224,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-09-28T15:42Z');
+const SITE_UPDATED = Date.parse('2026-09-28T21:07Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -253,6 +253,10 @@ const TEES = {
   sedge:      [['Back', 68.7, 130, 68], ['Back/Middle', 67.0, 126, 68]],
   mammoth:    [['Orange', 72.1, 136, 72], ['Orange/Sand', 71.1, 134, 72], ['Sand', 69.8, 131, 72]],
   sandvalley: [['Orange', 72.8, 138, 72], ['Orange/Sand', 71.4, 133, 72], ['Sand', 70.2, 129, 72]],
+  /* Lido ratings are from a web search (Sep 2026), not the physical card —
+     confirm on the day. White is the default as the nearest match to the tees
+     played elsewhere; the others are one tap away on the Enter tab. */
+  lido:       [['White', 72.5, 144, 72], ['Navy/White', 74.1, 146, 72], ['White/Green', 70.7, 141, 72], ['Green', 69.6, 134, 72]],
   sandbox:    null,
   commons:    null
 };
@@ -272,15 +276,16 @@ const R = [
   rules:['Warmup round. Everyone posts a gross score.','Committee (Drew + Matt) may adjust indexes before Monday.','Does not count for Copa points. Sunday finish is the FIRST tiebreak for seeding.'],
   gamerules:['Partners rotate every 6 holes so each player partners each other player.','Holes 1&ndash;6, 7&ndash;12, 13&ndash;18. Best ball each segment.','Fresh money each segment.']},
 
- {id:'r2', day:'Mon Oct 5', sd:'Mon 10/5', when:'AM', course:'Sand Valley / Mammoth', sc:'SV / Mammoth', key:'sandvalley',  tees:'10:10 / 10:30',
-  counts:true, tag:'Copa Round 1', game:'Nassau: front, back, total', out:[8], ng:2,
-  /* Split round: the two groups play different courses. Everything per player —
+ {id:'r2', day:'Mon Oct 5', sd:'Mon 10/5', when:'AM', course:'Sand Valley / Lido / Mammoth', sc:'SV / Lido / Mammoth', key:'sandvalley',  tees:'10:10 / 10:30',
+  counts:true, tag:'Copa Round 1', game:'Nassau: front, back, total', out:[8], ng:3,
+  /* Split round: each group plays a different course. Everything per player —
      tee, course handicap, quota — resolves through legOf() below, so the split
-     costs nobody anything. */
+     costs nobody anything. Legs are indexed by group, in BASE_GRID.r2 order. */
   split:[{key:'sandvalley', course:'Sand Valley', tee:'10:10'},
+         {key:'lido',       course:'The Lido', tee:'10:30'},
          {key:'mammoth',    course:'Mammoth Dunes', tee:'10:30'}],
-  rules:['Counts for La Copa. Daniel sits.','Two courses: Group 1 at Sand Valley 10:10, Group 2 at Mammoth Dunes 10:30.','Your quota follows whichever course you play.'],
-  gamerules:['2v2 better ball. Three separate bets: front nine, back nine, total.','Automatic press at 2 down.','Settle inside your own foursome &mdash; the two groups are on different courses.']},
+  rules:['Counts for La Copa. Daniel sits.','Three courses: Sand Valley 10:10, the Lido 10:30 and Mammoth Dunes 10:30.','Your quota follows whichever course you play.'],
+  gamerules:['Every man for himself: front nine, back nine and total are three separate bets against each player in your group.','Automatic press at 2 down.','Settle inside your own group &mdash; the three groups are on different courses.']},
 
  {id:'r3', day:'Mon Oct 5', sd:'Mon 10/5', when:'PM', course:'The Sandbox', sc:'Sandbox', key:'sandbox',    tees:'4:54 / 5:18',
   counts:false, tag:'Side Pot', game:'Gross skins + CTP', out:[], ng:2,
@@ -706,7 +711,7 @@ function generate(ids, sizes, hist, seed){
    together) and Thursday follows the standings. Edit freely on the Pairings
    tab — the matrix there tracks what your changes do to those numbers. */
 const BASE_SEED = 3;
-const BASE_GRID = {"r1":[[1,2,3,7],[0,4,5,6]],"r2":[[2,5,7,0],[6,1,3,4]],
+const BASE_GRID = {"r1":[[1,2,3,7],[0,4,5,6]],"r2":[[2,5,7],[1,0],[6,3,4]],
                    "r4":[[1,4,2,5],[8,0,6,3]],"r5":[[7,3,5,6],[2,8,4,0]],
                    "r6":[[2,0,6],[1,7,8,5]],"r7":[[7,4,8,6],[1,0,5,3]]};
 /* There is no user-facing auto-generate: the grid was chosen deliberately and a
@@ -758,7 +763,7 @@ function renderToday(){
   h+=`<div class="card">
     <span class="pill ${rd.counts?'count':''}">${rd.tag}</span>
     <p class="hero" style="margin-top:8px">${rd.course}</p>
-    <p class="sub">${rd.day} &middot; tee times ${rd.tees}${t0?` &middot; ${t0[0][0]} tees by default`:''}</p>
+    <p class="sub">${rd.day} &middot; tee times ${rd.tees}${t0 && !rd.split?` &middot; ${t0[0][0]} tees by default`:''}</p>
   </div>`;
 
   h+=`<div class="card"><h2>Groups</h2>`;
@@ -836,7 +841,7 @@ function renderEnter(){
   }
   h+=`<p class="note" style="margin-bottom:4px">Type each player&rsquo;s total quota points. Bogey 1, par 2, birdie 4, eagle 6. Gross double or worse is 0.</p>
       <p class="note" style="margin-bottom:6px">${rd.split
-        ? `Two courses today. Rating and slope follow each player&rsquo;s group &mdash; ${rd.split.map(l=>esc(l.course)+' '+l.tee).join(', ')}. Change them for anyone who played a different tee.`
+        ? `${rd.split.length===3?'Three':'Two'} courses today. Rating and slope follow each player&rsquo;s group &mdash; ${rd.split.map(l=>esc(l.course)+' '+l.tee).join(', ')}. Change them for anyone who played a different tee.`
         : `Rating and slope default to the ${list[0][0]} tees (par ${list[0][3]}). Change them for anyone who played a different tee and their quota follows.`}</p>`;
   const row = S.s[rd.id]||[];
   play.forEach(pi=>{

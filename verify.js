@@ -522,16 +522,18 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(split.counts === true, 'Monday counts toward La Copa');
   ok(split.sit === 'Daniel', 'Daniel sits Monday morning (got ' + split.sit + ')');
   ok(split.groups[0].every(x => x.course === 'Sand Valley'), 'group 1 plays Sand Valley');
-  ok(split.groups[1].every(x => x.course === 'Mammoth Dunes'), 'group 2 plays Mammoth Dunes');
-  ok(split.groups[0][0].slope === 138 && split.groups[1][0].slope === 136,
-     'each group gets its own slope (SV 138 / Mammoth 136)');
+  ok(split.groups[1].every(x => x.course === 'The Lido'), 'group 2 plays the Lido');
+  ok(split.groups[2].every(x => x.course === 'Mammoth Dunes'), 'group 3 plays Mammoth Dunes');
+  ok(split.groups[1].map(x => x.name).sort().join(',') === 'Drew,Matt', 'Drew and Matt are the Lido twosome');
+  ok(split.groups[0][0].slope === 138 && split.groups[1][0].slope === 144 && split.groups[2][0].slope === 136,
+     'each group gets its own slope (SV 138 / Lido 144 / Mammoth 136)');
   ok(split.groups.every(g => g.every(x => x.quota > 0 && Number.isInteger(x.quota))),
      'quotas resolve on both legs');
 
   await p.click('nav button[data-v="today"]'); await p.waitForTimeout(200);
   await p.selectOption('#roundSel', '1'); await p.waitForTimeout(300);
   const todayTxt = await p.evaluate(() => document.querySelector('#v-today').innerText);
-  ok(/Sand Valley . 10:10/.test(todayTxt) && /Mammoth Dunes . 10:30/.test(todayTxt),
+  ok(/Sand Valley . 10:10/.test(todayTxt) && /The Lido . 10:30/.test(todayTxt) && /Mammoth Dunes . 10:30/.test(todayTxt),
      'Today labels each group with its own course and tee time');
   ok(!/Woodlands/i.test(todayTxt), 'no Woodlands on Today');
 
