@@ -284,10 +284,9 @@ and Mammoth groups: **Drew and Matt play the Lido as a twosome**, leaving threes
 three-leg split (`ng:3`, `split` = SV / Lido / Mammoth in `BASE_GRID.r2` order). Lido counts
 like every other Sand Valley resort 18.
 
-**Lido ratings are from a web search, not the card** — White 72.5/144 (default), Navy/White
-74.1/146, White/Green 70.7/141, Green 69.6/134, all par 72. The scorecard sites were blocked from
-the build environment, so **confirm on the day**; a wrong number only mis-quotas Drew and Matt, and
-either can be corrected per player on the Enter tab or once in `TEES.lido`.
+**Lido ratings — CONFIRMED** against Sand Valley's own tee table (men's): White 72.5/144
+(default), Navy/White 74.1/146, Navy 75.2/149, White/Green 70.7/141, Green 69.6/134, all par 72.
+Drew and Matt can pick a different tee per player on the Enter tab.
 
 **Consequence: Drew no longer plays Mammoth at all** (Lido Monday, sits Tuesday PM Mammoth). The
 "everyone plays both courses" reasoning below predates Lido.
@@ -459,7 +458,7 @@ without a page error.
 - [x] **Verify the Commons stroke-index row** against the physical scorecard. Done — the old row
       was wrong in ten of twelve positions and is corrected. See §2.
 - [x] **Lido** — landed for Monday: Drew and Matt, 10:30. See §3 Monday.
-- [ ] **Confirm Lido rating/slope** on the card (web-sourced White 72.5/144 in use).
+- [x] **Confirm Lido rating/slope** — matches Sand Valley's tee table; White 72.5/144 in use.
 - [ ] **Restore 36/36 coverage** after the Lido change — Matt/Paul and Drew/Ryan are at zero.
 - [ ] Confirm Brook's and Tony's exact skip rounds, and Ryan/Paul/Eric/Daniel's round plans.
 
