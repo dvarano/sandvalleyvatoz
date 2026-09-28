@@ -401,7 +401,10 @@ shape evolves. Preserve that when changing state.
 ### Tabs
 
 **Info** (landing, unless opened during the trip dates → then Today) · **Today** (groups, format,
-quotas) · **Enter** (nine number inputs plus editable CR/slope per player) · **Standings**
+quotas, and **Plays off** — strokes against the lowest course handicap *in that player's own
+group*, for the side games; rows grouped, low man first at 0; split rounds put the course on the
+group header instead of a column so it fits a phone. Uses course handicaps, so tee overrides and
+split courses are already in it. It is display only — the Copa never reads it) · **Enter** (nine number inputs plus editable CR/slope per player) · **Standings**
 (leaderboard, bar chart, La Final card, pool) · **Pairings** (assignment dropdowns, generator,
 partner matrix).
 

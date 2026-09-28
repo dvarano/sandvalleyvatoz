@@ -73,6 +73,8 @@ th{font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06
 th:first-child{text-align:left}
 td{padding:7px 0;border-top:1px solid var(--grid);text-align:right;font-size:14px}
 td:first-child{text-align:left}
+table.qt th+th,table.qt td+td{padding-left:10px}
+tr.grprow td{text-align:left;font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;padding:10px 0 4px}
 .grp{border:1px solid var(--ring);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--plane)}
 .grp h3{margin:0 0 6px;font-size:13px;display:flex;justify-content:space-between}
 .grp h3 small{color:var(--ink-3);font-weight:400;font-variant-numeric:tabular-nums}
@@ -790,11 +792,29 @@ function renderToday(){
       <p class="note" style="margin-top:8px">Strokes fall hardest hole first: ${COMMONS_STROKE_HOLES.slice(0,6).map(x=>'#'+x).join(', ')} &hellip;</p></div>`;
   }
   if(t0){
-    h+=`<div class="card"><h2>Quotas &mdash; ${esc(rd.course)}</h2><table><thead><tr><th>Player</th><th>Idx</th><th>${rd.split?'Course':'Tee'}</th><th>CH</th><th>Quota</th></tr></thead><tbody>`;
-    play.forEach(pi=>{ const t=teeFor(rd,pi);
-      const where = rd.split ? courseOf(rd,pi) : t[0];
-      h+=`<tr><td>${P[pi].n}</td><td>${fmtIdx(P[pi].idx)}</td><td style="font-size:12px;color:var(--ink-3)">${esc(where)}</td><td>${chcp(P[pi].idx,t)}</td><td><b>${quotaFor(P[pi].idx,t)}</b></td></tr>`; });
-    h+=`</tbody></table></div>`;
+    /* "Plays off" is for the side games inside each group, not the Copa: course
+       handicap minus the lowest course handicap in that player's own group, so
+       the low man plays off 0. Using each player's own course handicap means a
+       different tee or a split-round course is already accounted for. Rows are
+       listed by group, low handicap first, so the 0 sits at the top of each. */
+    const ch = pi => chcp(P[pi].idx, teeFor(rd,pi));
+    const gs = (S.p[rd.id]||[]).filter(g=>g.length);
+    const blocks = gs.length ? gs.map(g=>g.filter(pi=>play.includes(pi))) : [play.slice()];
+    /* Split rounds name the course on each group's header row instead of in a
+       column: every player in a group is on the same course, and six columns do
+       not fit a phone. */
+    const cols = rd.split ? 5 : 6;
+    h+=`<div class="card"><h2>Quotas &mdash; ${esc(rd.course)}</h2><table class="qt"><thead><tr><th>Player</th><th>Idx</th>${rd.split?'':'<th>Tee</th>'}<th>CH</th><th>Quota</th><th>Plays off</th></tr></thead><tbody>`;
+    blocks.forEach((g,gi)=>{
+      if(!g.length) return;
+      const low = Math.min.apply(null, g.map(ch));
+      if(blocks.length>1) h+=`<tr class="grprow"><td colspan="${cols}">Group ${gi+1}${rd.split?' &middot; '+esc(courseOf(rd,g[0])):''}</td></tr>`;
+      g.slice().sort((x,y)=>ch(x)-ch(y)).forEach(pi=>{ const t=teeFor(rd,pi);
+        const tee = rd.split ? '' : `<td style="font-size:12px;color:var(--ink-3)">${esc(t[0])}</td>`;
+        h+=`<tr><td>${P[pi].n}</td><td>${fmtIdx(P[pi].idx)}</td>${tee}<td>${ch(pi)}</td><td><b>${quotaFor(P[pi].idx,t)}</b></td><td>${ch(pi)-low}</td></tr>`; });
+    });
+    h+=`</tbody></table>
+      <p class="note" style="margin-top:8px"><b>Plays off</b> is for group games: strokes against the lowest handicap in your group, who plays off 0. Playing off 8 means one stroke on each of the 8 hardest holes &mdash; the handicap row on the scorecard. The Copa is unaffected; it uses quota.</p></div>`;
   }
   $('#v-today').innerHTML=h;
 }
