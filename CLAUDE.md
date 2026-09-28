@@ -198,9 +198,9 @@ inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are sug
 | r1 Links (pinned) | Mike, Drew, Paul, Tony | Eric, Brook, Matt, Ryan |
 | r2 SV / Lido / Mammoth | **Sand Valley 10:10** — Mike, Paul, Eric · **Lido 10:30** — Drew, Matt | **Mammoth 10:30** — Brook, Tony, Ryan |
 | r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Brook | **8:40** — Daniel, Matt, Tony, Ryan |
-| r5 Mammoth | Paul, Eric, Tony, Ryan | Mike, Daniel, Brook, Matt |
-| r6 Sedge (Wed) | **7:40** — Mike, Matt, Ryan *(three)* | **7:50** — Drew, Paul, Daniel, Eric |
-| r7 Sand Valley | Paul, Brook, Daniel, Ryan | Drew, Matt, Eric, Tony |
+| r5 Mammoth | Brook, Eric, Ryan, Paul | Matt, Mike, Tony, Daniel |
+| r6 Sedge (Wed) | **7:40** — Drew, Mike, Ryan *(three)* | **7:50** — Matt, Eric, Paul, Daniel |
+| r7 Sand Valley | Drew, Brook, Paul, Daniel | Matt, Tony, Eric, Ryan |
 
 **Group order matters on the non-split rounds.** Group 1 tees first — the Today tab reads the
 two times straight off `rd.tees`. Drew's foursome is group 1 on Tuesday morning (8:30) by
@@ -212,8 +212,8 @@ Tony with Eric and move Brook and/or Matt into that group. Checked exhaustively:
 **Brook and Matt both is infeasible** (no week keeps 36/36 with max 3); Wed PM alone can't do it
 either (always a 0 or a 4). The smallest fix is **Matt in, with Wed AM swapping Matt and Eric**
 and Wed PM swapping Matt and Daniel. Brook-only needed Tuesday PM reshuffled too and took Drew
-out of Tony's group, so it was not taken. Drew's counts after: Matt 1, Mike 2, Tony 3, Brook 2,
-Eric 3, Ryan 1, Paul 2, Daniel 1.
+out of Tony's group, so it was not taken. (Superseded in part by the
+Lido re-pair below: Tony/Eric/Matt still together Wednesday PM, but Drew is no longer in that group.)
 - **r7 Wednesday PM** must have **Tony with Eric and Matt**.
 
 **Pinned by request — do not lose these when regenerating:**
@@ -230,7 +230,9 @@ four Sand Valley rounds, so the Lawsonia backup stays dormant. Loads are now **t
 five** (Matt, Eric, Ryan) and **six on four**.
 
 **Drew's partner preferences (Sep 2026):** more rounds with Mike, Brook and Tony; fewer with Ryan.
-Met — Mike 2, Brook 2, Tony 3, Ryan **1** (the floor, since every pair must meet once).
+After the Lido re-pair: Mike **3**, Brook 2, Paul 2, Tony **1**, Ryan **1** (the floor), Matt 1,
+Eric 1, Daniel 1. Tony at 1 is forced — no full-coverage week reaches 3, and the only ones at 2
+reshuffle Tuesday morning too (option B, not taken).
 
 **What unlocked it: dropping the index-balance constraint.** While balance was enforced, Drew with
 Mike could only happen once, and Sunday with Drew+Mike+Paul forced Ryan in as the only workable
@@ -294,7 +296,13 @@ Drew and Matt can pick a different tee per player on the Enter tab.
 **Coverage broke:** with Drew and Matt out of the two foursomes, **Matt/Paul and Drew/Ryan dropped
 to zero**. Exhaustive search (Sunday, Monday, Matt+Daniel Tuesday AM, Drew+Paul ≥2, Drew+Mike ≥2,
 Matt+Daniel ≥2, Tony+Eric+Matt Wednesday PM all held) finds 23 full-coverage weeks; **none keeps
-Drew/Ryan at zero**, and **none gives Drew more than 2 rounds with Tony**. Fix pending Drew's choice.
+Drew/Ryan at zero**, and **none gives Drew more than 2 rounds with Tony**.
+
+**Chosen: option A (Sep 2026), the smallest fix — 6 players move, Tuesday morning untouched.**
+Tue PM becomes Brook/Eric/Ryan/Paul | Matt/Mike/Tony/Daniel; Wed AM 7:40 Drew/Mike/Ryan (Mike's
+group still first) | 7:50 Matt/Eric/Paul/Daniel; Wed PM Drew/Brook/Paul/Daniel | Matt/Tony/Eric/Ryan.
+Back to 36/36, max 3; Drew+Paul 2, Drew+Mike 3, Matt+Daniel 3. Option B (11 moves, Drew with Tony
+2 but Mike out of Drew's Tuesday 8:30) was offered and not taken.
 
 r2 is the only round where the two groups play **different courses**: Sand Valley at 10:10 and
 Mammoth Dunes at 10:30, replacing the cancelled Lawsonia Woodlands tee time. Daniel sits.
@@ -459,7 +467,7 @@ without a page error.
       was wrong in ten of twelve positions and is corrected. See §2.
 - [x] **Lido** — landed for Monday: Drew and Matt, 10:30. See §3 Monday.
 - [x] **Confirm Lido rating/slope** — matches Sand Valley's tee table; White 72.5/144 in use.
-- [ ] **Restore 36/36 coverage** after the Lido change — Matt/Paul and Drew/Ryan are at zero.
+- [x] **Restore 36/36 coverage** after the Lido change — done with option A (§3 Monday).
 - [ ] Confirm Brook's and Tony's exact skip rounds, and Ryan/Paul/Eric/Daniel's round plans.
 
 ---
