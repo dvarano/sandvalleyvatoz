@@ -224,7 +224,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-09-28T15:35Z');
+const SITE_UPDATED = Date.parse('2026-09-28T15:42Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -999,6 +999,7 @@ function renderInfo(){
       <tr><td style="text-align:left">Double or worse</td><td><b>0</b></td></tr>
     </tbody></table>
     <p class="note" style="margin-top:10px">Your result for the round is <b>points minus quota</b>. Beat your number and you are positive. Because the double-bogey floor is zero, <b>pick up</b> once a hole is gone &mdash; it costs you nothing and Sand Valley enforces a 4:15 pace.</p>
+    <p class="note" style="margin-top:8px"><b>Example:</b> 1 birdie, 8 pars, 7 bogeys and 2 doubles or worse = 4&nbsp;+&nbsp;16&nbsp;+&nbsp;7&nbsp;+&nbsp;0 = <b>27 points</b>. Against a quota of 25, that is <b>+2</b>.</p>
     <p class="note" style="margin-top:8px"><b>Default tees are listed</b> on the Today tab, but the quota target will be adjusted if different tees are played.</p>
   </div>`;
 
