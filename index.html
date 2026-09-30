@@ -226,7 +226,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-09-30T23:23Z');
+const SITE_UPDATED = Date.parse('2026-09-30T23:36Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -722,7 +722,7 @@ function generate(ids, sizes, hist, seed){
    tab — the matrix there tracks what your changes do to those numbers. */
 const BASE_SEED = 3;
 const BASE_GRID = {"r1":[[1,2,3,7],[0,4,5,6]],"r2":[[2,5,7],[1,0],[6,3,4]],
-                   "r4":[[1,4,2,5],[8,0,6,3]],"r5":[[4,5,6,7],[0,2,3,8]],
+                   "r4":[[1,4,2,5],[8,0,6,3]],"r5":[[4,5,8,7],[0,2,3,6]],
                    "r6":[[2,7,0,8],[4,3,5,6]],"r7":[[1,8,0,7]]};
 /* There is no user-facing auto-generate: the grid was chosen deliberately and a
    stray tap should not be able to redraw it. generate() below is kept as an

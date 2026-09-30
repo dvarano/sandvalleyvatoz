@@ -198,7 +198,7 @@ inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are sug
 | r1 Links (pinned) | Mike, Drew, Paul, Tony | Eric, Brook, Matt, Ryan |
 | r2 SV / Lido / Mammoth | **Sand Valley 10:10** — Mike, Paul, Eric · **Lido 10:30** — Drew, Matt | **Mammoth 10:30** — Brook, Tony, Ryan |
 | r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Brook | **8:40** — Daniel, Matt, Tony, Ryan |
-| r5 Mammoth | Brook, Eric, Ryan, Paul | Matt, Mike, Tony, Daniel |
+| r5 Mammoth | Brook, Eric, Daniel, Paul | Matt, Mike, Tony, Ryan |
 | r6 Sedge / Lido (Wed) | **Sedge 7:40** — Mike, Paul, Matt, Daniel | **Lido 10:00** — Brook, Tony, Eric, Ryan |
 | r7 Sand Valley (Wed) | **1:00** — Drew, Daniel, Matt, Paul | *(one foursome only)* |
 
@@ -215,9 +215,13 @@ Consequences, all checked:
 - **Full coverage is impossible now.** With Sunday, Monday and this Wednesday fixed, an exhaustive
   search of every Tuesday AM × PM arrangement finds **no week with every pair meeting**; the best
   possible is 1 unmet pair, and that one puts Brook/Ryan together 5 times.
-- As built (Tuesday unchanged): **never meet** — Drew/Ryan, Mike/Ryan, Brook/Daniel, Eric/Daniel;
-  **4 times** — Matt/Daniel, Brook/Eric, Brook/Ryan. verify.js §7 pins exactly this list, so any
-  new gap still fails.
+- With Tuesday unchanged it was: never meet — Drew/Ryan, Mike/Ryan, Brook/Daniel, Eric/Daniel;
+  4 times — Matt/Daniel, Brook/Eric, Brook/Ryan. **Fixed partly by swapping Daniel and Ryan on
+  Tuesday PM (accepted Sep 30 2026)**, Tuesday AM untouched. **Now: never meet — Drew/Ryan,
+  Ryan/Paul; 4 times — Tony/Ryan, Brook/Eric.** verify.js §7 pins exactly this list, so any new
+  gap still fails.
+- **Lido four on Wednesday PM are not "sitting"** — Drew asked; kept as "Played the Lido this
+  morning" because they played a counting round that day, and "sitting" reads as a skip.
 - The old "Tony + Eric + Matt Wednesday PM" request and the Sedge sit-out plan are superseded.
 
 **Group order matters on the non-split rounds.** Group 1 tees first — the Today tab reads the
@@ -492,9 +496,7 @@ without a page error.
 - [x] **Confirm Lido rating/slope** — matches Sand Valley's tee table; White 72.5/144 in use.
 - [x] **Restore 36/36 coverage** after the Lido change — done with option A (§3 Monday).
 - [x] Round plans — superseded by the rebooked Wednesday (§3).
-- [ ] **Tuesday tweak offered, not yet decided:** swap Daniel and Ryan on Tuesday PM
-      (Matt/Mike/Tony/Ryan | Brook/Eric/Paul/Daniel). Cuts never-meet pairs 4 → 2 (Drew/Ryan,
-      Ryan/Paul) and 4-timers 3 → 2 (Tony/Ryan, Brook/Eric); Tuesday AM and all pins unchanged.
+- [x] **Tuesday PM Daniel/Ryan swap** — done; never-meet 4 → 2, four-timers 3 → 2.
 
 ---
 

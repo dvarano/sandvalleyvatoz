@@ -163,8 +163,8 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   /* Full coverage became impossible when Wednesday was fixed by tee times (Lido at
      10:00 for Brook/Tony/Eric/Ryan, one Sedge and one Sand Valley foursome) — see
      CLAUDE.md §3. These pin the accepted gaps exactly, so any NEW gap still fails. */
-  ok(inv.zeros === 'Brook/Daniel,Drew/Ryan,Eric/Daniel,Mike/Ryan', 'only the accepted pairs never meet (got ' + inv.zeros + ')');
-  ok(inv.fours === 'Brook/Eric,Brook/Ryan,Matt/Daniel' && inv.max <= 4, 'only the accepted pairs meet 4 times (got ' + inv.fours + ')');
+  ok(inv.zeros === 'Drew/Ryan,Ryan/Paul', 'only the accepted pairs never meet (got ' + inv.zeros + ')');
+  ok(inv.fours === 'Brook/Eric,Tony/Ryan' && inv.max <= 4, 'only the accepted pairs meet 4 times (got ' + inv.fours + ')');
   ok(inv.md >= 2, 'Matt+Daniel ' + inv.md + ' >= 2');
   ok(inv.dp >= 2, 'Drew+Paul ' + inv.dp + ' >= 2');
   ok(inv.r5 === 'Drew' && inv.r7 === 'Mike,Tony,Brook,Eric,Ryan', 'sit-outs intact (r5 ' + inv.r5 + ', r7 ' + inv.r7 + ')');
