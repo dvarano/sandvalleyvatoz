@@ -24,8 +24,8 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Paul |
 | r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Gross skins | Drew |
-| r6 | Wed 10/7 AM | Sedge Valley | 7:40 / 7:50 | Back 68.7 / 130, par 68 | **Yes** | Nine Point / 6-6-6 | Tony, Brook |
-| r7 | Wed 10/7 PM | Sand Valley | 12:50 / 1:00 | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Mike |
+| r6 | Wed 10/7 AM | **Sedge Valley / Lido (split)** | 7:40 / 10:00 | Sedge Back 68.7/130 · Lido White 72.5/144 | **Yes** | Six-Six-Six | Drew |
+| r7 | Wed 10/7 PM | Sand Valley | 1:00 (one foursome) | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Mike (+ the four who played Lido) |
 | r8 | Thu 10/8 AM | The Commons | 8:00 / 8:10 | 12 holes, par 45 | No — La Final | Match play | — |
 
 Alternate tees available in the app: Woodlands White 70.2/128; Sedge Back/Middle 67.0/126;
@@ -86,9 +86,9 @@ Implemented as flags, not hardcoded rounds: `counts:true` = Sand Valley counting
 `backup:true` = Lawsonia. `results()` fills from `COUNTING`, then tops up from `BACKUP`.
 **This survives schedule changes** — move a round between the two flags and the maths follows.
 
-Under the current schedule (`COUNTING` = r2/r4/r5/r6/r7, `BACKUP` = r1) **nobody actually needs
-the backup**: four players get 5 Sand Valley rounds and five get 4. It is insurance — it fires the
-moment anyone misses a second Sand Valley round.
+Under the current schedule (`COUNTING` = r2/r4/r5/r6/r7, `BACKUP` = r1) **Drew needs the backup**:
+the rebooked Wednesday leaves him on 3 Sand Valley rounds, so Lawsonia tops him up to 4 (`4*`).
+Matt plays 5; everyone else 4.
 
 **Why the backup exists in practice:** the likely trigger is someone deciding not to play 36 in a
 day and skipping an afternoon or a morning — Tuesday PM Mammoth or Wednesday AM Sedge. Those
@@ -199,8 +199,26 @@ inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are sug
 | r2 SV / Lido / Mammoth | **Sand Valley 10:10** — Mike, Paul, Eric · **Lido 10:30** — Drew, Matt | **Mammoth 10:30** — Brook, Tony, Ryan |
 | r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Brook | **8:40** — Daniel, Matt, Tony, Ryan |
 | r5 Mammoth | Brook, Eric, Ryan, Paul | Matt, Mike, Tony, Daniel |
-| r6 Sedge (Wed) | **7:40** — Drew, Mike, Ryan *(three)* | **7:50** — Matt, Eric, Paul, Daniel |
-| r7 Sand Valley | Drew, Brook, Paul, Daniel | Matt, Tony, Eric, Ryan |
+| r6 Sedge / Lido (Wed) | **Sedge 7:40** — Mike, Paul, Matt, Daniel | **Lido 10:00** — Brook, Tony, Eric, Ryan |
+| r7 Sand Valley (Wed) | **1:00** — Drew, Daniel, Matt, Paul | *(one foursome only)* |
+
+**Wednesday rebooked (Sep 30 2026) — set by tee times, not by the optimiser.** The 7:50 Sedge and
+12:50 Sand Valley times were given up for a **10:00 Lido foursome**. Drew specified the groups:
+Lido — Brook, Tony, Eric, Ryan; Sedge 7:40 — Mike, Paul, Matt, Daniel; Sand Valley 1:00 — Drew,
+Daniel, Matt, Paul. r6 is now a two-leg split (Sedge / Lido, like Monday) with **Drew sitting**;
+r7 is a single foursome (`ng:1`) with Mike sitting and the Lido four listed separately via
+`rd.elsewhere` ("Played the Lido this morning") so Today does not call them sitters.
+
+Consequences, all checked:
+- **Drew now has only 3 Sand Valley rounds** (sits Tue PM and Wed AM), so **the Lawsonia backup
+  fires for him** — his pool shows `4*`. Matt plays 5; everyone else 4.
+- **Full coverage is impossible now.** With Sunday, Monday and this Wednesday fixed, an exhaustive
+  search of every Tuesday AM × PM arrangement finds **no week with every pair meeting**; the best
+  possible is 1 unmet pair, and that one puts Brook/Ryan together 5 times.
+- As built (Tuesday unchanged): **never meet** — Drew/Ryan, Mike/Ryan, Brook/Daniel, Eric/Daniel;
+  **4 times** — Matt/Daniel, Brook/Eric, Brook/Ryan. verify.js §7 pins exactly this list, so any
+  new gap still fails.
+- The old "Tony + Eric + Matt Wednesday PM" request and the Sedge sit-out plan are superseded.
 
 **Group order matters on the non-split rounds.** Group 1 tees first — the Today tab reads the
 two times straight off `rd.tees`. Drew's foursome is group 1 on Tuesday morning (8:30) by
@@ -214,7 +232,7 @@ either (always a 0 or a 4). The smallest fix is **Matt in, with Wed AM swapping 
 and Wed PM swapping Matt and Daniel. Brook-only needed Tuesday PM reshuffled too and took Drew
 out of Tony's group, so it was not taken. (Superseded in part by the
 Lido re-pair below: Tony/Eric/Matt still together Wednesday PM, but Drew is no longer in that group.)
-- **r7 Wednesday PM** must have **Tony with Eric and Matt**.
+- ~~**r7 Wednesday PM** must have **Tony with Eric and Matt**~~ — superseded by the rebooked Wednesday.
 
 **Pinned by request — do not lose these when regenerating:**
 - **r1 Sunday** must have **Drew with Mike** and **Drew with Paul** and **Eric with Brook**.
@@ -473,7 +491,10 @@ without a page error.
 - [x] **Lido** — landed for Monday: Drew and Matt, 10:30. See §3 Monday.
 - [x] **Confirm Lido rating/slope** — matches Sand Valley's tee table; White 72.5/144 in use.
 - [x] **Restore 36/36 coverage** after the Lido change — done with option A (§3 Monday).
-- [ ] Confirm Brook's and Tony's exact skip rounds, and Ryan/Paul/Eric/Daniel's round plans.
+- [x] Round plans — superseded by the rebooked Wednesday (§3).
+- [ ] **Tuesday tweak offered, not yet decided:** swap Daniel and Ryan on Tuesday PM
+      (Matt/Mike/Tony/Ryan | Brook/Eric/Paul/Daniel). Cuts never-meet pairs 4 → 2 (Drew/Ryan,
+      Ryan/Paul) and 4-timers 3 → 2 (Tony/Ryan, Brook/Eric); Tuesday AM and all pins unchanged.
 
 ---
 
@@ -561,7 +582,7 @@ propagation, backward compatibility with pre-`i` links, the baseline-grid freeze
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
 Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
 guard, the pairing invariants, and code updates reaching an open tab (§15, over a local HTTP
-server) and the header's last-updated time (§16) — 127 assertions. Worth re-running after any change to the sync path.
+server) and the header's last-updated time (§16) — 129 assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked

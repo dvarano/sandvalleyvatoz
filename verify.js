@@ -155,15 +155,19 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
     R.forEach(rd => { if (rd.id === 'r3' || rd.id === 'r8') return; const g = S.p[rd.id]; if (!g) return;
       g.forEach(x => { for (let a = 0; a < x.length; a++) for (let b = a + 1; b < x.length; b++) h[k(x[a], x[b])] = (h[k(x[a], x[b])] || 0) + 1; }); });
     const z = []; for (let i = 0; i < 9; i++) for (let j = i + 1; j < 9; j++) if (!h[k(i, j)]) z.push(N[i] + '/' + N[j]);
-    return { met: Object.keys(h).length, max: Math.max(...Object.values(h)), zero: z.length,
+    const four = []; Object.keys(h).forEach(key => { if (h[key] > 3) { const [a, b] = key.split('|'); four.push(N[a] + '/' + N[b]); } });
+    return { met: Object.keys(h).length, max: Math.max(...Object.values(h)), zero: z.length, zeros: z.sort().join(','), fours: four.sort().join(','),
       md: h[k(N.indexOf('Matt'), N.indexOf('Daniel'))] || 0, dp: h[k(N.indexOf('Drew'), N.indexOf('Paul'))] || 0,
       r5: sitOuts(R.find(r => r.id === 'r5')).map(i => N[i]).join(), r7: sitOuts(R.find(r => r.id === 'r7')).map(i => N[i]).join() };
   });
-  ok(inv.met === 36 && inv.zero === 0, '36/36 pairs, none at zero');
-  ok(inv.max <= 3, 'max repeat ' + inv.max + ' <= 3');
+  /* Full coverage became impossible when Wednesday was fixed by tee times (Lido at
+     10:00 for Brook/Tony/Eric/Ryan, one Sedge and one Sand Valley foursome) — see
+     CLAUDE.md §3. These pin the accepted gaps exactly, so any NEW gap still fails. */
+  ok(inv.zeros === 'Brook/Daniel,Drew/Ryan,Eric/Daniel,Mike/Ryan', 'only the accepted pairs never meet (got ' + inv.zeros + ')');
+  ok(inv.fours === 'Brook/Eric,Brook/Ryan,Matt/Daniel' && inv.max <= 4, 'only the accepted pairs meet 4 times (got ' + inv.fours + ')');
   ok(inv.md >= 2, 'Matt+Daniel ' + inv.md + ' >= 2');
   ok(inv.dp >= 2, 'Drew+Paul ' + inv.dp + ' >= 2');
-  ok(inv.r5 === 'Drew' && inv.r7 === 'Mike', 'sit-outs intact (r5 ' + inv.r5 + ', r7 ' + inv.r7 + ')');
+  ok(inv.r5 === 'Drew' && inv.r7 === 'Mike,Tony,Brook,Eric,Ryan', 'sit-outs intact (r5 ' + inv.r5 + ', r7 ' + inv.r7 + ')');
 
   await p.context().close();
 
@@ -342,8 +346,8 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
     return { r7: S.p.r7.map(g => g.map(i => N[i]).sort().join('/')).sort().join(' | '),
              sit: sitOuts(R.find(r => r.id === 'r7')).map(i => N[i]).join() };
   });
-  ok(g11.sit === 'Mike', 'r7 sit-out comes from code, not the published file (got ' + g11.sit + ')');
-  ok(/Brook\/Daniel\/Drew\/Paul/.test(g11.r7), 'r7 groups are the current code grid (got ' + g11.r7 + ')');
+  ok(g11.sit === 'Mike,Tony,Brook,Eric,Ryan', 'r7 sit-out comes from code, not the published file (got ' + g11.sit + ')');
+  ok(g11.r7 === 'Daniel/Drew/Matt/Paul', 'r7 groups are the current code grid (got ' + g11.r7 + ')');
   await p.context().close();
 
   // ---- 12. Pairings tab is read-only for viewers, editable for the organiser
@@ -421,13 +425,12 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
       return { name: pl.n, n: st.n, usedBackup: st.rs.some(r => r.backup) }; });
   });
   ok(pools.every(x => x.n >= 4), 'nobody falls below a pool of 4 (got ' + pools.map(x => x.n).join(',') + ')');
-  ok(!pools.some(x => x.usedBackup), 'on the full schedule nobody needs the backup');
-  ok(pools.filter(x => x.n === 5).length === 3 && pools.filter(x => x.n === 4).length === 6,
-     'three players on 5 rounds, six on 4 (got ' + pools.map(x => x.n).join(',') + ')');
+  ok(pools.filter(x => x.usedBackup).map(x => x.name).join() === 'Drew', 'on the full schedule only Drew needs the backup (got ' + pools.filter(x => x.usedBackup).map(x => x.name).join() + ')');
+  ok(pools.filter(x => x.n === 5).map(x => x.name).join() === 'Matt' && pools.filter(x => x.n === 4).length === 8,
+     'Matt on 5 rounds, everyone else on 4 (got ' + pools.map(x => x.n).join(',') + ')');
 
-  // Drew sits a second Sand Valley round -> 3 SV rounds -> Lawsonia backfills.
+  // Drew has only 3 Sand Valley rounds (sits Tue PM and Wed AM) -> Lawsonia backfills.
   const short = await p.evaluate(() => {
-    S.o.r6 = [3, 1];                                   // Tony (already) + Drew
     const st = standing(1);
     return { n: st.n, used: st.rs.some(r => r.backup), pool: st.rs.map(r => r.rid).join(' ') };
   });
@@ -454,7 +457,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   await p.evaluate(() => {
     ['r1','r2','r4','r5','r6','r7'].forEach((rid, k) => { S.s[rid] = P.map((_, pi) => 24 + k + pi); });
     S.o.r5 = [1, 4];         // Brook also skips Tue PM -> 3 Sand Valley rounds, Lawsonia backfills
-    S.o.r6 = [3, 4, 8];      // Tony+Brook as usual, plus Daniel -> 3 rounds and no Lawsonia for him
+    S.o.r6 = [1, 8];         // Drew as usual, plus Daniel -> 3 rounds and no Lawsonia for him
   });
   await p.click('nav button[data-v="stand"]'); await p.waitForTimeout(400);
   const marks = await p.evaluate(() => {
@@ -565,11 +568,11 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   {
     const http = require('http'), fs = require('fs');
     const NEW = fs.readFileSync(URL.replace('file://', ''), 'utf8');
-    const m7 = NEW.match(/"r7":(\[\[[\d,]+\],\[[\d,]+\]\])/);
-    // An "old build": same page with two players swapped between the r7 groups.
+    const m7 = NEW.match(/"r4":(\[\[[\d,]+\],\[[\d,]+\]\])/);
+    // An "old build": same page with two players swapped between the r4 groups.
     const cur7 = JSON.parse(m7[1]), old7 = cur7.map(g => g.slice());
     [old7[0][0], old7[1][0]] = [cur7[1][0], cur7[0][0]];
-    const OLD = NEW.replace(m7[0], '"r7":' + JSON.stringify(old7));
+    const OLD = NEW.replace(m7[0], '"r4":' + JSON.stringify(old7));
     let serve = OLD, staleV = false, hits = [];
     const srv = http.createServer((q, r) => {
       hits.push(q.url);
@@ -578,7 +581,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
     });
     await new Promise(res => srv.listen(0, res));
     const HURL = `http://localhost:${srv.address().port}/sandvalleyvatoz/`;
-    const grid = pg => pg.evaluate(() => JSON.stringify(S.p.r7.map(g => g.slice().sort()).sort()));
+    const grid = pg => pg.evaluate(() => JSON.stringify(S.p.r4.map(g => g.slice().sort()).sort()));
     const want = await (async () => { const q = await newPage(browser); await q.goto(URL); await settle(q);
       const g = await grid(q); await q.context().close(); return g; })();
 
@@ -603,7 +606,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
     await p.context().close();
 
     staleV = false;
-    const staleHash = Buffer.from(JSON.stringify({ v: 1, s: {}, t: {}, p: { r7: old7 }, o: {}, u: {}, i: {}, m: 0, l: [] })).toString('base64');
+    const staleHash = Buffer.from(JSON.stringify({ v: 1, s: {}, t: {}, p: { r4: old7 }, o: {}, u: {}, i: {}, m: 0, l: [] })).toString('base64');
     p = await newPage(browser); await mockApi(p, makeRepo());
     await p.goto(HURL + '#' + staleHash); await settle(p);
     ok(await grid(p) === want, 'an old link carrying a previous grid shows the current one');
