@@ -196,7 +196,7 @@ inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are sug
 | Round | Group 1 | Group 2 |
 |---|---|---|
 | r1 Links (pinned) | Mike, Drew, Paul, Tony | Eric, Brook, Matt, Ryan |
-| r2 SV / Lido / Mammoth | **Sand Valley 10:10** — Mike, Eric, Brook · **Lido 10:30** — Drew, Matt | **Mammoth 10:30** — Ryan, Tony, Paul |
+| r2 SV / Lido / Mammoth | **Sand Valley 10:10** — Mike, Tony, Brook · **Lido 10:30** — Drew, Matt | **Mammoth 10:30** — Ryan, Eric, Paul |
 | r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Brook | **8:40** — Daniel, Matt, Tony, Ryan |
 | r5 Mammoth | Brook, Eric, Daniel, Paul | Matt, Mike, Tony, Ryan |
 | r6 Sedge / Lido (Wed) | **Sedge 7:40** — Mike, Paul, Matt, Daniel | **Lido 10:00** — Brook, Tony, Eric, Ryan |
@@ -220,8 +220,9 @@ Consequences, all checked:
   Tuesday PM (accepted Sep 30 2026)**, Tuesday AM untouched. Then: never meet — Drew/Ryan,
   Ryan/Paul; 4 times — Tony/Ryan, Brook/Eric.
 - **Monday Brook/Paul swap (Sep 30 2026, Drew's request):** fixes Ryan/Paul, but **Brook/Eric goes
-  to 5** (Sun, Mon SV, Tue AM, Tue PM, Wed Lido). **Now: never meet — Drew/Ryan only; Brook/Eric 5,
-  Tony/Ryan 4.** verify.js §7 pins exactly this, so any new gap still fails. Offered, not taken:
+  to 5** (Sun, Mon SV, Tue AM, Tue PM, Wed Lido). Then Brook/Eric 5, Tony/Ryan 4.
+- **Monday Eric/Tony swap (Sep 30 2026):** strictly better — **now never meet: Drew/Ryan only;
+  4 times: Brook/Eric only; max 4.** verify.js §7 pins exactly this, so any new gap still fails. Offered, not taken:
   swapping Eric and Ryan on Tuesday AM (8:30 becomes Drew/Mike/Brook/Ryan) brings Brook/Eric to 4
   and Tony/Ryan to 3 but leaves Drew/Eric and Ryan/Daniel never meeting.
 - **Wednesday PM lists Mike, Tony, Brook, Eric and Ryan all as Sitting.** A separate "Played the
@@ -309,8 +310,14 @@ in Appendix A.
 
 **Lido landed (Sep 2026).** Two Lido tee times at 10:30 replaced one spot each from the Sand Valley
 and Mammoth groups: **Drew and Matt play the Lido as a twosome**, leaving threesomes on Sand Valley
-(Mike, Eric, Brook) and Mammoth (Ryan, Tony, Paul) — **Brook and Paul swapped at Drew's request,
-Sep 30 2026** (originally Paul on Sand Valley, Brook on Mammoth). Daniel still sits. The round is now a
+(Mike, Tony, Brook) and Mammoth (Ryan, Eric, Paul) — Brook↔Paul and then Eric↔Tony swapped at
+Drew's request, Sep 30 2026. Daniel still sits.
+
+**Drew's course priority (Sep 30 2026): Drew, Mike, Matt, Tony and Brook should each play all four
+resort courses (Sand Valley, Lido, Sedge, Mammoth).** The Eric↔Tony swap gave Tony Sand Valley.
+Matt, Tony and Brook have all four in the grid. Drew's Mammoth is his Tuesday PM solo (off-site).
+**Mike has no Lido** — fixing it means swapping him into the Wednesday Lido foursome, which costs
+Mike/Daniel never meeting; offered, not taken. Non-priority gaps: Eric/Ryan no SV; Paul/Daniel no Lido. The round is now a
 three-leg split (`ng:3`, `split` = SV / Lido / Mammoth in `BASE_GRID.r2` order). Lido counts
 like every other Sand Valley resort 18.
 
