@@ -226,7 +226,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-09-30T23:36Z');
+const SITE_UPDATED = Date.parse('2026-09-30T23:43Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -315,10 +315,7 @@ const R = [
 
  {id:'r7', day:'Wed Oct 7', sd:'Wed 10/7', when:'PM', course:'Sand Valley', sc:'Sand Valley', key:'sandvalley', tees:'1:00',
   counts:true, tag:'Copa Round 5', game:'Vegas', out:[2,3,4,5,6], ng:1,
-  /* One foursome: the 12:50 time was given up for Wednesday's Lido. `elsewhere`
-     names the players who are out of this round because they played another
-     one that day, so Today does not list them as "sitting". Display only. */
-  elsewhere:{ids:[3,4,5,6], label:'Played the Lido this morning'},
+  /* One foursome: the 12:50 time was given up for Wednesday's Lido. */
   rules:['Final counting round. Standings lock after this.','One foursome at 1:00.'],
   gamerules:['2v2. Combine partners&rsquo; scores into a two-digit number, low digit first.','A birdie by the opposing side FLIPS your number. This is how people lose money.','Double stakes. It is the marquee round.']},
 
@@ -799,10 +796,7 @@ function renderToday(){
     } else {
       h+=`<p class="note">No groups set yet. Open the Pairings tab.</p>`;
     }
-    const away = (rd.elsewhere && rd.elsewhere.ids) || [];
-    const sat = out.filter(i=>away.indexOf(i)<0), gone = out.filter(i=>away.indexOf(i)>=0);
-    if(sat.length) h+=`<p class="note" style="margin-top:8px"><b>Sitting:</b> ${sat.map(i=>P[i].n).join(', ')}</p>`;
-    if(gone.length) h+=`<p class="note" style="margin-top:4px"><b>${esc(rd.elsewhere.label)}:</b> ${gone.map(i=>P[i].n).join(', ')}</p>`;
+    if(out.length) h+=`<p class="note" style="margin-top:8px"><b>Sitting:</b> ${out.map(i=>P[i].n).join(', ')}</p>`;
   }
   h+=`</div>`;
 

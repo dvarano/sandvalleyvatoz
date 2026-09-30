@@ -25,7 +25,7 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Paul |
 | r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Gross skins | Drew |
 | r6 | Wed 10/7 AM | **Sedge Valley / Lido (split)** | 7:40 / 10:00 | Sedge Back 68.7/130 · Lido White 72.5/144 | **Yes** | Six-Six-Six | Drew |
-| r7 | Wed 10/7 PM | Sand Valley | 1:00 (one foursome) | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Mike (+ the four who played Lido) |
+| r7 | Wed 10/7 PM | Sand Valley | 1:00 (one foursome) | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Mike, Tony, Brook, Eric, Ryan |
 | r8 | Thu 10/8 AM | The Commons | 8:00 / 8:10 | 12 holes, par 45 | No — La Final | Match play | — |
 
 Alternate tees available in the app: Woodlands White 70.2/128; Sedge Back/Middle 67.0/126;
@@ -206,8 +206,8 @@ inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are sug
 12:50 Sand Valley times were given up for a **10:00 Lido foursome**. Drew specified the groups:
 Lido — Brook, Tony, Eric, Ryan; Sedge 7:40 — Mike, Paul, Matt, Daniel; Sand Valley 1:00 — Drew,
 Daniel, Matt, Paul. r6 is now a two-leg split (Sedge / Lido, like Monday) with **Drew sitting**;
-r7 is a single foursome (`ng:1`) with Mike sitting and the Lido four listed separately via
-`rd.elsewhere` ("Played the Lido this morning") so Today does not call them sitters.
+r7 is a single foursome (`ng:1`); Mike and the Lido four all show as **Sitting** (Drew's call:
+Mike also plays that day, just earlier, so all five are treated the same).
 
 Consequences, all checked:
 - **Drew now has only 3 Sand Valley rounds** (sits Tue PM and Wed AM), so **the Lawsonia backup
@@ -220,8 +220,9 @@ Consequences, all checked:
   Tuesday PM (accepted Sep 30 2026)**, Tuesday AM untouched. **Now: never meet — Drew/Ryan,
   Ryan/Paul; 4 times — Tony/Ryan, Brook/Eric.** verify.js §7 pins exactly this list, so any new
   gap still fails.
-- **Lido four on Wednesday PM are not "sitting"** — Drew asked; kept as "Played the Lido this
-  morning" because they played a counting round that day, and "sitting" reads as a skip.
+- **Wednesday PM lists Mike, Tony, Brook, Eric and Ryan all as Sitting.** A separate "Played the
+  Lido this morning" line was tried and removed at Drew's request — Mike plays Sedge that morning
+  too, so singling out the Lido four was inconsistent.
 - The old "Tony + Eric + Matt Wednesday PM" request and the Sedge sit-out plan are superseded.
 
 **Group order matters on the non-split rounds.** Group 1 tees first — the Today tab reads the
