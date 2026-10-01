@@ -321,7 +321,11 @@ Drew's request, Sep 30 2026. Daniel still sits.
 **Drew's course priority (Sep 30 2026): Drew, Mike, Matt, Tony and Brook should each play all four
 resort courses (Sand Valley, Lido, Sedge, Mammoth).** The Eric↔Tony swap gave Tony Sand Valley.
 After Drew took Matt's Tuesday PM spot: Drew, Tony and Brook have all four; **Matt has no Mammoth**.
-**Mike has no Lido** (Drew: leave it) — fixing it means swapping him into the Wednesday Lido foursome, which costs
+**Mike has no Lido** (Drew: leave it).
+**Off-site solos (Oct 1 2026): Matt plays Mammoth solo on Tuesday PM; Mike plays the Lido solo on
+Wednesday.** Deliberately **not** on the site — solos do not count for the Copa, so they stay off the
+schedule, the Today tab and the Courses-by-player table (which therefore still shows dashes for
+Matt/Mammoth and Mike/Lido). Do not add them. — fixing it means swapping him into the Wednesday Lido foursome, which costs
 Mike/Daniel never meeting; offered, not taken. Non-priority gaps: Eric/Ryan no SV; Paul/Daniel no Lido. The round is now a
 three-leg split (`ng:3`, `split` = SV / Lido / Mammoth in `BASE_GRID.r2` order). Lido counts
 like every other Sand Valley resort 18.
