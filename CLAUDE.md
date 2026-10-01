@@ -23,7 +23,7 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | r2 | Mon 10/5 AM | **Sand Valley / Lido / Mammoth (split)** | 10:10 / 10:30 / 10:30 | SV Orange 72.8/138 · Lido White 72.5/144 · Mammoth Orange 72.1/136 | **Yes** | Nassau (front/back/total) | Daniel |
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Paul |
-| r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Gross skins | Drew |
+| r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Gross skins | Matt |
 | r6 | Wed 10/7 AM | **Sedge Valley / Lido (split)** | 7:40 / 10:00 | Sedge Back 68.7/130 · Lido White 72.5/144 | **Yes** | Six-Six-Six | Drew |
 | r7 | Wed 10/7 PM | Sand Valley | 1:00 (one foursome) | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Mike, Tony, Brook, Eric, Ryan |
 | r8 | Thu 10/8 AM | The Commons | 8:00 / 8:10 | 12 holes, par 45 | No — La Final | Match play | — |
@@ -86,9 +86,9 @@ Implemented as flags, not hardcoded rounds: `counts:true` = Sand Valley counting
 `backup:true` = Lawsonia. `results()` fills from `COUNTING`, then tops up from `BACKUP`.
 **This survives schedule changes** — move a round between the two flags and the maths follows.
 
-Under the current schedule (`COUNTING` = r2/r4/r5/r6/r7, `BACKUP` = r1) **Drew needs the backup**:
-the rebooked Wednesday leaves him on 3 Sand Valley rounds, so Lawsonia tops him up to 4 (`4*`).
-Matt plays 5; everyone else 4.
+Under the current schedule (`COUNTING` = r2/r4/r5/r6/r7, `BACKUP` = r1) **nobody needs the
+backup: all nine play exactly 4 Sand Valley rounds** (since Drew took Matt's Tuesday PM spot,
+Oct 1 2026). It is insurance again.
 
 **Why the backup exists in practice:** the likely trigger is someone deciding not to play 36 in a
 day and skipping an afternoon or a morning — Tuesday PM Mammoth or Wednesday AM Sedge. Those
@@ -198,7 +198,7 @@ inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are sug
 | r1 Links (pinned) | Mike, Drew, Paul, Tony | Eric, Brook, Matt, Ryan |
 | r2 SV / Lido / Mammoth | **Sand Valley 10:10** — Mike, Tony, Brook · **Lido 10:30** — Drew, Matt | **Mammoth 10:30** — Ryan, Eric, Paul |
 | r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Brook | **8:40** — Daniel, Matt, Tony, Ryan |
-| r5 Mammoth | Brook, Eric, Daniel, Paul | Matt, Mike, Tony, Ryan |
+| r5 Mammoth | Brook, Eric, Daniel, Paul | Drew, Mike, Tony, Ryan |
 | r6 Sedge / Lido (Wed) | **Sedge 7:40** — Mike, Paul, Matt, Daniel | **Lido 10:00** — Brook, Tony, Eric, Ryan |
 | r7 Sand Valley (Wed) | **1:00** — Drew, Daniel, Matt, Paul | *(one foursome only)* |
 
@@ -221,6 +221,11 @@ Consequences, all checked:
   Ryan/Paul; 4 times — Tony/Ryan, Brook/Eric.
 - **Monday Brook/Paul swap (Sep 30 2026, Drew's request):** fixes Ryan/Paul, but **Brook/Eric goes
   to 5** (Sun, Mon SV, Tue AM, Tue PM, Wed Lido). Then Brook/Eric 5, Tony/Ryan 4.
+- **Tuesday PM: Drew plays, Matt sits (Oct 1 2026, Drew's request)** — Drew takes Matt's place in
+  Mike/Tony/Ryan's group. **Back to 36/36: every pair meets; only Brook/Eric at 4.** Drew now has 4
+  SV rounds (no backup needed) and plays Mammoth with the group, so the planned solo is moot.
+  **Cost: Matt now has no Mammoth** (his only Mammoth was Tuesday PM). Drew+Mike 3, Drew+Paul 2,
+  Matt+Daniel 3. Everyone on 4 counting rounds. verify.js §7 is back to asserting 36/36.
 - **Monday Eric/Tony swap (Sep 30 2026):** strictly better — **now never meet: Drew/Ryan only;
   4 times: Brook/Eric only; max 4.** verify.js §7 pins exactly this, so any new gap still fails. Offered, not taken:
   swapping Eric and Ryan on Tuesday AM (8:30 becomes Drew/Mike/Brook/Ryan) brings Brook/Eric to 4
@@ -315,8 +320,8 @@ Drew's request, Sep 30 2026. Daniel still sits.
 
 **Drew's course priority (Sep 30 2026): Drew, Mike, Matt, Tony and Brook should each play all four
 resort courses (Sand Valley, Lido, Sedge, Mammoth).** The Eric↔Tony swap gave Tony Sand Valley.
-Matt, Tony and Brook have all four in the grid. Drew's Mammoth is his Tuesday PM solo (off-site).
-**Mike has no Lido** — fixing it means swapping him into the Wednesday Lido foursome, which costs
+After Drew took Matt's Tuesday PM spot: Drew, Tony and Brook have all four; **Matt has no Mammoth**.
+**Mike has no Lido** (Drew: leave it) — fixing it means swapping him into the Wednesday Lido foursome, which costs
 Mike/Daniel never meeting; offered, not taken. Non-priority gaps: Eric/Ryan no SV; Paul/Daniel no Lido. The round is now a
 three-leg split (`ng:3`, `split` = SV / Lido / Mammoth in `BASE_GRID.r2` order). Lido counts
 like every other Sand Valley resort 18.
@@ -325,10 +330,8 @@ like every other Sand Valley resort 18.
 (default), Navy/White 74.1/146, Navy 75.2/149, White/Green 70.7/141, Green 69.6/134, all par 72.
 Drew and Matt can pick a different tee per player on the Enter tab.
 
-**Consequence: Drew no longer plays Mammoth with the group** (Lido Monday, sits Tuesday PM
-Mammoth). The "everyone plays both courses" reasoning below predates Lido. **Drew will probably
-play Mammoth as a solo on Tuesday PM** — deliberately **not** on the site: it is not a group round,
-does not count for the Copa, and Drew stays marked as sitting r5. Do not add it.
+**Drew's Tuesday PM Mammoth solo is moot** — as of Oct 1 2026 Drew plays Tuesday PM with the group
+and Matt sits (see §3). The "everyone plays both courses" reasoning below predates Lido.
 
 **Coverage broke:** with Drew and Matt out of the two foursomes, **Matt/Paul and Drew/Ryan dropped
 to zero**. Exhaustive search (Sunday, Monday, Matt+Daniel Tuesday AM, Drew+Paul ≥2, Drew+Mike ≥2,

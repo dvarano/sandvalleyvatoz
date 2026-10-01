@@ -163,11 +163,11 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   /* Full coverage became impossible when Wednesday was fixed by tee times (Lido at
      10:00 for Brook/Tony/Eric/Ryan, one Sedge and one Sand Valley foursome) — see
      CLAUDE.md §3. These pin the accepted gaps exactly, so any NEW gap still fails. */
-  ok(inv.zeros === 'Drew/Ryan', 'only the accepted pairs never meet (got ' + inv.zeros + ')');
+  ok(inv.met === 36 && inv.zero === 0, '36/36 pairs, none at zero (got ' + (inv.zeros || 'none') + ')');
   ok(inv.fours === 'Brook/Eric' && inv.max === 4, 'only the accepted pairs meet 4 times (got ' + inv.fours + ')');
   ok(inv.md >= 2, 'Matt+Daniel ' + inv.md + ' >= 2');
   ok(inv.dp >= 2, 'Drew+Paul ' + inv.dp + ' >= 2');
-  ok(inv.r5 === 'Drew' && inv.r7 === 'Mike,Tony,Brook,Eric,Ryan', 'sit-outs intact (r5 ' + inv.r5 + ', r7 ' + inv.r7 + ')');
+  ok(inv.r5 === 'Matt' && inv.r7 === 'Mike,Tony,Brook,Eric,Ryan', 'sit-outs intact (r5 ' + inv.r5 + ', r7 ' + inv.r7 + ')');
 
   await p.context().close();
 
@@ -425,12 +425,12 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
       return { name: pl.n, n: st.n, usedBackup: st.rs.some(r => r.backup) }; });
   });
   ok(pools.every(x => x.n >= 4), 'nobody falls below a pool of 4 (got ' + pools.map(x => x.n).join(',') + ')');
-  ok(pools.filter(x => x.usedBackup).map(x => x.name).join() === 'Drew', 'on the full schedule only Drew needs the backup (got ' + pools.filter(x => x.usedBackup).map(x => x.name).join() + ')');
-  ok(pools.filter(x => x.n === 5).map(x => x.name).join() === 'Matt' && pools.filter(x => x.n === 4).length === 8,
-     'Matt on 5 rounds, everyone else on 4 (got ' + pools.map(x => x.n).join(',') + ')');
+  ok(!pools.some(x => x.usedBackup), 'on the full schedule nobody needs the backup');
+  ok(pools.every(x => x.n === 4), 'everyone on 4 Sand Valley rounds (got ' + pools.map(x => x.n).join(',') + ')');
 
-  // Drew has only 3 Sand Valley rounds (sits Tue PM and Wed AM) -> Lawsonia backfills.
+  // Drew skips Wednesday PM too -> 3 Sand Valley rounds -> Lawsonia backfills.
   const short = await p.evaluate(() => {
+    S.o.r7 = [1, 2, 3, 4, 5, 6];
     const st = standing(1);
     return { n: st.n, used: st.rs.some(r => r.backup), pool: st.rs.map(r => r.rid).join(' ') };
   });
@@ -440,7 +440,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   // A full Sand Valley pool ignores Lawsonia even when Lawsonia was the best round.
   const full = await p.evaluate(() => { S.s.r1[0] = 60; const st = standing(0);
     return { used: st.rs.some(r => r.backup), n: st.n }; });
-  ok(!full.used && full.n === 5, 'a full Sand Valley pool never pulls Lawsonia in');
+  ok(!full.used && full.n === 4, 'a full Sand Valley pool never pulls Lawsonia in');
 
   // Daniel has no Lawsonia round at all; he must still reach a full pool.
   const daniel = await p.evaluate(() => { const st = standing(8);
@@ -652,7 +652,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(cc && cc.last, 'viewers see the courses table at the bottom of Pairings');
   ok(cc && cc.tony === '1,1,1,1,4', 'Tony plays all four courses (got ' + (cc && cc.tony) + ')');
   ok(cc && cc.mike === '1,\u2013,2,1,4', 'Mike has no Lido, shown as a dash (got ' + (cc && cc.mike) + ')');
-  ok(cc && cc.matt === '1,1,2,1,5', 'Matt plays five counting rounds (got ' + (cc && cc.matt) + ')');
+  ok(cc && cc.matt === '1,1,2,\u2013,4', 'Matt has no Mammoth after sitting Tuesday PM (got ' + (cc && cc.matt) + ')');
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 
