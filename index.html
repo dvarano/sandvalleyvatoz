@@ -226,7 +226,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-01T16:15Z');
+const SITE_UPDATED = Date.parse('2026-10-01T16:18Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -270,6 +270,8 @@ const ENTRY_FEE = 150;
 const PRIZES = [700, 350, 300];
 /* The Sandbox's own pot, separate from the Copa. Single source for every mention. */
 const SANDBOX_POT = 450;
+const SANDBOX_CTP = 15, SANDBOX_HOLES = 17;            // $15 a hole for closest to the pin
+const SANDBOX_SKINS = SANDBOX_POT - SANDBOX_CTP*SANDBOX_HOLES;   // the remainder goes to skins
 /* All-square rule, quoted by La Final's card, the Today tab and the Info tab.
    Single source: these three drifted apart once. */
 const ALL_SQUARE = 'split the prizes, or agree on a playoff, chip-off or putt-off';
@@ -293,7 +295,7 @@ const R = [
 
  {id:'r3', day:'Mon Oct 5', sd:'Mon 10/5', when:'PM', course:'The Sandbox', sc:'Sandbox', key:'sandbox',    tees:'4:54 / 5:18',
   counts:false, tag:'Side Pot', game:'Gross skins + CTP', out:[], ng:2,
-  rules:['17 par 3s at dusk. All nine play. Fivesomes confirmed OK here.','$'+SANDBOX_POT+' prize pool, split between skins and closest to the pin. Separate from the Copa &mdash; does not touch the standings.'],
+  rules:['17 par 3s at dusk. All nine play. Fivesomes confirmed OK here.','$'+SANDBOX_POT+' prize pool: $'+SANDBOX_CTP+' a hole for closest to the pin ($'+SANDBOX_CTP*SANDBOX_HOLES+' over '+SANDBOX_HOLES+' holes), the remaining $'+SANDBOX_SKINS+' for skins. Separate from the Copa &mdash; does not touch the standings.'],
   gamerules:['GROSS skins, no handicaps. Ties carry over.','Closest to the pin on every hole.','Expect a monster carryover on the closing holes.']},
 
  {id:'r4', day:'Tue Oct 6', sd:'Tue 10/6', when:'AM', course:'Sedge Valley', sc:'Sedge', key:'sedge',      tees:'8:30 / 8:40',
@@ -1068,7 +1070,7 @@ function renderInfo(){
     <ul class="rules">
       <li><b>La Copa:</b> $${ENTRY_FEE} each, pays $${PRIZES[0]} / $${PRIZES[1]} / $${PRIZES[2]}. Nine buy-ins funds it exactly.</li>
       <li><b>Each round can have its own separate money game within the foursome.</b> See the Today tab for ideas for formats.</li>
-      <li><b>The Sandbox</b> (Monday dusk) is a separate <b>$${SANDBOX_POT}</b> prize pool, split between gross skins with carryovers and closest to the pin on all 17. No handicaps.</li>
+      <li><b>The Sandbox</b> (Monday dusk) is a separate <b>$${SANDBOX_POT}</b> prize pool: <b>$${SANDBOX_CTP} a hole</b> for closest to the pin on all ${SANDBOX_HOLES}, and the remaining <b>$${SANDBOX_SKINS}</b> for gross skins with carryovers. No handicaps.</li>
     </ul>
   </div>`;
 
