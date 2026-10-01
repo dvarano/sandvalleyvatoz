@@ -364,7 +364,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
     rselHidden: document.querySelector('.rsel').classList.contains('hide'),
     showsIdx: /\b13\b/.test(document.querySelector('#v-pair').innerHTML)
   }));
-  ok(JSON.stringify(ro.heads) === '["Who plays with whom","Handicap indexes"]', 'exactly the two cards: ' + JSON.stringify(ro.heads));
+  ok(JSON.stringify(ro.heads) === '["Who plays with whom","Handicap indexes","Courses by player"]', 'exactly the three viewer cards: ' + JSON.stringify(ro.heads));
   ok(ro.inputs === 0, 'no inputs, selects or buttons for a viewer (found ' + ro.inputs + ')');
   ok(!ro.oldName, 'old "Who has played with whom" wording is gone');
   ok(ro.showsIdx, 'viewer can still read the index values');
@@ -634,6 +634,25 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   });
   ok(hdr.older, 'a site update newer than the last publish shows as the update time');
   ok(hdr.newer, 'a publish newer than the site update shows as the update time');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
+  // ---- 17. Courses by player on the Pairings tab -----------------------------
+  console.log('\n[17] Courses-by-player table');
+  p = await newPage(browser); await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+  await p.click('nav button[data-v="pair"]'); await p.waitForTimeout(300);
+  const cc = await p.evaluate(() => {
+    const card = [...document.querySelectorAll('#v-pair .card')].find(c => /Courses by player/.test(c.textContent));
+    if (!card) return null;
+    const row = n => [...card.querySelectorAll('tbody tr')].find(t => t.cells[0].textContent === n);
+    const cells = n => [...row(n).cells].slice(1).map(c => c.textContent.trim()).join(',');
+    return { last: card === [...document.querySelectorAll('#v-pair .card')].pop(), tony: cells('Tony'), mike: cells('Mike'), matt: cells('Matt') };
+  });
+  ok(cc && cc.last, 'viewers see the courses table at the bottom of Pairings');
+  ok(cc && cc.tony === '1,1,1,1,4', 'Tony plays all four courses (got ' + (cc && cc.tony) + ')');
+  ok(cc && cc.mike === '1,\u2013,2,1,4', 'Mike has no Lido, shown as a dash (got ' + (cc && cc.mike) + ')');
+  ok(cc && cc.matt === '1,1,2,1,5', 'Matt plays five counting rounds (got ' + (cc && cc.matt) + ')');
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 

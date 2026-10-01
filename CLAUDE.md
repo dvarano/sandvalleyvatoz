@@ -472,8 +472,10 @@ quotas, and **Plays off** — strokes against the lowest course handicap *in tha
 group*, for the side games; rows grouped, low man first at 0; split rounds put the course on the
 group header instead of a column so it fits a phone. Uses course handicaps, so tee overrides and
 split courses are already in it. It is display only — the Copa never reads it) · **Enter** (nine number inputs plus editable CR/slope per player) · **Standings**
-(leaderboard, bar chart, La Final card, pool) · **Pairings** (assignment dropdowns, generator,
-partner matrix).
+(leaderboard, bar chart, La Final card, pool) · **Pairings** (assignment dropdowns, partner
+matrix, indexes, and at the bottom **Courses by player** — `coursesCard()` counts each player's
+SV / Lido / Sedge / Mammoth rounds from `S.p` across counting rounds, red dash for a course they
+never play; shown to viewers too. Off-site rounds like Drew's Tuesday solo are not in it).
 
 ### Testing
 
@@ -597,7 +599,7 @@ propagation, backward compatibility with pre-`i` links, the baseline-grid freeze
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
 Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
 guard, the pairing invariants, and code updates reaching an open tab (§15, over a local HTTP
-server) and the header's last-updated time (§16) — 129 assertions. Worth re-running after any change to the sync path.
+server), the header's last-updated time (§16) and the courses-by-player table (§17) — 134 assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked
