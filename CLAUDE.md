@@ -178,7 +178,9 @@ holes are not USGA rated, so no score can be posted. Architect Jimmy Craig, est.
 - **Each round can have its own money game inside the foursome.** These do not interfere with
   the Copa **as long as everyone plays their own ball**. All the suggested formats respect
   that; a scramble or alternate shot would break it.
-- **The Sandbox** is its own pot: gross skins with carryovers plus CTP on all 17. No handicaps.
+- **The Sandbox** is its own pot: **$450 prize pool split between skins and CTP** (Oct 2026). Gross skins
+  with carryovers plus CTP on all 17. No handicaps. `SANDBOX_POT` is the single source for the figure
+  (Today notes, Info money card, Enter tab). The split between skins and CTP is not specified.
 
 **Format ideas (Sep 2026).** Bingo Bango Bongo is dropped entirely. Sunday is Six-Six-Six, Monday
 is Nassau (front / back / total), Tuesday morning stays Wolf, Tuesday afternoon is **gross skins**
