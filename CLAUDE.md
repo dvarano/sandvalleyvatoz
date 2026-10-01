@@ -75,7 +75,13 @@ entirely. Eagle at 6 rather than 8 is deliberate, so a lucky eagle can't hijack 
 
 ### Standings — drop your worst (El Mulligan), average the rest
 
-Play five counting rounds, average your best four. Play four, average your best three.
+**Rule (Oct 1 2026, Drew): your FIRST 4 Sand Valley rounds count** (schedule order). Drop the worst
+of those 4, average the other 3. An extra solo round never counts. Fewer than 4 (missed/skipped a
+round) → Lawsonia tops the pool up. Enforced in `results()` by `.slice(0, MIN_POOL)` before the
+backup step, so a fifth scored round can never sneak in. The Info tab's "uneven round counts"
+sentence was removed — everyone is on exactly 4 now. Covered by verify.js §13b.
+
+*(Historical: it used to be "play five, average your best four; play four, average your best three".)*
 
 **Lawsonia is a conditional backup (added Sep 2026).** Only **Sand Valley resort 18-hole rounds**
 count. If a player ends up with fewer than `MIN_POOL` (4) of them — sat one out, arrived late —
@@ -611,7 +617,7 @@ propagation, backward compatibility with pre-`i` links, the baseline-grid freeze
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
 Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
 guard, the pairing invariants, and code updates reaching an open tab (§15, over a local HTTP
-server), the header's last-updated time (§16) and the courses-by-player table and solo notes (§17) — 137 assertions. Worth re-running after any change to the sync path.
+server), the header's last-updated time (§16) and the courses-by-player table and solo notes (§17) — 138 assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked

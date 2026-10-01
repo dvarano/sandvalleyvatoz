@@ -226,7 +226,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-01T00:56Z');
+const SITE_UPDATED = Date.parse('2026-10-01T03:24Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -610,8 +610,11 @@ function roundResult(pi, rid){
    leaves fewer than MIN_POOL, Lawsonia tops it up — best round first — so
    nobody is judged on a thinner pool than everyone else just because they
    sat one out. A player with a full Sand Valley pool never uses Lawsonia. */
+/* Your FIRST four Sand Valley rounds count, in schedule order — an extra round
+   (a solo, or a fifth scored round after a late schedule change) never does.
+   Fewer than four (missed or skipped a round) and Lawsonia tops the pool up. */
 function results(pi){
-  const out = COUNTING.map(rid=>roundResult(pi,rid)).filter(Boolean);
+  const out = COUNTING.map(rid=>roundResult(pi,rid)).filter(Boolean).slice(0, MIN_POOL);
   if(out.length < MIN_POOL){
     const spare = BACKUP.map(rid=>roundResult(pi,rid)).filter(Boolean)
       .sort((a,b)=>b.d-a.d)
@@ -1031,13 +1034,13 @@ function renderInfo(){
       <td style="font-size:12px;color:${rd.counts?'var(--accent)':(rd.backup?'var(--warn)':'var(--ink-3)')}">${rd.counts?'YES':(rd.backup?'Warmup/Backup':rd.tag)}</td></tr>`;
   });
   h+=`</tbody></table>
-    <p class="note" style="margin-top:10px"><b>Sand Valley rounds count.</b> Lawsonia is a warmup &mdash; unless you end up short, in which case it backs you up. The Sandbox is its own pot and Thursday is the final.</p>
+    <p class="note" style="margin-top:10px"><b>Your first ${MIN_POOL} Sand Valley rounds count.</b> Lawsonia is a warmup &mdash; unless you end up short, in which case it backs you up. The Sandbox is its own pot and Thursday is the final.</p>
   </div>`;
 
   h+=`<div class="card"><h2>How standings work</h2>
-    <p class="note"><b>Everyone drops their worst round at Sand Valley (El Mulligan), then averages their remaining 3 or 4 round quota scores.</b></p>
-    <p class="note" style="margin-top:8px">This exists because the round counts are uneven and cannot be made even.</p>
-    <p class="note" style="margin-top:8px"><b>Lawsonia is your backup.</b> Your four or five Sand&nbsp;Valley rounds are what count. If you end up with only three &mdash; you sat one out, or arrived late &mdash; your Lawsonia round is pulled in as the fourth so you are not judged on a thinner pool than everyone else. Play your full Sand Valley schedule and Lawsonia stays a warmup.</p>
+    <p class="note"><b>Your first ${MIN_POOL} Sand Valley rounds count.</b> Drop your worst of the ${MIN_POOL} (El Mulligan) and average the other ${MIN_POOL-1} quota scores.</p>
+    <p class="note" style="margin-top:8px">An extra solo round does not count.</p>
+    <p class="note" style="margin-top:8px"><b>Lawsonia is your backup.</b> If you end up with fewer than ${MIN_POOL} Sand&nbsp;Valley rounds because you missed or skipped one, your Lawsonia round fills the gap. Otherwise it stays a warmup.</p>
   </div>`;
 
   h+=`<div class="card"><h2>Seeding &amp; La Final</h2>
