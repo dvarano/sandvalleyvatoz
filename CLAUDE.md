@@ -22,8 +22,8 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | r1 | Sun 10/4 PM | Lawsonia Links | 1:40 / 1:50 | White 72.0 / 133, par 72 | Backup only | Six-Six-Six | Daniel |
 | r2 | Mon 10/5 AM | **Sand Valley / Lido / Mammoth (split)** | 10:10 / 10:30 / 10:30 | SV Orange 72.8/138 · Lido White 72.5/144 · Mammoth Orange 72.1/136 | **Yes** | Nassau (front/back/total) | Daniel |
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
-| r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Wolf | Paul |
-| r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Gross skins | Matt |
+| r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Net skins | Paul |
+| r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Wolf | Matt |
 | r6 | Wed 10/7 AM | **Sedge Valley / Lido (split)** | 7:40 / 10:00 | Sedge Back 68.7/130 · Lido White 72.5/144 | **Yes** | Six-Six-Six | Drew |
 | r7 | Wed 10/7 PM | Sand Valley | 1:00 (one foursome) | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Mike, Tony, Brook, Eric, Ryan |
 | r8 | Thu 10/8 AM | The Commons | 8:00 / 8:10 | 12 holes, par 45 | No — La Final | Match play | — |
@@ -185,9 +185,11 @@ is Nassau (front / back / total), Tuesday morning stays Wolf, Tuesday afternoon 
 — it was a second Nassau, identical to Monday's, until this was spotted. Skins now appears on one
 18-hole round; the Sandbox (r3) is a separate pot on 17 par 3s, not a duplicate.
 
-**Mammoth's skins are gross, deliberately.** The app carries no hole-by-hole stroke indexes — that
-is the whole reason the Copa is quota rather than net Stableford (§2) — so net skins would need
-data nobody has. Same basis as the Sandbox.
+**Tuesday swapped (Oct 1 2026, Drew): Tuesday AM Sedge is now NET skins, Tuesday PM Mammoth is
+Wolf.** Net skins works without the app carrying stroke indexes: each player uses the **Plays off**
+number from the Today quota table and takes strokes off the handicap row on the Sedge scorecard.
+(Earlier the Mammoth skins were deliberately gross on the no-stroke-index argument; the Plays off
+column, added later, removed that objection.) The Sandbox stays gross.
 
 `rd.game` is rendered through `esc()`, so it must be **plain text — no HTML entities**;
 `rd.gamerules` is not escaped and may use them. Six-Six-Six still appears twice: Sunday, and
