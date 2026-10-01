@@ -226,6 +226,10 @@ Consequences, all checked:
   SV rounds (no backup needed) and plays Mammoth with the group, so the planned solo is moot.
   **Cost: Matt now has no Mammoth** (his only Mammoth was Tuesday PM). Drew+Mike 3, Drew+Paul 2,
   Matt+Daniel 3. Everyone on 4 counting rounds. verify.js §7 is back to asserting 36/36.
+  **Considered and declined (Oct 1 2026): Brook sitting Tuesday PM instead of Matt.** Course coverage
+  comes out the same (one priority player on a Mammoth solo either way), but it costs Brook/Paul and
+  Brook/Daniel never meeting, Matt/Daniel 4, Brook down to 3 SV rounds (Lawsonia backup) and Matt up
+  to 5. Drew: leave Matt sitting.
 - **Monday Eric/Tony swap (Sep 30 2026):** strictly better — **now never meet: Drew/Ryan only;
   4 times: Brook/Eric only; max 4.** verify.js §7 pins exactly this, so any new gap still fails. Offered, not taken:
   swapping Eric and Ryan on Tuesday AM (8:30 becomes Drew/Mike/Brook/Ryan) brings Brook/Eric to 4
