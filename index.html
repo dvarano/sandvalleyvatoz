@@ -226,7 +226,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-01T16:18Z');
+const SITE_UPDATED = Date.parse('2026-10-01T19:16Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -1135,10 +1135,10 @@ function matrixCard(){
    every counting round (split rounds resolve each player's own course). Built
    from S.p, so it follows any pairing or sit-out change. A red dash is a course
    that player never plays. Rounds off the site (Drew's Tuesday solo) are not in it. */
-const COURSE_COLS = [['sandvalley','SV'],['lido','Lido'],['sedge','Sedge'],['mammoth','Mammoth']];
+const COURSE_COLS = [['links','Lawsonia'],['sandvalley','SV'],['lido','Lido'],['sedge','Sedge'],['mammoth','Mammoth']];
 function coursesCard(){
   const cnt = P.map(()=>({}));
-  R.filter(rd=>rd.counts).forEach(rd=>{
+  R.filter(rd=>rd.counts || rd.backup).forEach(rd=>{
     (S.p[rd.id]||[]).forEach(g=>g.forEach(pi=>{ const k=keyFor(rd,pi); cnt[pi][k]=(cnt[pi][k]||0)+1; }));
   });
   let h=`<div class="card"><h2>Courses by player</h2><table><thead><tr><th style="text-align:left">Player</th>${COURSE_COLS.map(c=>`<th style="text-align:center">${c[1]}</th>`).join('')}<th>Total</th></tr></thead><tbody>`;
@@ -1150,7 +1150,7 @@ function coursesCard(){
     h+=`<td><b>${tot}</b></td></tr>`;
   });
   return h+`</tbody></table>
-    <p class="note" style="margin-top:8px">Counting rounds at the resort only &mdash; Lawsonia, the Sandbox and the Commons are left out. A red dash is a course that player is not scheduled to play.</p>
+    <p class="note" style="margin-top:8px">All scheduled 18-hole rounds, Lawsonia included; the Sandbox and the Commons are left out. A red dash is a course that player is not scheduled to play.</p>
     <p class="note" style="margin-top:6px">Solo rounds are not counted here or for the Copa: Matt plays Mammoth solo on Tuesday afternoon and Mike plays the Lido solo on Wednesday afternoon.</p></div>`;
 }
 

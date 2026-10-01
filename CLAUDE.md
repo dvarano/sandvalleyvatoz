@@ -497,7 +497,8 @@ group header instead of a column so it fits a phone. Uses course handicaps, so t
 split courses are already in it. It is display only — the Copa never reads it) · **Enter** (nine number inputs plus editable CR/slope per player) · **Standings**
 (leaderboard, bar chart, La Final card, pool) · **Pairings** (assignment dropdowns, partner
 matrix, indexes, and at the bottom **Courses by player** — `coursesCard()` counts each player's
-SV / Lido / Sedge / Mammoth rounds from `S.p` across counting rounds, red dash for a course they
+Lawsonia / SV / Lido / Sedge / Mammoth rounds from `S.p` across counting and backup rounds (Lawsonia
+column added Oct 2026; Total counts it, so most players show 5), red dash for a course they
 never play; shown to viewers too. Off-site rounds like Drew's Tuesday solo are not in it).
 
 ### Testing
