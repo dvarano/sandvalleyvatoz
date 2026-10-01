@@ -326,10 +326,11 @@ Drew's request, Sep 30 2026. Daniel still sits.
 resort courses (Sand Valley, Lido, Sedge, Mammoth).** The Eric↔Tony swap gave Tony Sand Valley.
 After Drew took Matt's Tuesday PM spot: Drew, Tony and Brook have all four; **Matt has no Mammoth**.
 **Mike has no Lido** (Drew: leave it).
-**Off-site solos (Oct 1 2026): Matt plays Mammoth solo on Tuesday PM; Mike plays the Lido solo on
-Wednesday.** Deliberately **not** on the site — solos do not count for the Copa, so they stay off the
-schedule, the Today tab and the Courses-by-player table (which therefore still shows dashes for
-Matt/Mammoth and Mike/Lido). Do not add them. — fixing it means swapping him into the Wednesday Lido foursome, which costs
+**Solos (Oct 1 2026): Matt plays Mammoth solo on Tuesday PM; Mike plays the Lido solo on Wednesday
+PM.** They do not count for the Copa. **Shown on the site at Drew's request (reversing an earlier
+"keep it off")**: the Today sitting line reads "Matt (playing Mammoth solo)" / "Mike (playing the Lido
+solo)" via a display-only `rd.soloNote` map, and a note under Courses by player names both. The
+table counts themselves still exclude solos (red dashes stay). Covered by verify.js §17. — fixing it means swapping him into the Wednesday Lido foursome, which costs
 Mike/Daniel never meeting; offered, not taken. Non-priority gaps: Eric/Ryan no SV; Paul/Daniel no Lido. The round is now a
 three-leg split (`ng:3`, `split` = SV / Lido / Mammoth in `BASE_GRID.r2` order). Lido counts
 like every other Sand Valley resort 18.
@@ -610,7 +611,7 @@ propagation, backward compatibility with pre-`i` links, the baseline-grid freeze
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
 Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
 guard, the pairing invariants, and code updates reaching an open tab (§15, over a local HTTP
-server), the header's last-updated time (§16) and the courses-by-player table (§17) — 134 assertions. Worth re-running after any change to the sync path.
+server), the header's last-updated time (§16) and the courses-by-player table and solo notes (§17) — 137 assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked

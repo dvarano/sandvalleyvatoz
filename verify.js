@@ -652,6 +652,16 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(cc && cc.last, 'viewers see the courses table at the bottom of Pairings');
   ok(cc && cc.tony === '1,1,1,1,4', 'Tony plays all four courses (got ' + (cc && cc.tony) + ')');
   ok(cc && cc.mike === '1,\u2013,2,1,4', 'Mike has no Lido, shown as a dash (got ' + (cc && cc.mike) + ')');
+  const soloTxt = await p.evaluate(() => [...document.querySelectorAll('#v-pair .card')].pop().textContent);
+  ok(/Matt plays Mammoth solo/.test(soloTxt) && /Mike plays the Lido solo/.test(soloTxt), 'courses table notes the two solo rounds');
+  await p.click('nav button[data-v="today"]'); await p.waitForTimeout(200);
+  const sitTxt = {};
+  for (const [rid, idx] of [['r5', 4], ['r7', 6]]) {
+    await p.selectOption('#roundSel', String(idx)); await p.waitForTimeout(200);
+    sitTxt[rid] = await p.evaluate(() => [...document.querySelectorAll('#v-today .note')].map(n => n.textContent).find(t => /^Sitting:/.test(t)) || '');
+  }
+  ok(sitTxt.r5 === 'Sitting: Matt (playing Mammoth solo)', 'Tue PM names Matt\'s solo (got ' + sitTxt.r5 + ')');
+  ok(sitTxt.r7 === 'Sitting: Mike (playing the Lido solo), Tony, Brook, Eric, Ryan', 'Wed PM names Mike\'s solo (got ' + sitTxt.r7 + ')');
   ok(cc && cc.matt === '1,1,2,\u2013,4', 'Matt has no Mammoth after sitting Tuesday PM (got ' + (cc && cc.matt) + ')');
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();

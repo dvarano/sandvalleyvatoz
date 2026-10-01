@@ -226,7 +226,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-01T00:05Z');
+const SITE_UPDATED = Date.parse('2026-10-01T00:34Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -301,6 +301,8 @@ const R = [
 
  {id:'r5', day:'Tue Oct 6', sd:'Tue 10/6', when:'PM', course:'Mammoth Dunes', sc:'Mammoth', key:'mammoth',    tees:'12:50 / 1:00',
   counts:true, tag:'Copa Round 3', game:'Gross skins', out:[0], ng:2,
+  /* soloNote: what a sitter is doing instead. Display only — solos never count. */
+  soloNote:{0:'playing Mammoth solo'},
   rules:['Counts for La Copa. Matt sits.','If a 3rd tee time lands, switch to three groups of three and everyone plays.'],
   gamerules:['Low gross score on a hole wins the skin. Tie and it carries to the next hole.','No handicaps, same as the Sandbox &mdash; no stroke index needed.','Mammoth is wide and birdie-able, so carryovers build and the closing holes get expensive.']},
 
@@ -316,6 +318,7 @@ const R = [
  {id:'r7', day:'Wed Oct 7', sd:'Wed 10/7', when:'PM', course:'Sand Valley', sc:'Sand Valley', key:'sandvalley', tees:'1:00',
   counts:true, tag:'Copa Round 5', game:'Vegas', out:[2,3,4,5,6], ng:1,
   /* One foursome: the 12:50 time was given up for Wednesday's Lido. */
+  soloNote:{2:'playing the Lido solo'},
   rules:['Final counting round. Standings lock after this.','One foursome at 1:00.'],
   gamerules:['2v2. Combine partners&rsquo; scores into a two-digit number, low digit first.','A birdie by the opposing side FLIPS your number. This is how people lose money.','Double stakes. It is the marquee round.']},
 
@@ -796,7 +799,8 @@ function renderToday(){
     } else {
       h+=`<p class="note">No groups set yet. Open the Pairings tab.</p>`;
     }
-    if(out.length) h+=`<p class="note" style="margin-top:8px"><b>Sitting:</b> ${out.map(i=>P[i].n).join(', ')}</p>`;
+    const solo = rd.soloNote || {};
+    if(out.length) h+=`<p class="note" style="margin-top:8px"><b>Sitting:</b> ${out.map(i=>P[i].n + (solo[i] ? ` (${esc(solo[i])})` : '')).join(', ')}</p>`;
   }
   h+=`</div>`;
 
@@ -1139,7 +1143,8 @@ function coursesCard(){
     h+=`<td><b>${tot}</b></td></tr>`;
   });
   return h+`</tbody></table>
-    <p class="note" style="margin-top:8px">Counting rounds at the resort only &mdash; Lawsonia, the Sandbox and the Commons are left out. A red dash is a course that player is not scheduled to play.</p></div>`;
+    <p class="note" style="margin-top:8px">Counting rounds at the resort only &mdash; Lawsonia, the Sandbox and the Commons are left out. A red dash is a course that player is not scheduled to play.</p>
+    <p class="note" style="margin-top:6px">Solo rounds are not counted here or for the Copa: Matt plays Mammoth solo on Tuesday afternoon and Mike plays the Lido solo on Wednesday afternoon.</p></div>`;
 }
 
 /* Roster indexes. Editable only with a token; everyone else gets the same numbers
