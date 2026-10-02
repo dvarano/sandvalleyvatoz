@@ -489,7 +489,16 @@ shape evolves. Preserve that when changing state.
 
 ### Tabs
 
-**Info** (landing, unless opened during the trip dates → then Today) · **Today** (groups — **each
+**Which round the site opens on (Oct 2026, Drew).** `liveRound(now)` picks the last round whose
+`roundOpens(i)` has passed, **always in Wisconsin Central time** (`TZ_OFFSET_H = 5`, CDT, independent
+of the phone's zone; tee times are parsed from `rd.tees`). Morning rounds open at **7pm Central the
+night before**; afternoon rounds (and the first round, Sunday) open **4h before their first tee, but
+not until 2h after the previous round's last tee** so a 36-hole day doesn't flip mid-round. Result:
+Sun 9:40am Lawsonia · Sun 7pm Mon AM · Mon 12:54pm Sandbox · Mon 7pm Tue AM · Tue 10:40am Mammoth ·
+Tue 7pm Wed AM · Wed 12:00pm Sand Valley · Wed 7pm Commons. Before Sun 9:40am the site opens on Info.
+Covered by verify.js §18. If tee times change, the switch times follow automatically.
+
+**Info** (landing until Sun 9:40am Central, then Today on the live round) · **Today** (groups — **each
 group box names its course (split days) and default tees in bold with rating/slope, right under
 the tee time**; the old "X tees by default" in the header was dropped since it was wrong on split
 days — format,
@@ -625,7 +634,7 @@ propagation, backward compatibility with pre-`i` links, the baseline-grid freeze
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
 Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
 guard, the pairing invariants, and code updates reaching an open tab (§15, over a local HTTP
-server), the header's last-updated time (§16) and the courses-by-player table and solo notes (§17) — 138 assertions. Worth re-running after any change to the sync path.
+server), the header's last-updated time (§16) the courses-by-player table and solo notes (§17), and the Central-time landing round (§18) — 140 assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked

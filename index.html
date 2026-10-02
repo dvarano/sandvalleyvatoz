@@ -226,7 +226,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-02T16:24Z');
+const SITE_UPDATED = Date.parse('2026-10-02T16:30Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -1423,19 +1423,44 @@ $('#roundSel').addEventListener('change',e=>{ cur=+e.target.value; render(); });
 $('#prevR').addEventListener('click',()=>{ cur=Math.max(0,cur-1); render(); });
 $('#nextR').addEventListener('click',()=>{ cur=Math.min(R.length-1,cur+1); render(); });
 
+/* ---------- Which round the site opens on ----------
+   All times are Wisconsin Central time (CDT, UTC-5 in October), whatever the
+   phone's own time zone is. Each round "opens" — becomes the landing page — at:
+     * a morning round: 7pm Central the night before (the first round of the trip
+       has no night before and uses the afternoon rule);
+     * an afternoon round: 4 hours before its first tee time, but not until 2 hours
+       after the previous round's last group has teed off, so a 36-hole day does
+       not flip to the afternoon round while the morning groups are mid-round.
+   The live round is the last one that has opened; before the first, the site
+   stays on Info. The Sandbox and the Commons follow the same rules. */
+const TZ_OFFSET_H = 5;                                    // CDT = UTC-5 through Nov 1
+function ctTime(day, h, m){ return Date.UTC(2026, 9, day, h + TZ_OFFSET_H, m); }
+function teeTimes(rd){
+  const day = +rd.day.split(' ')[2];
+  return rd.tees.split('/').map(t=>{
+    const [h, m] = t.trim().split(':').map(Number);
+    const h24 = (rd.when==='PM' && h < 12) ? h + 12 : h;
+    return ctTime(day, h24, m);
+  }).sort((a,b)=>a-b);
+}
+function roundOpens(i){
+  const rd = R[i], first = teeTimes(rd)[0];
+  if(rd.when==='AM' && i > 0) return ctTime(+rd.day.split(' ')[2] - 1, 19, 0);
+  const prev = i > 0 ? teeTimes(R[i-1]).pop() + 2*3600e3 : 0;
+  return Math.max(first - 4*3600e3, prev);
+}
+function liveRound(now){
+  let live = -1;
+  R.forEach((_, i)=>{ if(now >= roundOpens(i)) live = i; });
+  return live;
+}
+
 /* ---------- Boot ---------- */
 (function(){
   load();
   applyIdx();
-  // Pick the round matching today's date if we are on the trip.
-  const today=new Date(), y=today.getFullYear(), m=today.getMonth(), d=today.getDate();
-  if(y===2026 && m===9 && d>=4 && d<=8){
-    const day=['Sun Oct 4','Mon Oct 5','Tue Oct 6','Wed Oct 7','Thu Oct 8'][d-4];
-    const pm=today.getHours()>=12;
-    let i=R.findIndex(r=>r.day===day && (r.when===(pm?'PM':'AM')));
-    if(i<0) i=R.findIndex(r=>r.day===day);
-    if(i>=0){ cur=i; view='today'; }
-  }
+  // Open on the round that is "live" right now (see liveRound), else Info.
+  { const i = liveRound(Date.now()); if(i>=0){ cur=i; view='today'; } }
   defaultPairings();
   save();
   syncNav();

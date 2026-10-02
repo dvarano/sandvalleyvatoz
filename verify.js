@@ -668,6 +668,19 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 
+  // ---- 18. Which round the site opens on (Central time) ---------------------
+  console.log('\n[18] Landing round follows the Central-time schedule');
+  p = await newPage(browser); await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+  const live = await p.evaluate(() => {
+    const at = (d, h, m) => { const i = liveRound(ctTime(d, h, m)); return i < 0 ? 'info' : R[i].id; };
+    return [at(4,9,39), at(4,9,40), at(4,18,59), at(4,19,0), at(5,12,53), at(5,12,54), at(5,19,0),
+            at(6,10,39), at(6,10,40), at(6,19,0), at(7,11,59), at(7,12,0), at(7,19,0)].join(' ');
+  });
+  ok(live === 'info r1 r1 r2 r2 r3 r4 r4 r5 r6 r6 r7 r8', 'opens on the right round at each switch time (got ' + live + ')');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
   await browser.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
