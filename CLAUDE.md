@@ -85,6 +85,15 @@ sentence was removed — everyone is on exactly 4 now. Covered by verify.js §13
 
 *(Historical: it used to be "play five, average your best four; play four, average your best three".)*
 
+**Mid-week display (Oct 2 2026).** Lawsonia only backfills a round a player has actually *missed*:
+`results()` targets `MIN_POOL − (scored + pendingRounds(pi))`, where `pendingRounds` counts counting
+rounds not yet scored (`roundPlayed()` = any score entered) that the player is scheduled to play. So
+before the week is done nobody shows `*` or `!`; a known skip (Sitting) that leaves someone unable to
+reach 4 still pulls Lawsonia in immediately. The Rds column shows **`n/4`** while rounds are pending,
+with the **counting scores in brackets** underneath, e.g. `(+2, 0, -1)` (the dropped one excluded).
+**The drop starts at 3 rounds** (`DROP_FROM`); with 1–2 rounds the average is over all of them.
+Covered by verify.js §19.
+
 **Lawsonia is a conditional backup (added Sep 2026).** Only **Sand Valley resort 18-hole rounds**
 count. If a player ends up with fewer than `MIN_POOL` (4) of them — sat one out, arrived late —
 their **Lawsonia round is pulled in to top the pool back up to 4**, best Lawsonia round first.
@@ -634,7 +643,7 @@ propagation, backward compatibility with pre-`i` links, the baseline-grid freeze
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
 Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
 guard, the pairing invariants, and code updates reaching an open tab (§15, over a local HTTP
-server), the header's last-updated time (§16) the courses-by-player table and solo notes (§17), and the Central-time landing round (§18) — 140 assertions. Worth re-running after any change to the sync path.
+server), the header's last-updated time (§16) the courses-by-player table and solo notes (§17), the Central-time landing round (§18) and mid-week standings (§19) — 146 assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked

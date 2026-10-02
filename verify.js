@@ -463,7 +463,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   const marks = await p.evaluate(() => {
     const cell = name => { const tr = [...document.querySelectorAll('#v-stand tbody tr')]
       .find(t => new RegExp(name).test(t.textContent));
-      return tr ? tr.querySelectorAll('td')[2].textContent.trim() : null; };
+      return tr ? tr.querySelectorAll('td')[2].textContent.replace(/\(.*\)/, '').trim() : null; };
     const notes = [...document.querySelectorAll('#v-stand .note')].map(n => n.textContent);
     return { brook: cell('Brook'), daniel: cell('Daniel'), matt: cell('Matt'),
              starNote: notes.some(n => /Lawsonia round counts as one/.test(n)),
@@ -678,6 +678,29 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
             at(6,10,39), at(6,10,40), at(6,19,0), at(7,11,59), at(7,12,0), at(7,19,0)].join(' ');
   });
   ok(live === 'info r1 r1 r2 r2 r3 r4 r4 r5 r6 r6 r7 r8', 'opens on the right round at each switch time (got ' + live + ')');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
+  // ---- 19. Mid-week standings: no early Lawsonia, n/4, delayed drop, scores --
+  console.log('\n[19] Mid-week standings');
+  p = await newPage(browser); await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+  const mid = await p.evaluate(() => {
+    ['r1','r2'].forEach((rid, k) => { S.s[rid] = P.map((_, pi) => 26 + k + pi); });   // through Monday
+    const rows = board(), mike = rows.find(r => r.name === 'Mike');
+    const early = { anyBackup: rows.some(r => r.backup), anyShort: rows.some(r => r.short), mike: mike.n + '/' + mike.of };
+    ['r4','r5'].forEach((rid, k) => { S.s[rid] = P.map((_, pi) => 22 + k * 3 + pi); });  // through Tuesday
+    const st = standing(2);                                          // Mike: Mon, Tue AM, Tue PM
+    const skip = (S.o.r6 = [1, 2], standing(2));                     // Mike also skips Wed AM -> can't reach 4
+    render(); document.querySelector('nav button[data-v="stand"]').click();
+    const cell = [...document.querySelectorAll('#v-stand tbody tr')].find(t => /Mike/.test(t.textContent)).cells[2].textContent;
+    return Object.assign(early, { dropAt3: !!st.dropped && st.n === 3, skipBackup: skip.rs.some(r => r.backup), cell: cell });
+  });
+  ok(!mid.anyBackup && !mid.anyShort, 'after Monday nobody shows Lawsonia or a short-pool marker');
+  ok(mid.mike === '1/4', 'after Monday Mike shows 1/4 (got ' + mid.mike + ')');
+  ok(mid.dropAt3, 'the worst round is dropped once 3 rounds are in');
+  ok(mid.skipBackup, 'a scheduled skip that leaves a player short pulls Lawsonia in straight away');
+  ok(/\(.+\)/.test(mid.cell), 'counting scores shown in brackets after the round count (got ' + mid.cell + ')');
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 

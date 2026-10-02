@@ -79,6 +79,7 @@ tr.grprow td{text-align:left;font-size:11px;color:var(--ink-3);text-transform:up
 .grp h3{margin:0 0 6px;font-size:13px;display:flex;justify-content:space-between}
 .grp h3 small{color:var(--ink-3);font-weight:400;font-variant-numeric:tabular-nums}
 .grp ul{margin:0;padding-left:0;list-style:none}
+.cnt{display:block;font-size:11px;color:var(--ink-3);white-space:nowrap;font-weight:400}
 .grptee{margin:-2px 0 8px;font-size:14px}
 .grptee span{color:var(--ink-3);font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums;margin-left:4px}
 .grp li{display:flex;justify-content:space-between;padding:3px 0;font-size:14px}
@@ -226,7 +227,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-02T16:33Z');
+const SITE_UPDATED = Date.parse('2026-10-02T17:46Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -626,25 +627,44 @@ function roundResult(pi, rid){
    sat one out. A player with a full Sand Valley pool never uses Lawsonia. */
 /* Your FIRST four Sand Valley rounds count, in schedule order — an extra round
    (a solo, or a fifth scored round after a late schedule change) never does.
-   Fewer than four (missed or skipped a round) and Lawsonia tops the pool up. */
+   Lawsonia tops the pool up only for a round you have actually MISSED: a round
+   that has been scored for others but not you, or one you are down to sit that
+   leaves you unable to reach four. Rounds simply not played yet never pull it in,
+   so mid-week the board shows "2/4", not a Lawsonia round standing in. */
+function roundPlayed(rid){
+  const row = S.s[rid];
+  return !!row && row.some(v=>v!==null && v!==undefined && v!=='');
+}
+function pendingRounds(pi){
+  return COUNTING.filter(rid=>{
+    const rd = R.find(r=>r.id===rid);
+    return !roundPlayed(rid) && sitOuts(rd).indexOf(pi) < 0;
+  }).length;
+}
 function results(pi){
   const out = COUNTING.map(rid=>roundResult(pi,rid)).filter(Boolean).slice(0, MIN_POOL);
-  if(out.length < MIN_POOL){
+  const need = MIN_POOL - Math.min(MIN_POOL, out.length + pendingRounds(pi));
+  if(need > 0){
     const spare = BACKUP.map(rid=>roundResult(pi,rid)).filter(Boolean)
       .sort((a,b)=>b.d-a.d)
-      .slice(0, MIN_POOL - out.length);
+      .slice(0, need);
     out.push.apply(out, spare);
   }
   const order = rid => R.findIndex(r=>r.id===rid);
   return out.sort((a,b)=>order(a.rid)-order(b.rid));
 }
+/* The worst round is dropped only once there are three to choose from, so an
+   early average never rests on a single round. */
+const DROP_FROM = 3;
 function standing(pi){
-  const rs = results(pi);
-  if(!rs.length) return {n:0, avg:null, dropped:null, rs:rs};
-  if(rs.length===1) return {n:1, avg:rs[0].d, dropped:null, rs:rs};
+  const rs = results(pi), pending = pendingRounds(pi);
+  const of = Math.min(MIN_POOL, rs.length + pending);       // rounds that will count in the end
+  const base = {n:rs.length, of:of, pending:pending, rs:rs};
+  if(!rs.length) return Object.assign(base, {avg:null, dropped:null});
+  if(rs.length < DROP_FROM) return Object.assign(base, {avg:rs.reduce((a,r)=>a+r.d,0)/rs.length, dropped:null});
   let wi=0; for(let i=1;i<rs.length;i++) if(rs[i].d < rs[wi].d) wi=i;
   let sum=0; for(let i=0;i<rs.length;i++) if(i!==wi) sum+=rs[i].d;
-  return {n:rs.length, avg:sum/(rs.length-1), dropped:rs[wi], rs:rs};
+  return Object.assign(base, {avg:sum/(rs.length-1), dropped:rs[wi]});
 }
 function sundayDelta(pi){
   const rd = R[0], row = S.s[rd.id];
@@ -657,7 +677,7 @@ function board(){
   const rows = P.map((p,i)=>{
     const st = standing(i);
     return {i:i, name:p.n, idx:p.idx, n:st.n, avg:st.avg, dropped:st.dropped, best:st.rs.length?Math.max.apply(null,st.rs.map(r=>r.d)):null, sun:sundayDelta(i),
-            backup:st.rs.some(r=>r.backup), short:st.rs.length>0 && st.rs.length<MIN_POOL};
+            of:st.of, counting:st.rs.filter(r=>r!==st.dropped).map(r=>r.d), backup:st.rs.some(r=>r.backup), short:st.rs.length>0 && st.of<MIN_POOL};
   });
   rows.sort((a,b)=>{
     if(a.avg===null && b.avg===null) return a.name.localeCompare(b.name);
@@ -951,12 +971,13 @@ function renderStand(){
   rows.forEach((r,i)=>{
     h+=`<tr><td style="text-align:left;color:var(--ink-3)">${r.avg===null?'':i+1}</td>
       <td style="text-align:left">${r.name} <span style="color:var(--ink-3);font-size:12px">${fmtIdx(r.idx)}</span></td>
-      <td>${r.n||'&mdash;'}${r.backup?'<span style="color:var(--warn)" title="includes a Lawsonia round">*</span>':''}${r.short?'<span class="warn" title="fewer than '+MIN_POOL+' rounds and no Lawsonia round to fall back on">!</span>':''}</td>
+      <td>${r.n ? r.n + (r.of>r.n ? `<span style="color:var(--ink-3)">/${r.of}</span>` : '') : '&mdash;'}${r.backup?'<span style="color:var(--warn)" title="includes a Lawsonia round">*</span>':''}${r.short?'<span class="warn" title="fewer than '+MIN_POOL+' rounds and no Lawsonia round to fall back on">!</span>':''}${r.counting.length?`<span class="cnt">(${r.counting.map(fmt).join(', ')})</span>`:''}</td>
       <td style="color:var(--ink-3);font-size:12px">${r.dropped?fmt(r.dropped.d):'&mdash;'}</td>
       <td class="${cls(r.avg)}"><b>${fmt(r.avg)}</b></td></tr>`;
   });
   h+=`</tbody></table>`;
   if(rows.some(r=>r.backup)) h+=`<p class="note" style="margin-top:8px"><b style="color:var(--warn)">*</b> played fewer than ${MIN_POOL} Sand Valley rounds, so their Lawsonia round counts as one of the ${MIN_POOL}.</p>`;
+  if(rows.some(r=>r.of>r.n)) h+=`<p class="note" style="margin-top:8px"><b>2/4</b> = rounds in so far, out of the ${MIN_POOL} that will count. Your worst round is dropped once you have ${DROP_FROM}.</p>`;
   if(rows.some(r=>r.short)) h+=`<p class="note" style="margin-top:4px"><b class="warn">!</b> under ${MIN_POOL} rounds with no Lawsonia round to fall back on &mdash; averaged on a thinner pool than everyone else.</p>`;
   if(scored.length){
     const anyNeg = scored.some(r=>r.avg<0);
