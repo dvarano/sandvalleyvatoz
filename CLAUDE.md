@@ -210,7 +210,7 @@ inside r6's conditional "Nine Point / Six-Six-Six". Left as-is — these are sug
 |---|---|---|
 | r1 Links (pinned) | Mike, Drew, Paul, Tony | Eric, Brook, Matt, Ryan |
 | r2 SV / Lido / Mammoth | **Sand Valley 10:10** — Mike, Tony, Brook · **Lido 10:30** — Drew, Matt | **Mammoth 10:30** — Ryan, Eric, Paul |
-| r4 Sedge (Tue) | **8:30** — Daniel, Matt, Tony, Ryan | **8:40** — Mike, Drew, Eric, Brook |
+| r4 Sedge (Tue) | **8:30** — Mike, Drew, Eric, Brook | **8:40** — Daniel, Matt, Tony, Ryan |
 | r5 Mammoth | Brook, Eric, Daniel, Paul | Drew, Mike, Tony, Ryan |
 | r6 Sedge / Lido (Wed) | **Sedge 7:40** — Mike, Paul, Matt, Daniel | **Lido 10:00** — Brook, Tony, Eric, Ryan |
 | r7 Sand Valley (Wed) | **1:00** — Drew, Daniel, Matt, Paul | *(one foursome only)* |
@@ -253,8 +253,8 @@ Consequences, all checked:
 - The old "Tony + Eric + Matt Wednesday PM" request and the Sedge sit-out plan are superseded.
 
 **Group order matters on the non-split rounds.** Group 1 tees first — the Today tab reads the
-two times straight off `rd.tees`. Tuesday morning: **Matt's foursome goes first at 8:30, Drew's at 8:40**
-(flipped at Drew's request, Oct 1 2026 — it was the other way round before). Swapping the two groups in `BASE_GRID` changes only who tees when; membership, pair
+two times straight off `rd.tees`. Tuesday morning: **Drew's foursome goes first at 8:30, Matt's at 8:40**
+(flipped Oct 1 2026 to Matt first, then flipped back at Drew's request Oct 2 2026). Swapping the two groups in `BASE_GRID` changes only who tees when; membership, pair
 counts and the pins are all order-independent.
 
 **Wednesday swap (Sep 2026), from the group's feedback:** on Wednesday PM they asked to keep
