@@ -22,19 +22,19 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | r1 | Sun 10/4 PM | Lawsonia Links | 1:40 / 1:50 | White 72.0 / 133, par 72 | Backup only | Six-Six-Six | Daniel |
 | r2 | Mon 10/5 AM | **Sand Valley / Lido / Mammoth (split)** | 10:10 / 10:30 / 10:30 | SV Orange 72.8/138 · Lido White 72.5/144 · Mammoth Orange 72.1/136 | **Yes** | Nassau (front/back/total) | Daniel |
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
-| r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back 68.7 / 130, par 68 | **Yes** | Net skins | Paul |
+| r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back/Middle 67.0 / 126, par 68 | **Yes** | Net skins | Paul |
 | r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Wolf | Matt |
-| r6 | Wed 10/7 AM | **Sedge Valley / Lido (split)** | 7:40 / 10:00 | Sedge Back 68.7/130 · Lido White 72.5/144 | **Yes** | Six-Six-Six | Drew |
+| r6 | Wed 10/7 AM | **Sedge Valley / Lido (split)** | 7:40 / 10:00 | Sedge Back/Middle 67.0/126 · Lido White 72.5/144 | **Yes** | Six-Six-Six | Drew |
 | r7 | Wed 10/7 PM | Sand Valley | 1:00 (one foursome) | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Mike, Tony, Brook, Eric, Ryan |
 | r8 | Thu 10/8 AM | The Commons | 8:00 / 8:10 | 12 holes, par 45 | No — La Final | Match play | — |
 
-Alternate tees available in the app: Woodlands White 70.2/128; Sedge Back/Middle 67.0/126;
+Alternate tees available in the app: Woodlands White 70.2/128; Sedge Back 68.7/130 and Middle 63.9/112;
 Mammoth Orange/Sand 71.1/134 and Sand 69.8/131; Sand Valley Orange/Sand 71.4/133 and Sand 70.2/129.
 
-**Sedge is played from the tips on purpose.** The back tees are only 5,829 yards at par 68,
-already the shortest course on the trip. One up (~5,400) takes driver out of your hands on a
-course built to be played at full length. This is a golf-quality call, not a fairness one —
-quota self-corrects for tees automatically.
+**Sedge default is the Back/Middle combo, 67.0/126 (Drew, Oct 2 2026)** — confirmed from the Sedge
+scorecard (Back 5,808 yds / Back-Middle 5,477 / Middle 4,790, par 68). It used to be the Back tees
+on a golf-quality argument; Drew changed it. Back and Middle remain selectable per player on Enter,
+and quota self-corrects for whichever tee is played.
 
 ### Roster (handicap indexes are PLACEHOLDERS, confirm before the trip)
 
