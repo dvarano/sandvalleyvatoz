@@ -227,7 +227,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-02T17:46Z');
+const SITE_UPDATED = Date.parse('2026-10-02T17:53Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -281,7 +281,7 @@ const ALL_SQUARE = 'split the prizes, or agree on a playoff, chip-off or putt-of
 const R = [
  {id:'r1', day:'Sun Oct 4', sd:'Sun 10/4', when:'PM', course:'Lawsonia Links', sc:'Links', key:'links',      tees:'1:40 / 1:50',
   counts:false, backup:true, tag:'El Qualifier', game:'Six-Six-Six', out:[8], ng:2, pin:true,
-  rules:['Warmup round. Everyone posts a gross score.','Committee (Drew + Matt) may adjust indexes before Monday.','Does not count for Copa points. Sunday finish is the FIRST tiebreak for seeding.'],
+  rules:['Warmup round. Everyone posts a gross score.','Committee (Drew + Matt) may adjust indexes before Monday.','Does not count for Copa points. Sunday finish is the second tiebreak for seeding, after best single round.'],
   gamerules:['Partners rotate every 6 holes so each player partners each other player.','Holes 1&ndash;6, 7&ndash;12, 13&ndash;18. Best ball each segment.','Fresh money each segment.']},
 
  {id:'r2', day:'Mon Oct 5', sd:'Mon 10/5', when:'AM', course:'Sand Valley / Lido / Mammoth', sc:'SV / Lido / Mammoth', key:'sandvalley',  tees:'10:10 / 10:30',
@@ -684,8 +684,8 @@ function board(){
     if(a.avg===null) return 1;
     if(b.avg===null) return -1;
     if(b.avg!==a.avg) return b.avg-a.avg;
-    if(a.sun!==null && b.sun!==null && b.sun!==a.sun) return b.sun-a.sun;  // tiebreak 1: Sunday
-    if(a.best!==null && b.best!==null && b.best!==a.best) return b.best-a.best; // tiebreak 2: best round
+    if(a.best!==null && b.best!==null && b.best!==a.best) return b.best-a.best; // tiebreak 1: best single round
+    if(a.sun!==null && b.sun!==null && b.sun!==a.sun) return b.sun-a.sun;  // tiebreak 2: Sunday at Lawsonia
     return a.name.localeCompare(b.name);
   });
   return rows;
@@ -993,7 +993,7 @@ function renderStand(){
     });
     h+=`</div>`;
   }
-  h+=`<p class="note" style="margin-top:10px">Ties broken by Sunday finish at Lawsonia, then best single round.</p></div>`;
+  h+=`<p class="note" style="margin-top:10px">Ties broken by best single round, then Sunday finish at Lawsonia.</p></div>`;
 
   const q=rows.filter(r=>r.avg!==null).slice(0,4);
   h+=`<div class="card"><h2>La Final &mdash; Thursday at the Commons, 8:10</h2>`;
@@ -1080,7 +1080,7 @@ function renderInfo(){
 
   h+=`<div class="card"><h2>Seeding &amp; La Final</h2>
     <ul class="rules">
-      <li><b>Lawsonia is a warmup</b> that does not award points &mdash; unless you finish short of ${MIN_POOL} Sand Valley rounds, in which case it counts as your ${MIN_POOL}th. Sunday is the <b>first tiebreak</b> for seeding. Second tiebreak is your best single round.</li>
+      <li><b>Lawsonia is a warmup</b> that does not award points &mdash; unless you finish short of ${MIN_POOL} Sand Valley rounds, in which case it counts as your ${MIN_POOL}th. Ties for seeding are broken by your <b>best single round</b>, then by your <b>Sunday finish</b> at Lawsonia.</li>
       <li><b>La Final:</b> the top 4 in the standings after Wednesday play the final on Thursday at the Commons, teeing off <b>last, at 8:10</b>.</li>
       <li>Seed 1 v Seed 2 for <b>$${PRIZES[0]} / $${PRIZES[1]}</b>. Seed 3 v Seed 4 for <b>$${PRIZES[2]}</b>.</li>
       <li><b>Seeds 1 and 3 start 1 up.</b> All square after 12 &rarr; ${ALL_SQUARE}.</li>

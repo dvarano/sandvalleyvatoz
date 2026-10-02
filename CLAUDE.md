@@ -140,8 +140,9 @@ twice breaks the symmetry the rule depends on.
 
 ### Seeding and La Final
 
-- Sunday at Lawsonia is a **warmup only** (see the backup rule above). It is the **first tiebreak**
-  for seeding; second tiebreak is best single round. The committee (Drew and Matt) may still adjust
+- Sunday at Lawsonia is a **warmup only** (see the backup rule above). **Tiebreaks (Oct 2 2026, Drew
+  flipped the order): 1st best single round** (highest +/- in the player's counting pool), **2nd
+  Sunday finish at Lawsonia**. The committee (Drew and Matt) may still adjust
   indexes before Monday — that is an index decision, deliberately **not** described on the
   Info tab as part of the Lawsonia round. **The site says only that indexes may be adjusted; it
   deliberately gives no number** (it used to say ±3; Drew asked to keep it vague, Sep 2026).
@@ -643,7 +644,7 @@ propagation, backward compatibility with pre-`i` links, the baseline-grid freeze
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
 Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
 guard, the pairing invariants, and code updates reaching an open tab (§15, over a local HTTP
-server), the header's last-updated time (§16) the courses-by-player table and solo notes (§17), the Central-time landing round (§18) and mid-week standings (§19) — 146 assertions. Worth re-running after any change to the sync path.
+server), the header's last-updated time (§16) the courses-by-player table and solo notes (§17), the Central-time landing round (§18), mid-week standings (§19) and the tiebreak order (§20) — 147 assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked

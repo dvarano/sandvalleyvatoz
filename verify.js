@@ -704,6 +704,22 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();
 
+  // ---- 20. Tiebreak: best single round first, then Sunday -------------------
+  console.log('\n[20] Tiebreak order');
+  p = await newPage(browser); await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+  const tb = await p.evaluate(() => {
+    // Two players tied on average; A has the better best round, B the better Sunday.
+    const q = (pi, rid) => quotaFor(P[pi].idx, teeFor(R.find(r => r.id === rid), pi));
+    S.s = {}; ['r1','r2','r4'].forEach(rid => S.s[rid] = new Array(9).fill(null));
+    // Eric (5) and Ryan (6) both play r1, r2, r4.
+    S.s.r1[5] = q(5,'r1') + 0;  S.s.r2[5] = q(5,'r2') + 6;  S.s.r4[5] = q(5,'r4') + 0;  // avg +3, best +6, Sun 0
+    S.s.r1[6] = q(6,'r1') + 9;  S.s.r2[6] = q(6,'r2') + 3;  S.s.r4[6] = q(6,'r4') + 3;  // avg +3, best +3, Sun +9
+    return board().filter(r => r.avg !== null).map(r => r.name).join(',');
+  });
+  ok(tb === 'Eric,Ryan', 'tie goes to the better single round before Sunday (got ' + tb + ')');
+  await p.context().close();
+
   await browser.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
