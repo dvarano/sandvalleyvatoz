@@ -226,7 +226,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-02T05:03Z');
+const SITE_UPDATED = Date.parse('2026-10-02T05:18Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -315,7 +315,7 @@ const R = [
   counts:true, tag:'Copa Round 4', game:'Six-Six-Six', out:[1], ng:2,
   /* Split round, like Monday: the 7:50 Sedge time was given up for a 10:00 Lido
      foursome. Group 1 (Sedge) and group 2 (Lido) resolve their own tees via legOf(). */
-  split:[{key:'sedge', course:'Sedge Valley', tee:'7:40'},
+  split:[{key:'sedge', course:'Sedge Valley', tee:'7:40', def:'Back'},   // Wednesday Sedge from the Back tees
          {key:'lido',  course:'The Lido',     tee:'10:00'}],
   rules:['Counts for La Copa. Drew sits.','Two courses: Sedge Valley 7:40 and the Lido 10:00.','Sedge at 7:40 is a pre-8am speed slot, under 4 hours &mdash; done ~11:40, well ahead of the 1:00 Sand Valley tee.','Your quota follows whichever course you play.'],
   gamerules:['Partners rotate every 6 holes so each player partners each other player.','Holes 1&ndash;6, 7&ndash;12, 13&ndash;18. Best ball each segment.','Settle inside your own foursome &mdash; the two groups are on different courses.']},
@@ -373,7 +373,16 @@ function legOf(rd, pi){
 }
 function keyFor(rd, pi){ const leg = legOf(rd,pi); return leg ? leg.key : rd.key; }
 function courseOf(rd, pi){ const leg = legOf(rd,pi); return leg ? leg.course : rd.course; }
-function teeListFor(rd, pi){ return TEES[keyFor(rd,pi)]; }
+/* A round (or one leg of a split round) can name a different default tee with
+   `def`; the list is reordered so that tee comes first, and everything that reads
+   list[0] — quota, Today's tee line, Enter's presets — follows. */
+function legTees(rd, leg){
+  const list = TEES[leg ? leg.key : rd.key]; if(!list) return list;
+  const def = (leg && leg.def) || rd.def;
+  const i = def ? list.findIndex(t=>t[0]===def) : -1;
+  return i > 0 ? [list[i]].concat(list.filter((_,j)=>j!==i)) : list;
+}
+function teeListFor(rd, pi){ return legTees(rd, legOf(rd,pi)); }
 
 function teeFor(rd, pi){
   const list = teeListFor(rd, pi); if(!list) return null;
@@ -795,7 +804,7 @@ function renderToday(){
            on a split day the three groups are on three different courses. */
         const leg = rd.split && rd.split[Math.min(i, rd.split.length-1)];
         const time = leg ? leg.tee : (rd.tees.split('/')[i] ? rd.tees.split('/')[i].trim() : '');
-        const dt = (TEES[leg ? leg.key : rd.key] || [])[0];
+        const dt = (legTees(rd, leg) || [])[0];
         const teeLine = dt ? `<p class="grptee">${leg ? esc(leg.course)+' &middot; ' : ''}<b>${esc(dt[0])} tees</b> <span>${dt[1].toFixed(1)} / ${dt[2]}</span></p>` : '';
         h+=`<div class="grp"><h3>Group ${i+1} <small>${time}</small></h3>${teeLine}<ul>`;
         g.forEach(pi=>{ const t=teeFor(rd,pi);
