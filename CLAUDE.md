@@ -339,8 +339,8 @@ Drew's request, Sep 30 2026. Daniel still sits.
 resort courses (Sand Valley, Lido, Sedge, Mammoth).** The Eric↔Tony swap gave Tony Sand Valley.
 After Drew took Matt's Tuesday PM spot: Drew, Tony and Brook have all four; **Matt has no Mammoth**.
 **Mike has no Lido** (Drew: leave it).
-**Solos (Oct 1 2026): Matt plays Mammoth solo on Tuesday PM; Mike plays the Lido solo on Wednesday
-PM.** They do not count for the Copa. **Shown on the site at Drew's request (reversing an earlier
+**Solos (Oct 1 2026): Matt plays Mammoth solo on Tuesday PM at 1:30pm; Mike plays the Lido solo on
+Wednesday PM at 12:30pm.** They do not count for the Copa. **Shown on the site at Drew's request (reversing an earlier
 "keep it off")**: the Today sitting line reads "Matt (playing Mammoth solo)" / "Mike (playing the Lido
 solo)" via a display-only `rd.soloNote` map, and a note under Courses by player names both. The
 table counts themselves still exclude solos (red dashes stay). Covered by verify.js §17. — fixing it means swapping him into the Wednesday Lido foursome, which costs

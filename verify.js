@@ -662,8 +662,8 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
     await p.selectOption('#roundSel', String(idx)); await p.waitForTimeout(200);
     sitTxt[rid] = await p.evaluate(() => [...document.querySelectorAll('#v-today .note')].map(n => n.textContent).find(t => /^Sitting:/.test(t)) || '');
   }
-  ok(sitTxt.r5 === 'Sitting: Matt (playing Mammoth solo)', 'Tue PM names Matt\'s solo (got ' + sitTxt.r5 + ')');
-  ok(sitTxt.r7 === 'Sitting: Mike (playing the Lido solo), Tony, Brook, Eric, Ryan', 'Wed PM names Mike\'s solo (got ' + sitTxt.r7 + ')');
+  ok(sitTxt.r5 === 'Sitting: Matt (playing Mammoth solo at 1:30pm)', 'Tue PM names Matt\'s solo (got ' + sitTxt.r5 + ')');
+  ok(sitTxt.r7 === 'Sitting: Mike (playing the Lido solo at 12:30pm), Tony, Brook, Eric, Ryan', 'Wed PM names Mike\'s solo (got ' + sitTxt.r7 + ')');
   ok(cc && cc.matt === '1,1,1,2,\u2013,5', 'Matt has no Mammoth after sitting Tuesday PM (got ' + (cc && cc.matt) + ')');
   ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
   await p.context().close();

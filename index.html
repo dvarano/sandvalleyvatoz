@@ -226,7 +226,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-02T05:18Z');
+const SITE_UPDATED = Date.parse('2026-10-02T16:24Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -307,7 +307,7 @@ const R = [
  {id:'r5', day:'Tue Oct 6', sd:'Tue 10/6', when:'PM', course:'Mammoth Dunes', sc:'Mammoth', key:'mammoth',    tees:'12:50 / 1:00',
   counts:true, tag:'Copa Round 3', game:'Wolf', out:[0], ng:2,
   /* soloNote: what a sitter is doing instead. Display only — solos never count. */
-  soloNote:{0:'playing Mammoth solo'},
+  soloNote:{0:'playing Mammoth solo at 1:30pm'},
   rules:['Counts for La Copa. Matt sits.','If a 3rd tee time lands, switch to three groups of three and everyone plays.'],
   gamerules:['Rotating Wolf order, changes every hole.','Wolf tees off last, picks a partner after watching drives, or goes Lone Wolf for double.','Net scores. Mammoth&rsquo;s width means everyone has a shot at being picked.']},
 
@@ -323,7 +323,7 @@ const R = [
  {id:'r7', day:'Wed Oct 7', sd:'Wed 10/7', when:'PM', course:'Sand Valley', sc:'Sand Valley', key:'sandvalley', tees:'1:00',
   counts:true, tag:'Copa Round 5', game:'Vegas', out:[2,3,4,5,6], ng:1,
   /* One foursome: the 12:50 time was given up for Wednesday's Lido. */
-  soloNote:{2:'playing the Lido solo'},
+  soloNote:{2:'playing the Lido solo at 12:30pm'},
   rules:['Final counting round. Standings lock after this.','One foursome at 1:00.'],
   gamerules:['2v2. Combine partners&rsquo; scores into a two-digit number, low digit first.','A birdie by the opposing side FLIPS your number. This is how people lose money.','Double stakes. It is the marquee round.']},
 
