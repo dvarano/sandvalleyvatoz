@@ -227,7 +227,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-02T17:53Z');
+const SITE_UPDATED = Date.parse('2026-10-03T23:32Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -1045,7 +1045,7 @@ function renderInfo(){
   h+=`<div class="card">
     <p class="hero" style="font-size:22px">${TRIP_NAME}</p>
     <p class="sub">Sand Valley &amp; Lawsonia &middot; October 4&ndash;8, 2026<br>Nine Vatoz, eight rounds</p>
-    <p class="note" style="margin-top:10px">One individual competition spans the whole trip. Every round can also have its own team game and bets within the foursome. As long as everyone plays their own ball, it won&rsquo;t interfere with the trip-wide competition.</p>
+    <p class="note" style="margin-top:10px">One individual competition spans the whole trip. Every round can also have its own game and bets within the pairing. As long as everyone plays their own ball, it won&rsquo;t interfere with the trip-wide competition.</p>
   </div>`;
 
   h+=`<div class="card"><h2>The competition &mdash; the quota game</h2>
@@ -1100,7 +1100,7 @@ function renderInfo(){
   h+=`<div class="card"><h2>Money</h2>
     <ul class="rules">
       <li><b>La Copa:</b> $${ENTRY_FEE} each, pays $${PRIZES[0]} / $${PRIZES[1]} / $${PRIZES[2]}. Nine buy-ins funds it exactly.</li>
-      <li><b>Each round can have its own separate money game within the foursome.</b> See the Today tab for ideas for formats.</li>
+      <li><b>Each round can have its own separate money game within the pairing.</b> See the Today tab for ideas for formats.</li>
       <li><b>The Sandbox</b> (Monday dusk) is a separate <b>$${SANDBOX_POT}</b> prize pool: <b>$${SANDBOX_CTP} a hole</b> for closest to the pin on all ${SANDBOX_HOLES}, and the remaining <b>$${SANDBOX_SKINS}</b> for gross skins with carryovers. No handicaps.</li>
     </ul>
   </div>`;
