@@ -38,7 +38,7 @@ and quota self-corrects for whichever tee is played. **Exception: Wednesday AM S
 the Back tees 68.7/130** (Drew, Oct 2 2026) via `def:'Back'` on that split leg; `legTees()` reorders
 the tee list so the named default comes first. Tuesday AM stays Back/Middle.
 
-### Roster (handicap indexes are PLACEHOLDERS, confirm before the trip)
+### Roster (fallback indexes; confirmed values live in `data.json`, see §5)
 
 | Mike | Drew | Paul | Daniel | Eric | Brook | Matt | Tony | Ryan |
 |---|---|---|---|---|---|---|---|---|
@@ -548,13 +548,12 @@ without a page error.
 - [ ] **Tuesday's turn is tight.** Sedge at 8:30/8:40 finishing at the resort's 4:15 pace lands
       12:45–12:55 against a 12:50 Mammoth tee. Moving Tuesday's Sedge earlier is worth more than
       the extra tee times. (Wednesday is fine: 7:40 is a pre-8am speed slot, under 4 hours.)
-- [ ] **Confirm real handicap indexes.** Drew expects them mid-week. Seven are in (Matt 14.1, Drew 7.3,
-      Mike 7.7, Tony 13.1, Brook 12.7, Eric 6.4, Paul 8.8); Ryan and Daniel are still placeholders, but they no longer
-      need a code change: edit them on the **Pairings tab → Handicap indexes** and Publish.
-      The hardcoded `P` array is only the fallback. **Lock them before Monday** — round results
-      are recomputed from the current index, so editing one after a counting round rewrites
-      that round's result. Sunday doesn't count, which is why any committee adjustment belongs
-      Sunday night.
+- [x] **Confirm real handicap indexes.** All nine confirmed (Oct 4 2026): Matt 14.1, Drew 7.3, Mike 7.7,
+      Tony 13.1, Brook 12.7, Eric 6.4, Paul 8.8, Ryan 15.1 (all in `data.json`), and **Daniel 9.0** —
+      confirmed equal to his `BASE_IDX` fallback, so he has no `data.json` entry and needs none. If an
+      index changes, edit it on the **Pairings tab → Handicap indexes** and Publish (no code change).
+      **Lock them before Monday** — round results are recomputed from the current index, so editing one
+      after a counting round rewrites that round's result. Committee adjustments belong Sunday night.
 - [x] **Verify the Commons stroke-index row** against the physical scorecard. Done — the old row
       was wrong in ten of twelve positions and is corrected. See §2.
 - [x] **Lido** — landed for Monday: Drew and Matt, 10:30. See §3 Monday.
