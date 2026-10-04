@@ -229,7 +229,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-04T00:04:05Z');
+const SITE_UPDATED = Date.parse('2026-10-04T00:11:29Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -815,7 +815,7 @@ function renderToday(){
     <p class="sub">${rd.day} &middot; tee time${rd.tees.indexOf('/')>=0?'s':''} ${rd.tees}</p>
   </div>`;
 
-  h+=`<div class="card"><h2>Groups${rd.backup?' <span class="pill bk">Backup only</span>':''}</h2>`;
+  h+=`<div class="card"><h2>Groups${rd.backup?' <span class="pill bk">Backup round for Copa</span>':''}</h2>`;
   if(rd.id==='r3'){
     h+=`<p class="note">All nine play. Fivesomes are fine at the Sandbox, so no groups to set and it is left out of the partner tracking.</p>`;
   } else {
@@ -871,7 +871,7 @@ function renderToday(){
        not fit a phone. */
     const cols = rd.split ? 5 : 6;
     h+=`<div class="card"><h2>Quotas &mdash; ${esc(rd.course)}${rd.backup?' <span class="pill bk">Backup only</span>':''}</h2>${rd.backup
-      ? `<p class="note bk" style="margin-bottom:8px"><b>Backup only &mdash; this round almost certainly won&rsquo;t count.</b> It is used only if you end up with fewer than ${MIN_POOL} Sand Valley rounds (miss or skip one). Your Sunday finish is also the second tiebreak for seeding.</p>` : ''}<table class="qt"><thead><tr><th>Player</th><th>Idx</th>${rd.split?'':'<th>Tee</th>'}<th>CH</th><th>Quota</th><th>Plays off</th></tr></thead><tbody>`;
+      ? `<p class="note bk" style="margin-bottom:8px"><b>Backup only &mdash; this round likely won&rsquo;t count.</b> It is used only if you end up with fewer than ${MIN_POOL} Sand Valley rounds (miss or skip one). Your Sunday finish is also the second tiebreak for seeding.</p>` : ''}<table class="qt"><thead><tr><th>Player</th><th>Idx</th>${rd.split?'':'<th>Tee</th>'}<th>CH</th><th>Quota</th><th>Plays off</th></tr></thead><tbody>`;
     blocks.forEach((g,gi)=>{
       if(!g.length) return;
       const low = Math.min.apply(null, g.map(ch));

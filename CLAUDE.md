@@ -118,8 +118,8 @@ him. **Settled: Drew expects Daniel to play both 36-hole days**, giving him 4 Sa
 and no need for a backup. Nothing to do — but if that changes and he skips one, he drops to a pool
 of 3 averaged over 2, and the board marks it with `!` rather than hiding it.
 
-**Sunday is flagged "Backup only" on Today and Enter (Oct 4 2026, Drew).** A `Backup only` pill on the
-Groups and Quotas headings, an amber note on the Quotas card, and the Notes bullet saying when it counts.
+**Sunday is flagged "Backup only" on Today and Enter (Oct 4 2026, Drew).** A `Backup round for Copa` pill on the
+Groups heading, `Backup only` on the Quotas heading, an amber note on the Quotas card, and the Notes bullet saying when it counts.
 All keyed off `rd.backup`. **Enter Sunday's points anyway**: it is the second seeding tiebreak and the
 backfill source, and `results()` ignores it unless a round is actually missed. Covered by verify.js §21.
 
