@@ -132,6 +132,8 @@ nav button[aria-selected=true]{color:var(--ink-1);font-weight:600}
 .hide{display:none}
 .note{font-size:12.5px;color:var(--ink-2);line-height:1.5}
 .note code{background:var(--plane);padding:1px 4px;border-radius:4px;font-size:12px}
+.note.bk{border-left:3px solid var(--warn);background:var(--plane);padding:6px 10px;border-radius:0 6px 6px 0}
+.pill.bk{color:var(--ink-1);border-color:var(--warn);vertical-align:middle;margin-left:4px}
 .toast{
   position:fixed;left:50%;transform:translateX(-50%);bottom:80px;z-index:60;
   background:var(--ink-1);color:var(--surface-1);padding:10px 16px;border-radius:999px;
@@ -227,7 +229,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-03T23:50Z');
+const SITE_UPDATED = Date.parse('2026-10-04T00:04:05Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -281,7 +283,7 @@ const ALL_SQUARE = 'split the prizes, or agree on a playoff, chip-off or putt-of
 const R = [
  {id:'r1', day:'Sun Oct 4', sd:'Sun 10/4', when:'PM', course:'Lawsonia Links', sc:'Links', key:'links',      tees:'1:40 / 1:50',
   counts:false, backup:true, tag:'El Qualifier', game:'Six-Six-Six', out:[8], ng:2, pin:true,
-  rules:['Warmup round. Everyone posts a gross score.','Committee (Drew + Matt) may adjust indexes before Monday.','Does not count for Copa points. Sunday finish is the second tiebreak for seeding, after best single round.'],
+  rules:['Warmup round. Everyone posts a gross score.','Committee (Drew + Matt) may adjust indexes before Monday.','Backup only: counts for the Copa only if you end up with fewer than 4 Sand Valley rounds. Sunday finish is the second tiebreak for seeding, after best single round.'],
   gamerules:['Partners rotate every 6 holes so each player partners each other player.','Holes 1&ndash;6, 7&ndash;12, 13&ndash;18. Best ball each segment.','Fresh money each segment.']},
 
  {id:'r2', day:'Mon Oct 5', sd:'Mon 10/5', when:'AM', course:'Sand Valley / Lido / Mammoth', sc:'SV / Lido / Mammoth', key:'sandvalley',  tees:'10:10 / 10:30',
@@ -813,7 +815,7 @@ function renderToday(){
     <p class="sub">${rd.day} &middot; tee time${rd.tees.indexOf('/')>=0?'s':''} ${rd.tees}</p>
   </div>`;
 
-  h+=`<div class="card"><h2>Groups</h2>`;
+  h+=`<div class="card"><h2>Groups${rd.backup?' <span class="pill bk">Backup only</span>':''}</h2>`;
   if(rd.id==='r3'){
     h+=`<p class="note">All nine play. Fivesomes are fine at the Sandbox, so no groups to set and it is left out of the partner tracking.</p>`;
   } else {
@@ -868,7 +870,8 @@ function renderToday(){
        column: every player in a group is on the same course, and six columns do
        not fit a phone. */
     const cols = rd.split ? 5 : 6;
-    h+=`<div class="card"><h2>Quotas &mdash; ${esc(rd.course)}</h2><table class="qt"><thead><tr><th>Player</th><th>Idx</th>${rd.split?'':'<th>Tee</th>'}<th>CH</th><th>Quota</th><th>Plays off</th></tr></thead><tbody>`;
+    h+=`<div class="card"><h2>Quotas &mdash; ${esc(rd.course)}${rd.backup?' <span class="pill bk">Backup only</span>':''}</h2>${rd.backup
+      ? `<p class="note bk" style="margin-bottom:8px"><b>Backup only &mdash; this round almost certainly won&rsquo;t count.</b> It is used only if you end up with fewer than ${MIN_POOL} Sand Valley rounds (miss or skip one). Your Sunday finish is also the second tiebreak for seeding.</p>` : ''}<table class="qt"><thead><tr><th>Player</th><th>Idx</th>${rd.split?'':'<th>Tee</th>'}<th>CH</th><th>Quota</th><th>Plays off</th></tr></thead><tbody>`;
     blocks.forEach((g,gi)=>{
       if(!g.length) return;
       const low = Math.min.apply(null, g.map(ch));
@@ -892,6 +895,7 @@ function renderEnter(){
       : 'La Final is match play, not quota. Nothing to enter here.'}</p></div>`;
     $('#v-enter').innerHTML=h; return;
   }
+  if(rd.backup) h+=`<p class="note bk" style="margin-bottom:6px"><b>Backup round &mdash; enter it anyway.</b> It stays out of the standings unless someone misses a Sand Valley round, and the Sunday finish is the second seeding tiebreak.</p>`;
   h+=`<p class="note" style="margin-bottom:4px">Type each player&rsquo;s total quota points. Bogey 1, par 2, birdie 4, eagle 6. Gross double or worse is 0.</p>
       <p class="note" style="margin-bottom:6px">${rd.split
         ? `${rd.split.length===3?'Three':'Two'} courses today. Rating and slope follow each player&rsquo;s group &mdash; ${rd.split.map(l=>esc(l.course)+' '+l.tee).join(', ')}. Change them for anyone who played a different tee.`

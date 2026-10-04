@@ -118,6 +118,11 @@ him. **Settled: Drew expects Daniel to play both 36-hole days**, giving him 4 Sa
 and no need for a backup. Nothing to do — but if that changes and he skips one, he drops to a pool
 of 3 averaged over 2, and the board marks it with `!` rather than hiding it.
 
+**Sunday is flagged "Backup only" on Today and Enter (Oct 4 2026, Drew).** A `Backup only` pill on the
+Groups and Quotas headings, an amber note on the Quotas card, and the Notes bullet saying when it counts.
+All keyed off `rd.backup`. **Enter Sunday's points anyway**: it is the second seeding tiebreak and the
+backfill source, and `results()` ignores it unless a round is actually missed. Covered by verify.js §21.
+
 **The standings say why.** A pool topped up from Lawsonia shows `4*`; a pool under `MIN_POOL` with
 nothing to backfill shows `3!`, each with a footnote. Without these, a Lawsonia round quietly
 counting looks identical to four Sand Valley rounds, and a thin pool looks like a normal one.
@@ -644,7 +649,7 @@ propagation, backward compatibility with pre-`i` links, the baseline-grid freeze
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
 Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
 guard, the pairing invariants, and code updates reaching an open tab (§15, over a local HTTP
-server), the header's last-updated time (§16) the courses-by-player table and solo notes (§17), the Central-time landing round (§18), mid-week standings (§19) and the tiebreak order (§20) — 147 assertions. Worth re-running after any change to the sync path.
+server), the header's last-updated time (§16) the courses-by-player table and solo notes (§17), the Central-time landing round (§18), mid-week standings (§19), the tiebreak order (§20) and the Sunday backup-only flag (§21) — 150 assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked

@@ -720,6 +720,20 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(tb === 'Eric,Ryan', 'tie goes to the better single round before Sunday (got ' + tb + ')');
   await p.context().close();
 
+  // ---- 21. Sunday's quota table is flagged backup-only ----------------------
+  console.log('\n[21] Lawsonia flagged backup only');
+  p = await newPage(browser); await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+  await p.click('nav button[data-v="today"]'); await p.waitForTimeout(200);
+  await p.selectOption('#roundSel', '0'); await p.waitForTimeout(200);
+  const bk = await p.evaluate(() => [...document.querySelectorAll('#v-today .card')].find(c => /^Quotas/.test(c.querySelector('h2') ? c.querySelector('h2').textContent : '')).textContent);
+  ok(/Backup only/.test(bk) && /fewer than 4 Sand Valley rounds/.test(bk), 'Sunday quota card says backup only and when it counts');
+  await p.selectOption('#roundSel', '1'); await p.waitForTimeout(200);
+  const nbk = await p.evaluate(() => [...document.querySelectorAll('#v-today .card')].find(c => /^Quotas/.test(c.querySelector('h2') ? c.querySelector('h2').textContent : '')).textContent);
+  ok(!/Backup only/.test(nbk), 'counting rounds carry no backup flag');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
   await browser.close();
   console.log(`\n${pass} passed, ${fail} failed`);
   process.exit(fail ? 1 : 0);
