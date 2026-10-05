@@ -77,6 +77,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(!(await p.$eval('#pubBtn', e => e.classList.contains('hide'))), 'Publish button visible for editor');
 
   await p.click('nav button[data-v="enter"]'); await p.waitForTimeout(250);
+  await p.selectOption('#roundSel', '0'); await p.waitForTimeout(200);   // date-independent: Sunday
   await p.fill('[data-pts="0"]', '38'); await p.waitForTimeout(250);
   ok(/Unpublished changes/.test(await sync(p)), 'header flags unpublished edits: "' + await sync(p) + '"');
 
@@ -124,7 +125,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   await mockApi(p, repo, { rateLimit: true });
   await p.goto(URL); await settle(p);
   ok(/rate limit/i.test(await sync(p)), 'rate limit reported plainly: "' + await sync(p) + '"');
-  ok(await p.$eval('#v-info', e => e.innerHTML.length > 500), 'board still renders while rate limited');
+  ok(await p.evaluate(() => ['#v-info','#v-today'].some(s => document.querySelector(s).innerHTML.length > 500)), 'board still renders while rate limited');
   await p.context().close();
 
   // ---- 6. Offline: hash still works, no data loss --------------------------
@@ -133,6 +134,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   await mockApi(p, repo, { offline: true });
   await p.goto(URL); await settle(p);
   await p.click('nav button[data-v="enter"]'); await p.waitForTimeout(250);
+  await p.selectOption('#roundSel', '0'); await p.waitForTimeout(200);   // date-independent: Sunday
   await p.fill('[data-pts="3"]', '35'); await p.waitForTimeout(300);
   const hashHas = await p.evaluate(() => {
     const o = JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(1)))));
