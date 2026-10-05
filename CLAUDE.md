@@ -23,10 +23,15 @@ Matt Anderson organizes the trip logistics; Drew handles pairings, games and thi
 | r2 | Mon 10/5 AM | **Sand Valley / Lido / Mammoth (split)** | 10:10 / 10:30 / 10:30 | SV Orange 72.8/138 · Lido White 72.5/144 · Mammoth Orange 72.1/136 | **Yes** | Nassau (front/back/total) | Daniel |
 | r3 | Mon 10/5 PM | The Sandbox | 4:54 / 5:18 | 17 par 3s | No — Side Pot | Gross skins + CTP | — |
 | r4 | Tue 10/6 AM | Sedge Valley | 8:30 / 8:40 | Back/Middle 67.0 / 126, par 68 | **Yes** | Net skins | Paul |
-| r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, par 72 | **Yes** | Wolf | Matt |
+| r5 | Tue 10/6 PM | Mammoth Dunes | 12:50 / 1:00 | Orange 72.1 / 136, **par 73** | **Yes** | Wolf | Matt |
 | r6 | Wed 10/7 AM | **Sedge Valley / Lido (split)** | 7:40 / 10:00 | Sedge **Back** 68.7/130 · Lido White 72.5/144 | **Yes** | Six-Six-Six | Drew |
 | r7 | Wed 10/7 PM | Sand Valley | 1:00 (one foursome) | Orange 72.8 / 138, par 72 | **Yes** | Vegas | Mike, Tony, Brook, Eric, Ryan |
 | r8 | Thu 10/8 AM | The Commons | 8:00 / 8:10 | 12 holes, par 45 | No — La Final | Match play | — |
+
+**Mammoth Dunes is par 73 (fixed Oct 5 2026).** It was entered as par 72, which put every Mammoth course
+handicap one stroke too high (and every quota one too low). Drew caught it against GHIN: 7.3 × 136/113 +
+(72.1 − 73) = 7.89 → **8**, matching GHIN; par 72 gave 9. Fixed before any Mammoth score was entered.
+The `CR − par` term matters — always take par from the scorecard, not the default 72.
 
 Alternate tees available in the app: Woodlands White 70.2/128; Sedge Back 68.7/130 and Middle 63.9/112;
 Mammoth Orange/Sand 71.1/134 and Sand 69.8/131; Sand Valley Orange/Sand 71.4/133 and Sand 70.2/129.
@@ -650,7 +655,7 @@ propagation, backward compatibility with pre-`i` links, the baseline-grid freeze
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
 Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
 guard, the pairing invariants, and code updates reaching an open tab (§15, over a local HTTP
-server), the header's last-updated time (§16) the courses-by-player table and solo notes (§17), the Central-time landing round (§18), mid-week standings (§19), the tiebreak order (§20) and the Sunday backup-only flag (§21) — 150 assertions. Worth re-running after any change to the sync path.
+server), the header's last-updated time (§16) the courses-by-player table and solo notes (§17), the Central-time landing round (§18), mid-week standings (§19), the tiebreak order (§20) and the Sunday backup-only flag (§21), Mammoth par 73 (§20b) — 151 assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked

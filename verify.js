@@ -722,6 +722,13 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(tb === 'Eric,Ryan', 'tie goes to the better single round before Sunday (got ' + tb + ')');
   await p.context().close();
 
+  // ---- 20b. Mammoth is par 73 (GHIN check: Drew 7.3 -> CH 8) --------------
+  p = await newPage(browser); await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+  const mam = await p.evaluate(() => ({ par: TEES.mammoth.every(t => t[3] === 73), drew: chcp(7.3, TEES.mammoth[0]) }));
+  ok(mam.par && mam.drew === 8, 'Mammoth Dunes is par 73; Drew 7.3 plays off 8 from Orange like GHIN (got ' + mam.drew + ')');
+  await p.context().close();
+
   // ---- 21. Sunday's quota table is flagged backup-only ----------------------
   console.log('\n[21] Lawsonia flagged backup only');
   p = await newPage(browser); await mockApi(p, makeRepo());
