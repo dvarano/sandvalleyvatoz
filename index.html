@@ -895,7 +895,7 @@ function renderEnter(){
       : 'La Final is match play, not quota. Nothing to enter here.'}</p></div>`;
     $('#v-enter').innerHTML=h; return;
   }
-  if(rd.backup) h+=`<p class="note bk" style="margin-bottom:6px"><b>Backup round &mdash; enter it anyway.</b> It stays out of the standings unless someone misses a Sand Valley round, and the Sunday finish is the second seeding tiebreak.</p>`;
+  if(rd.backup) h+=`<p class="note bk" style="margin-bottom:6px"><b>Backup round &mdash; fine to leave blank.</b> Enter it only if someone ends up short of 4 Sand Valley rounds, or to break a tie for a seed (Sunday finish is the second tiebreak).</p>`;
   h+=`<p class="note" style="margin-bottom:4px">Type each player&rsquo;s total quota points. Bogey 1, par 2, birdie 4, eagle 6. Gross double or worse is 0.</p>
       <p class="note" style="margin-bottom:6px">${rd.split
         ? `${rd.split.length===3?'Three':'Two'} courses today. Rating and slope follow each player&rsquo;s group &mdash; ${rd.split.map(l=>esc(l.course)+' '+l.tee).join(', ')}. Change them for anyone who played a different tee.`

@@ -120,8 +120,10 @@ of 3 averaged over 2, and the board marks it with `!` rather than hiding it.
 
 **Sunday is flagged "Backup only" on Today and Enter (Oct 4 2026, Drew).** A `Backup round for Copa` pill on the
 Groups heading, `Backup only` on the Quotas heading, an amber note on the Quotas card, and the Notes bullet saying when it counts.
-All keyed off `rd.backup`. **Enter Sunday's points anyway**: it is the second seeding tiebreak and the
-backfill source, and `results()` ignores it unless a round is actually missed. Covered by verify.js §21.
+All keyed off `rd.backup`. **Drew's call (Oct 5 2026): Sunday's points are NOT entered unless needed** —
+i.e. someone ends up short of 4 SV rounds, or a seeding tie survives the best-single-round tiebreak.
+Nothing breaks while it's blank: `sundayDelta()` returns null and the backup has nothing to pull, so a
+short player shows `3!` until Sunday is entered, then recomputes. The Enter-tab note says so. Covered by verify.js §21.
 
 **The standings say why.** A pool topped up from Lawsonia shows `4*`; a pool under `MIN_POOL` with
 nothing to backfill shows `3!`, each with a footnote. Without these, a Lawsonia round quietly
