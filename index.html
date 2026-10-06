@@ -229,7 +229,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-05T11:29:59Z');
+const SITE_UPDATED = Date.parse('2026-10-06T03:31:06Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -1000,7 +1000,13 @@ function renderStand(){
   h+=`<p class="note" style="margin-top:10px">Ties broken by best single round, then Sunday finish at Lawsonia.</p></div>`;
 
   const q=rows.filter(r=>r.avg!==null).slice(0,4);
+  /* Seeds move until every counting round has a score in, so say so plainly —
+     a mid-week top 4 must not read as the final draw. */
+  const seedsFinal = COUNTING.every(roundPlayed);
   h+=`<div class="card"><h2>La Final &mdash; Thursday at the Commons, 8:10</h2>`;
+  if(q.length>=4) h+= seedsFinal
+    ? `<p class="note" style="margin-bottom:8px"><span class="pill count">Final seeds</span></p>`
+    : `<p class="note bk" style="margin-bottom:8px"><b>Based on current standings.</b> Not final &mdash; seeds can change until all the Sand Valley rounds are in after Wednesday.</p>`;
   if(q.length<4){
     h+=`<p class="note">Seeds set once the counting rounds are in. ${q.length} of 4 places filled.</p>`;
   } else {

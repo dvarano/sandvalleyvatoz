@@ -729,6 +729,22 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   ok(mam.par && mam.drew === 8, 'Mammoth Dunes is par 73; Drew 7.3 plays off 8 from Orange like GHIN (got ' + mam.drew + ')');
   await p.context().close();
 
+  // ---- 20c. La Final card says "based on current standings" mid-week ------
+  p = await newPage(browser); await mockApi(p, makeRepo());
+  await p.goto(URL); await settle(p);
+  const fin = await p.evaluate(() => {
+    const q = (pi, rid) => quotaFor(P[pi].idx, teeFor(R.find(r => r.id === rid), pi));
+    const fill = rid => { S.s[rid] = new Array(9).fill(null); playing(R.find(r => r.id === rid)).forEach((pi, k) => S.s[rid][pi] = q(pi, rid) + (k % 5)); };
+    const card = () => { renderStand(); return [...document.querySelectorAll('#v-stand .card')].find(c => /La Final/.test(c.textContent)).textContent; };
+    S.s = {}; ['r2','r4','r5'].forEach(fill); const mid = card();
+    ['r6','r7'].forEach(fill); const end = card();
+    return { mid, end };
+  });
+  ok(/Based on current standings/.test(fin.mid) && /Not final/.test(fin.mid), 'mid-week La Final card says based on current standings');
+  ok(/Final seeds/.test(fin.end) && !/Based on current standings/.test(fin.end), 'once every counting round is in, it says Final seeds');
+  ok(p.errs.length === 0, 'no page errors' + (p.errs.length ? ': ' + p.errs[0] : ''));
+  await p.context().close();
+
   // ---- 21. Sunday's quota table is flagged backup-only ----------------------
   console.log('\n[21] Lawsonia flagged backup only');
   p = await newPage(browser); await mockApi(p, makeRepo());
