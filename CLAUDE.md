@@ -158,6 +158,11 @@ twice breaks the symmetry the rule depends on.
   indexes before Monday — that is an index decision, deliberately **not** described on the
   Info tab as part of the Lawsonia round. **The site says only that indexes may be adjusted; it
   deliberately gives no number** (it used to say ±3; Drew asked to keep it vague, Sep 2026).
+- **Tie explainer (Oct 7 2026, Drew).** `tieNotes(board())` renders a "How ties were broken" box under
+  the standings whenever averages tie, spelling out each tie: the best single rounds, then (only if
+  still level) the Sunday scores, then the resulting places. It mirrors `board()`'s sort, so it can't
+  disagree with the table. First used for the final board: Ryan, Mike and Matt all +2 with a best
+  round of +4 each; Sunday (Ryan 0, Mike −5, Matt −6) set 2nd/3rd/4th. verify.js §20.
 - **La Final card is labelled provisional mid-week (Oct 6 2026, Drew).** Until every counting round has a
   score (`COUNTING.every(roundPlayed)`), the Standings card leads with an amber "Based on current
   standings. Not final…" note; after that it shows a `Final seeds` pill. verify.js §20c.
@@ -658,7 +663,7 @@ propagation, backward compatibility with pre-`i` links, the baseline-grid freeze
 read-only viewer tab, index/course-handicap number formatting, the Lawsonia backup rule, the
 Monday split round, the standings markers, the organiser-only Info card, the no-op sit-out
 guard, the pairing invariants, and code updates reaching an open tab (§15, over a local HTTP
-server), the header's last-updated time (§16) the courses-by-player table and solo notes (§17), the Central-time landing round (§18), mid-week standings (§19), the tiebreak order (§20) and the Sunday backup-only flag (§21), Mammoth par 73 (§20b), the provisional La Final label (§20c) — 154 assertions. Worth re-running after any change to the sync path.
+server), the header's last-updated time (§16) the courses-by-player table and solo notes (§17), the Central-time landing round (§18), mid-week standings (§19), the tiebreak order (§20) and the Sunday backup-only flag (§21), Mammoth par 73 (§20b), the provisional La Final label (§20c) — 156 assertions. Worth re-running after any change to the sync path.
 
 ```
 npm i playwright && node verify.js      # no token and no network needed; the API is mocked

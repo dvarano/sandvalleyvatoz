@@ -112,6 +112,7 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
   await mockApi(p, repo, { staleOnce: true });
   await p.goto(URL); await settle(p);
   await p.click('nav button[data-v="enter"]'); await p.waitForTimeout(250);
+  await p.selectOption('#roundSel', '0'); await p.waitForTimeout(200);   // date-independent: Sunday
   await p.fill('[data-pts="2"]', '40'); await p.waitForTimeout(200);
   const before = repo.commits.length;
   await p.click('#pubBtn'); await settle(p);
@@ -720,6 +721,16 @@ const sync = p => p.$eval('#syncTxt', e => e.textContent);
     return board().filter(r => r.avg !== null).map(r => r.name).join(',');
   });
   ok(tb === 'Eric,Ryan', 'tie goes to the better single round before Sunday (got ' + tb + ')');
+  const tn = await p.evaluate(() => tieNotes(board()).join(' | '));
+  ok(/Tied on \+3:<\/b> Eric, Ryan/.test(tn) && /Eric \+6, Ryan \+3\./.test(tn) && /So Eric 1st, Ryan 2nd\./.test(tn) && !/Sunday/.test(tn),
+     'tie explainer names the tie and says best single round settled it (got ' + tn + ')');
+  const tn2 = await p.evaluate(() => {
+    const q = (pi, rid) => quotaFor(P[pi].idx, teeFor(R.find(r => r.id === rid), pi));
+    S.s.r2[5] = q(5,'r2') + 3; S.s.r4[5] = q(5,'r4') + 3;                 // Eric now +3 / best +3, Sunday 0
+    return tieNotes(board()).join(' | ');
+  });
+  ok(/still level/.test(tn2) && /Sunday at Lawsonia: Eric 0, Ryan \+9|Sunday at Lawsonia: Ryan \+9, Eric 0/.test(tn2) && /So Ryan 1st, Eric 2nd\./.test(tn2),
+     'when best round is level too, the explainer cites Sunday (got ' + tn2 + ')');
   await p.context().close();
 
   // ---- 20b. Mammoth is par 73 (GHIN check: Drew 7.3 -> CH 8) --------------

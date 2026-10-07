@@ -229,7 +229,7 @@ const TRIP_NAME = "La Copa De Vatoz";
    whichever is newer — this or the last publish of data.json — so a pairing
    change pushed as code reads as an update just like a published score does.
    Pure code housekeeping (tests, docs, refactors) should NOT bump it. */
-const SITE_UPDATED = Date.parse('2026-10-06T03:31:06Z');
+const SITE_UPDATED = Date.parse('2026-10-07T23:45:24Z');
 document.getElementById('brandName').textContent = TRIP_NAME;
 document.title = TRIP_NAME + " · Sand Valley 2026";
 
@@ -965,6 +965,33 @@ function renderEnterDelta(){
   });
 }
 
+/* Plain-English account of every tie on the board and how board()'s tiebreaks
+   settled it: best single round first, then Sunday at Lawsonia. Only rendered
+   when there is a tie, so it reads as the explanation for that particular finish. */
+const ORD = n => n + (['th','st','nd','rd'][(n%100-20)%10] || ['th','st','nd','rd'][n%100] || 'th');
+function tieNotes(rows){
+  const out=[], scored=rows.filter(r=>r.avg!==null);
+  for(let a=0;a<scored.length;){
+    let b=a; while(b+1<scored.length && scored[b+1].avg===scored[a].avg) b++;
+    if(b>a){
+      const g=scored.slice(a,b+1), pos=k=>ORD(a+k+1);
+      let t=`<b>Tied on ${fmt(g[0].avg)}:</b> ${g.map(r=>r.name).join(', ')}. `;
+      const bests=g.map(r=>r.best), byBest=new Set(bests).size===g.length;
+      t+=`Best single round: ${g.map(r=>`${r.name} ${fmt(r.best)}`).join(', ')}`;
+      const stuck=g.filter(r=>bests.filter(x=>x===r.best).length>1);
+      if(byBest) t+='. ';
+      else {
+        t+=stuck.length===g.length ? ' &mdash; still level. ' : ` &mdash; ${stuck.map(r=>r.name).join(' and ')} still level. `;
+        t+=`Sunday at Lawsonia: ${stuck.map(r=>`${r.name} ${r.sun===null?'no score':fmt(r.sun)}`).join(', ')}. `;
+      }
+      t+=`So ${g.map((r,k)=>`${r.name} ${pos(k)}`).join(', ')}.`;
+      out.push(t);
+    }
+    a=b+1;
+  }
+  return out;
+}
+
 function renderStand(){
   const rows=board(), scored=rows.filter(r=>r.avg!==null);
   const mx=Math.max(1, ...scored.map(r=>Math.abs(r.avg)));
@@ -997,7 +1024,10 @@ function renderStand(){
     });
     h+=`</div>`;
   }
-  h+=`<p class="note" style="margin-top:10px">Ties broken by best single round, then Sunday finish at Lawsonia.</p></div>`;
+  h+=`<p class="note" style="margin-top:10px">Ties broken by best single round, then Sunday finish at Lawsonia.</p>`;
+  const ties=tieNotes(rows);
+  if(ties.length) h+=`<div class="note bk" style="margin-top:8px"><b style="display:block;margin-bottom:2px">How ties were broken</b>${ties.map(t=>`<p style="margin:4px 0 0">${t}</p>`).join('')}</div>`;
+  h+=`</div>`;
 
   const q=rows.filter(r=>r.avg!==null).slice(0,4);
   /* Seeds move until every counting round has a score in, so say so plainly —
