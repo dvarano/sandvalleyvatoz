@@ -25,7 +25,11 @@ Quota game, first 4 Sand Valley rounds counted, worst dropped, other 3 averaged.
 Seeds 2–4 were a three-way tie on +2, and so was the first tiebreak (best round +4 each). The
 second tiebreak, Sunday at Lawsonia (Ryan 0, Mike −5, Matt −6), decided it. **Lesson: a tiebreak
 nobody expects to use will get used.** Enter the backup/tiebreak round's scores anyway.
-La Final: Paul v Ryan, Mike v Matt. *(Thursday results not recorded here — add them.)*
+**La Final (Thu Oct 8, the Commons):** **Paul beat Ryan** to win La Copa ($700; Ryan $350), and
+**Mike beat Matt** for 3rd ($300). Both higher seeds, who started 1 up, won. Worth remembering
+when sizing 2027's half-stroke head start: a full hole was enough to hold up twice out of two.
+
+**🏆 2026 champion: Paul.**
 
 The final `data.json` is the archive of every score. To keep the 2026 site viewable, tag it before
 changing anything: `git tag 2026-final && git push origin 2026-final`.

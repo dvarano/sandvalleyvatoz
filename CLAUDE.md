@@ -7,7 +7,7 @@ so a future session can pick this up cold.
 - **The app:** `index.html` — one self-contained file, no build step, no dependencies.
 - **Group name:** the Sand Valley Vatoz (vatos with a z). Competition is **La Copa De Vatoz**.
   Rename via `TRIP_NAME` at the top of the script.
-- **Trip complete (Oct 8 2026).** Planning 2027? **Read `NEXT_YEAR.md` first**: final results,
+- **Trip complete (Oct 8 2026). Champion: Paul** (beat Ryan in La Final; Mike beat Matt for 3rd). Planning 2027? **Read `NEXT_YEAR.md` first**: final results,
   what to keep, lessons, and Drew's 2027 format (partner + individual games, rank-points per round, match-play bracket).
 - **Branch:** commit and push directly to `main`. No feature branches, no PRs — Pages serves
   `main`, so anything not on it isn't live.
