@@ -75,35 +75,64 @@ changing anything: `git tag 2026-final && git push origin 2026-final`.
 
 ## 4. 2027 format (Drew's plan, Oct 8 2026)
 
-**Variety of individual / pattern games instead of quota every round. Each round is ranked, and
-your rank earns points. Top 4 on points go to a match-play final day.**
+**Variety of partner and individual games instead of quota every round. Each round is ranked, and
+you earn individual points from your rank (in a partner game, from your team's rank). Top 4 on
+points go to a match-play final day.**
 
 ### 4a. Round games
 
-Each round names one game. The game must produce **one number per player, handicap-adjusted**, so
-the whole field can be ranked, including across courses on split days. Possible games:
+Each round names one game, partner or individual. It must produce **one handicap-adjusted number
+per team (or per player)** so the whole field can be ranked, including across groups and across
+courses on split days. That means the game is scored field-wide, not just inside a foursome.
 
-| Game | Per-player number | Better | Net how |
-|---|---|---|---|
-| Quota (2026's) | points − quota | high | built in |
-| Net Stableford | points | high | strokes off the stroke index |
-| Net stroke play | net total | low | course handicap |
-| Par 3s / par 5s only | net score to par on those holes | low | strokes on those holes only |
-| Peoria / Callaway | adjusted net from hidden holes | low | self-handicapping |
-| Best 9 holes | net score to par on your best 9 holes | low | strokes on the stroke index |
+| Game | Type | Number ranked | Better | Handicap |
+|---|---|---|---|---|
+| Four-ball (best ball) | partner | team net total, lower ball per hole | low | 85% of course handicap |
+| Two-man aggregate | partner | sum of both partners' net totals | low | 100% |
+| Scramble | partner | team net total | low | 35% low / 15% high |
+| Shamble | partner | team net, best ball after a shared drive | low | ~80% |
+| Alternate shot / Chapman | partner | team net total | low | 50% / 60–40% combined |
+| Quota (2026's) | individual | points − quota | high | built in |
+| Net Stableford | individual | points | high | stroke index |
+| Net stroke play | individual | net total | low | 100% |
 
-Keep them **individual, own ball**, so group side games still don't interfere (2026 rule).
-**Anything that needs stroke indexes needs every course's handicap row entered and checked**,
-which quota avoided. Budget for it, or favour games that only need a course handicap (quota,
-net total, Callaway).
+The allowances are USGA recommendations; tweak them, but print whatever you use on the Info tab.
+**Four-ball, shamble and Stableford need each course's stroke-index row** to give strokes on the
+right holes, which quota avoided. Enter the rows and check them (a permutation of 1–18) before the
+trip. Aggregate, scramble, alternate shot and quota only need a course handicap.
 
-### 4b. Rank points
+**This drops 2026's "own ball" rule on partner rounds.** That rule existed so foursome side games
+couldn't interfere with the Copa; on a partner round the Copa *is* the team game, so side bets
+should fit around it.
+
+### 4b. Partner draws: balance now matters
+
+In 2026 **index balance was deliberately ignored** because quota made the draw irrelevant to
+anyone's score (`CLAUDE.md` §3). **With partner games that reverses**: your partner's handicap and
+form directly move your points, so the draw is part of the competition.
+- **Rotate partners**, so everyone partners as many different people as possible and nobody
+  partners the same person twice. Extend the pairing optimizer with a partner-frequency term
+  alongside the existing group-frequency term.
+- **Balance team strength per round**, e.g. pair the low and high handicaps (1+9, 2+8, …). Net
+  allowances do most of the levelling, and the rotation evens out the rest over the week.
+- **Nine players means an odd one out** on every partner round. Options, best first:
+  (1) a three-player team, scored best-2-of-3 or with an adjusted allowance;
+  (2) the odd player plays with a "ghost" partner (their own second score, or a fixed net par);
+  (3) the odd player sits that round, with the round counts kept even across the week.
+  Decide this before the trip; it is the fiddliest part of the format.
+
+### 4c. Rank points
 
 - Rank the whole field each round. **Points from a fixed table**, so a round is worth the same
   whoever sits. Suggested table for 9:
   **1st 10 · 2nd 8 · 3rd 6 · 4th 5 · 5th 4 · 6th 3 · 7th 2 · 8th 1 · 9th 0**.
   This is steeper at the top so winning a round matters; 9-down-to-1 is the flat alternative.
-- **Ties split the points** of the positions they occupy (two tied for 2nd each get (8+6)/2 = 7).
+- **Partner rounds use the same table.** A two-player team finishing *k*-th occupies individual
+  places 2k−1 and 2k, and **each partner gets the average of those two**. So the winning team
+  gets (10+8)/2 = 9 each, 2nd gets (6+5)/2 = 5.5 each, and so on. A three-player team occupies
+  three places. Partner and individual rounds then carry exactly the same total points.
+- **Ties split the points** of the places they occupy (two players tied for 2nd each get
+  (8+6)/2 = 7; tied teams share in the same way).
 - A rank caps the margin: one blowout round can't run away with the week. That's the main gain
   over averaging.
 - **Uneven round counts.** Either give everyone the same number of counting rounds (best, as in
@@ -111,7 +140,7 @@ net total, Callaway).
 - Tiebreak on total points: most round wins, then best single finish, then head-to-head. Pick the
   order before the trip and print it on the Info tab.
 
-### 4c. Final day: match play bracket
+### 4d. Final day: match play bracket
 
 - **Semifinals on the front nine:** Seed 1 v Seed 4 and Seed 2 v Seed 3. **Seeds 1 and 2 start up
   half a stroke.**
@@ -136,12 +165,17 @@ net total, Callaway).
 pairing optimizer, `verify.js` harness.
 
 **Replace or extend:**
-- `rd.game` → a structured spec, e.g. `{id:'stableford', name:'Net Stableford', better:'high',
-  needs:'si'}`. Keep `gamerules` for the text.
-- Enter tab: one number per player per round, labelled by the game ("net total", "points"…), with
-  the direction shown so nobody enters a gross score into a net game.
-- `results()/standing()/board()` → `roundRanks(rid)` (field-wide rank with split ties) →
-  `rankPoints` table → totals. The drop-worst / first-N logic and `pendingRounds` still apply.
+- `rd.game` → a structured spec, e.g. `{id:'fourball', name:'Four-ball', type:'partner',
+  better:'low', allowance:0.85, needs:'si'}`. Keep `gamerules` for the text.
+- **Teams per round**: a new `rd.teams` / `S.k[rid]` (partner pairs within each group), seeded from
+  a baseline like `BASE_GRID` and editable on the Pairings tab, with the same strip-before-publish
+  rule so code changes still reach everyone.
+- Enter tab: one number per **team** on partner rounds and per player on individual rounds,
+  labelled by the game ("team net", "points"…) with the direction shown, so nobody enters a gross
+  score into a net game. Show each team's allowance-adjusted handicap next to it.
+- Plays off: on partner rounds, show the allowance-adjusted strokes per player.
+- `results()/standing()/board()` → `roundRanks(rid)` (field-wide rank of players or teams, with
+  split ties; a team spreads across its places) → `rankPoints` table → per-player totals. The drop-worst / first-N logic and `pendingRounds` still apply.
 - Standings: points per round in brackets the way the counting scores were, the rank shown per
   round, and the tie explainer rewritten for the new tiebreak order.
 - The La Final card becomes a **bracket**: semis (front 9) → final + 3rd-place (back 9), with
@@ -159,7 +193,9 @@ pairing optimizer, `verify.js` harness.
 - [ ] Stroke-index rows entered and verified if any game needs them.
 - [ ] Indexes confirmed and **locked before the first counting round**.
 - [ ] Schedule gives everyone the same number of counting rounds.
-- [ ] Optimizer run with this year's pins; check 36/36 pairs and max repeats.
+- [ ] Optimizer run with this year's pins; check 36/36 pairs, max repeats, **no repeat partners**
+      and team balance on each partner round.
+- [ ] Odd-player rule for partner rounds decided, and allowances for each partner game set.
 - [ ] Token generated (one repo, Contents read/write, expiry past the trip) and pasted on each
       scoring device.
 - [ ] Rank-points table, tiebreak order, half-stroke wording and prizes all on the Info tab.
