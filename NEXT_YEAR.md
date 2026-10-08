@@ -119,18 +119,18 @@ form directly move your points, so the draw is part of the competition.
   alongside the existing group-frequency term.
 - **Balance team strength per round**, e.g. pair the low and high handicaps (1+9, 2+8, …). Net
   allowances do most of the levelling, and the rotation evens out the rest over the week.
-- **Nine players means an odd one out** on every partner round. Options, best first:
+- **An odd number of players means one is left out** of every partner round. With 8, 10 or 12
+  (see 4e) this goes away. Keep a rule in reserve in case someone drops out late, best first:
   (1) a three-player team, scored best-2-of-3 or with an adjusted allowance;
   (2) the odd player plays with a "ghost" partner (their own second score, or a fixed net par);
   (3) the odd player sits that round, with the round counts kept even across the week.
-  Decide this before the trip; it is the fiddliest part of the format.
 
 ### 4c. Rank points
 
 - Rank the whole field each round. **Points from a fixed table**, so a round is worth the same
-  whoever sits. Suggested table for 9:
+  whoever sits. The table depends on the field size (see 4e). The 2026 table for 9 would have been
   **1st 10 · 2nd 8 · 3rd 6 · 4th 5 · 5th 4 · 6th 3 · 7th 2 · 8th 1 · 9th 0**.
-  This is steeper at the top so winning a round matters; 9-down-to-1 is the flat alternative.
+  It's steeper at the top so winning a round matters; n-down-to-1 is the flat alternative.
 - **Partner rounds use the same table.** A two-player team finishing *k*-th occupies individual
   places 2k−1 and 2k, and **each partner gets the average of those two**. So the winning team
   gets (10+8)/2 = 9 each, 2nd gets (6+5)/2 = 5.5 each, and so on. A three-player team occupies
@@ -161,6 +161,44 @@ form directly move your points, so the draw is part of the competition.
   the single source and make the total equal the pot.
 
 ---
+
+### 4e. Field size: 8, 10 or 12 golfers (Drew, Oct 8 2026)
+
+**Any even number fixes 2026's biggest headache.** Nine players into foursome tee times forced
+sit-outs every round, and all the uneven-round-count rules and Lawsonia backup logic followed from
+that. With 8 or 12, every foursome is full, **everybody plays every round**, and round counts are
+equal automatically. Even numbers also give whole partner teams.
+
+| | 8 | 10 | 12 |
+|---|---|---|---|
+| Groups per round | 2 foursomes | 3 groups: 4/3/3 (or 4/4/2) | 3 foursomes |
+| Sit-outs | none | none, but needs a 3rd tee time | none |
+| Partner teams | 4 | 5 | 6 |
+| Pairs to cover | 28 | 45 | 66 |
+| Rounds for every pair to meet* | **3** | **4** (4/3/3) · 5 (4/4/2) | **5** (no 4-round week found) |
+| Pot at $150 | $1,200 | $1,500 | $1,800 |
+
+\*Found by search, the same optimizer approach as 2026. More rounds than that leaves room for the
+pins people ask for. 10 is the awkward one: three tee times, and the threesomes play faster, so
+put them out first.
+
+**Rank-points tables** (steep at the top, last place still scores except at 8):
+
+| Place | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 8 players | 10 | 8 | 6 | 5 | 4 | 3 | 2 | 1 | | | | |
+| 10 players | 12 | 10 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | | |
+| 12 players | 15 | 12 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 |
+
+Partner rounds use the same table: a team finishing *k*-th shares places 2k−1 and 2k.
+
+**Top 4 to the bracket works at every size**, but it's half the field at 8 and a third at 12.
+At 12, consider paying 4th, or running a consolation bracket for 5th–8th alongside El Toilet Bowl.
+
+**In the code:** `NP` is already `P.length`, so the roster size flows through the score arrays, the
+pool and the Enter tab. Watch for: `BASE_GRID` and the optimizer (`FREE`, `OUT`, group sizes per
+round via `sizesFor`), `ng` per round (3 at 10 and 12), `PRIZES` summing to the new pot, and
+`verify.js`, whose pair counts (36/36) and partner-matrix checks assume nine.
 
 ## 5. What changes in the code
 
@@ -196,6 +234,8 @@ pairing optimizer, `verify.js` harness.
       course-handicap spot check per course.
 - [ ] Stroke-index rows entered and verified if any game needs them.
 - [ ] Indexes confirmed and **locked before the first counting round**.
+- [ ] Field size settled (8 / 10 / 12) and enough tee times booked that nobody sits; points table and
+      prizes match it.
 - [ ] Schedule gives everyone the same number of counting rounds.
 - [ ] Optimizer run with this year's pins; check 36/36 pairs, max repeats, **no repeat partners**
       and team balance on each partner round.
