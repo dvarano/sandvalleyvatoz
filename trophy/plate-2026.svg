@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1.8in" height="0.5in" viewBox="0 0 1.8 0.5">
-  <!-- Engraving art for one plate: 1.8 x 0.5 in, true scale. Black = engraved.
+<svg xmlns="http://www.w3.org/2000/svg" width="1.75in" height="0.56in" viewBox="0 0 1.75 0.56">
+  <!-- Engraving art for one plate: 1.75 x 0.56 in (Crown Awards ENGOLD), true scale. Black = engraved.
        Font: Copperplate Gothic Bold, caps. Line 1 ~10 pt, line 2 ~20 pt. Centered. -->
-  <rect x="0.005" y="0.005" width="1.79" height="0.49" rx="0.02" fill="#fff" stroke="#999" stroke-width="0.01"/>
-  <text x="0.9" y="0.17" text-anchor="middle" font-family="Copperplate, 'Copperplate Gothic Bold', 'Times New Roman', serif" font-weight="700" font-size="0.11" letter-spacing="0.012" fill="#000">2026 · SAND VALLEY</text>
-  <text x="0.9" y="0.41" text-anchor="middle" font-family="Copperplate, 'Copperplate Gothic Bold', 'Times New Roman', serif" font-weight="700" font-size="0.22" letter-spacing="0.03" fill="#000">PAUL</text>
+  <rect x="0.005" y="0.005" width="1.74" height="0.55" rx="0.02" fill="#fff" stroke="#999" stroke-width="0.01"/>
+  <text x="0.875" y="0.19" text-anchor="middle" font-family="Copperplate, 'Copperplate Gothic Bold', 'Times New Roman', serif" font-weight="700" font-size="0.11" letter-spacing="0.012" fill="#000">2026 · SAND VALLEY</text>
+  <text x="0.875" y="0.46" text-anchor="middle" font-family="Copperplate, 'Copperplate Gothic Bold', 'Times New Roman', serif" font-weight="700" font-size="0.22" letter-spacing="0.03" fill="#000">PAUL</text>
 </svg>
