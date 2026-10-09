@@ -244,3 +244,25 @@ pairing optimizer, `verify.js` harness.
       scoring device.
 - [ ] Rank-points table, tiebreak order, half-stroke wording and prizes all on the Info tab.
 - [ ] `node verify.js` green with the clock set to mid-trip as well as before it.
+
+---
+
+## 7. The trophy: winner plates
+
+Front panel of the base is **3.9 × 1.3 in**. It holds **four winner plates in a 2 × 2 grid**, filled
+in reading order: 2026 top-left, 2027 top-right, 2028 bottom-left, 2029 bottom-right.
+
+- **Plate:** 1.8 × 0.5 in, adhesive-backed antique/brushed gold aluminum, black laser fill.
+  0.1 in margins and gutters all round.
+- **Text:** centred, Copperplate Gothic Bold, all caps. Line 1 is `YEAR · VENUE` at about 10 pt;
+  line 2 is the winner's name at about 20 pt.
+- **Buy all four blanks at once** so the finish matches, and engrave one a year at the same shop
+  with the same font.
+- To scale: `trophy/front-layout.svg` (the whole panel) and `trophy/plate-2026.svg` (engraving art).
+  Both print at true size at 100%.
+- **When it's full (after 2029):** mount the trophy on a walnut base about 5–6 in square and
+  1.5–2 in tall, with the same 1.8 × 0.5 plates on its sides.
+
+| Year | Winner | Venue |
+|---|---|---|
+| 2026 | Paul | Sand Valley |

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3.9in" height="1.3in" viewBox="0 0 3.9 1.3">
+  <!-- La Copa De Vatoz trophy: front panel 3.9 x 1.3 in, four 1.8 x 0.5 in plates,
+       0.1 in margins and gutters. True scale when printed at 100%. -->
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6c873"/><stop offset="0.5" stop-color="#c9a24a"/><stop offset="1" stop-color="#b08a3a"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="3.9" height="1.3" rx="0.03" fill="#8a6a35"/>
+  <!-- 2026 (top left) -->
+  <rect x="0.1" y="0.1" width="1.8" height="0.5" rx="0.02" fill="url(#gold)" stroke="#6b5226" stroke-width="0.008"/>
+  <text x="1.0" y="0.27" text-anchor="middle" font-family="Copperplate, 'Copperplate Gothic Bold', 'Times New Roman', serif" font-weight="700" font-size="0.11" letter-spacing="0.012" fill="#1a1407">2026 · SAND VALLEY</text>
+  <text x="1.0" y="0.51" text-anchor="middle" font-family="Copperplate, 'Copperplate Gothic Bold', 'Times New Roman', serif" font-weight="700" font-size="0.22" letter-spacing="0.03" fill="#1a1407">PAUL</text>
+  <!-- 2027 (top right), 2028 (bottom left), 2029 (bottom right): blanks -->
+  <g fill="none" stroke="#e6c873" stroke-width="0.01" stroke-dasharray="0.04 0.03">
+    <rect x="2.0" y="0.1" width="1.8" height="0.5" rx="0.02"/>
+    <rect x="0.1" y="0.7" width="1.8" height="0.5" rx="0.02"/>
+    <rect x="2.0" y="0.7" width="1.8" height="0.5" rx="0.02"/>
+  </g>
+  <g font-family="Helvetica, Arial, sans-serif" font-size="0.09" fill="#e6c873" text-anchor="middle">
+    <text x="2.9" y="0.38">2027</text><text x="1.0" y="0.98">2028</text><text x="2.9" y="0.98">2029</text>
+  </g>
+</svg>
